@@ -295,7 +295,6 @@
         }
         .cycle-dot.active { background: var(--gold); -webkit-transform: scale(1.3); transform: scale(1.3); }
 
-        /* БЛОК СТАТИСТИКИ */
         .stat-container {
             margin-top: 15px; display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
@@ -377,19 +376,17 @@
 
     <div class="cycle-progress" id="cycleDots"></div>
     
-    <!-- БЛОК СТАТИСТИКИ -->
     <div class="stat-container" id="statContainer" onclick="cycleStat()">
         <div class="stat-label" id="statLabel">ДЫХАНИЕ ВСЕЛЕННОЙ</div>
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.11</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.12</div>
 </div>
 
 <script>
     trackEvent('app_open');
 
-    // БЛОКИРОВКА ЗУМА
     document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
     var lastTouchEnd = 0;
@@ -428,10 +425,9 @@
 
     var edgeLengths = [450, 420, 450];
 
-    // === СТАТИСТИКА ===
     var appStats = {
         totalVdoh: parseInt(localStorage.getItem('mb_total_vdoh')) || 0,
-        totalHold: parseInt(localStorage.getItem('mb_total_hold')) || 0,
+        totalHold: parseFloat(localStorage.getItem('mb_total_hold')) || 0,
         maxCycles: parseInt(localStorage.getItem('mb_max_cycles')) || 0,
         maxVdoh: parseFloat(localStorage.getItem('mb_max_vdoh')) || 0,
         maxHold: parseFloat(localStorage.getItem('mb_max_hold')) || 0,
@@ -463,7 +459,8 @@
     var currentStatIdx = Math.floor(Math.random() * statModes.length);
 
     function formatTime(totalSeconds) {
-        var h = Math.floor(totalSeconds / 3600), m = Math.floor((totalSeconds % 3600) / 60), s = totalSeconds % 60;
+        var rounded = Math.floor(totalSeconds);
+        var h = Math.floor(rounded / 3600), m = Math.floor((rounded % 3600) / 60), s = rounded % 60;
         return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
 
@@ -621,7 +618,7 @@
         state.timeLeft -= delta;
         if (state.idx === 1) { 
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
-            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', Math.floor(appStats.totalHold)); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
+            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
         }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
