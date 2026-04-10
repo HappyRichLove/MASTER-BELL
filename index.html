@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#f4f1ea">
+    <title>❤️ MASTER BREATH🙏</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       var METRICA_ID = 108490319; 
+       ym(METRICA_ID, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+       });
+
+       function trackEvent(eventName) {
+           if (typeof ym === 'function') {
+               ym(METRICA_ID, 'reachGoal', eventName);
+           }
+       }
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/108490319" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <style>
+        *, *::before, *::after { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+        :root {
+            --bg: #f4f1ea;
+            --surface: #ffffff;
+            --text: #000000;
+            --accent: #8e806a;
+            --gold: #c2a05e;
+            --circle-bg: rgba(0,0,0,0.06);
+            --glow: rgba(194, 160, 94, 0.4);
+            --triangle-stroke: rgba(194, 160, 94, 0.25);
+            --triangle-glow: rgba(194, 160, 94, 0.15);
+        }
+
+        .night-theme {
+            --bg: #000000;
+            --surface: #1c1c1e;
+            --text: #ffffff;
+            --accent: #8e8e93;
+            --gold: #d4af37;
+            --circle-bg: rgba(255,255,255,0.04);
+            --glow: rgba(212, 175, 55, 0.5);
+            --triangle-stroke: rgba(212, 175, 55, 0.35);
+            --triangle-glow: rgba(212, 175, 55, 0.25);
+        }
+
+        html { background-color: var(--bg); }
+
+        body {
+            margin: 0; padding: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            height: 100vh; height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-transition: background-color 0.8s ease; transition: background-color 0.8s ease;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* ЭХО ОВЕРЛЕЙ */
+        #echoOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 5000; display: none;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            -webkit-justify-content: center; justify-content: center;
+            opacity: 0;
+            -webkit-transition: opacity 0.8s ease; transition: opacity 0.8s ease;
+            -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px);
+            -webkit-user-select: none; user-select: none;
+        }
+        #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
+
+        #echoCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5001; pointer-events: none; }
+
+        .echo-content {
+            position: relative; z-index: 5005;
+            padding: 40px; pointer-events: none;
+            text-align: center; width: 100%;
+        }
+
+        #echoText {
+            font-size: 1.6rem; font-weight: 300; line-height: 1.6;
+            color: var(--gold); opacity: 0;
+            -webkit-transition: opacity 2.5s ease, -webkit-transform 2.5s ease;
+            transition: opacity 2.5s ease, transform 2.5s ease;
+            -webkit-transform: scale(0.98) translateY(10px);
+            transform: scale(0.98) translateY(10px);
+            max-width: 85%; margin: 0 auto; font-style: italic;
+        }
+        #echoText.reveal { opacity: 1; -webkit-transform: scale(1) translateY(0); transform: scale(1) translateY(0); }
+
+        .echo-hint {
+            position: absolute; bottom: 10%; left: 0; width: 100%;
+            font-size: 0.75rem; letter-spacing: 0.25em; color: var(--accent);
+            text-transform: uppercase; z-index: 5010; opacity: 0.5;
+            text-align: center; pointer-events: none;
+        }
+
+        #echoClose {
+            position: absolute; top: 50px; right: 30px; z-index: 9999;
+            background: rgba(128,128,128,0.15); border: none; color: var(--gold);
+            cursor: pointer; width: 54px; height: 54px; border-radius: 50%;
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* МАСТЕР НЕ СПИТ */
+        #welcomeAlert {
+            position: fixed; top: -100px; left: 50%;
+            -webkit-transform: translateX(-50%); transform: translateX(-50%);
+            background: var(--surface); color: var(--gold);
+            padding: 15px 40px; border-radius: 40px;
+            -webkit-box-shadow: 0 15px 40px rgba(0,0,0,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;
+            z-index: 10000;
+            -webkit-transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+        }
+        #welcomeAlert.show { top: 40px; }
+
+        .container {
+            width: 100%; max-width: 600px; text-align: center;
+            position: relative; z-index: 10;
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            padding-top: 5px;
+        }
+
+        .visualizer {
+            position: relative;
+            width: 80vw; max-width: 340px;
+            height: 46vh; max-height: 340px;
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            z-index: 5; pointer-events: none;
+            margin-bottom: -10px; overflow: hidden;
+        }
+
+        .triangle-svg {
+            width: 100%; height: 100%;
+            -webkit-transform: scale(1.05); transform: scale(1.05);
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+        .edge-bg {
+            fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
+            -webkit-filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+            filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+        }
+        .edge-active {
+            fill: none; stroke: var(--gold); stroke-width: 10;
+            stroke-linecap: round;
+            -webkit-filter: drop-shadow(0 0 12px var(--gold));
+            filter: drop-shadow(0 0 12px var(--gold));
+            opacity: 0;
+            -webkit-transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
+            transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
+        }
+
+        .timer-box {
+            position: absolute;
+            top: 38%; left: 50%;
+            -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            -webkit-justify-content: center; justify-content: center;
+            width: 100%;
+        }
+
+        .status-inner {
+            font-weight: 800; letter-spacing: 0.4em; text-indent: 0.4em;
+            font-size: 1.1rem; color: var(--gold); text-transform: uppercase;
+            text-align: center; display: block; width: 100%;
+        }
+        .timer-display {
+            font-size: 7rem; font-weight: 100;
+            font-variant-numeric: tabular-nums; color: var(--text);
+            line-height: 0.85; text-align: center;
+            display: block; width: 100%;
+            -webkit-transition: opacity 0.15s ease, -webkit-transform 0.15s ease;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .timer-display.tick { opacity: 0.4; -webkit-transform: scale(0.92); transform: scale(0.92); }
+
+        .intervals-grid {
+            display: -ms-grid; display: grid;
+            grid-template-columns: repeat(4, 1fr); gap: 10px;
+            width: 92%; margin-bottom: 20px;
+            -webkit-transition: opacity 0.6s ease; transition: opacity 0.6s ease;
+        }
+        .running .intervals-grid { opacity: 0.1; pointer-events: none; }
+
+        .interval-box {
+            background: var(--surface); padding: 12px 0; border-radius: 20px;
+            -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.04); box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            -webkit-justify-content: center; justify-content: center;
+        }
+        .interval-label { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+        .interval-input {
+            background: transparent; border: none; font-family: inherit;
+            font-size: 20px; font-weight: 700; width: 100%; text-align: center;
+            color: var(--text); outline: none; padding: 0; margin: 0;
+            -moz-appearance: textfield;
+            -webkit-appearance: none; appearance: none;
+        }
+        .interval-input::-webkit-outer-spin-button,
+        .interval-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .controls {
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            gap: 15px; width: 100%;
+        }
+        .master-label { font-weight: 700; letter-spacing: 0.2em; font-size: 1.2rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+
+        .secondary-btns {
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            gap: 40px; margin-bottom: 5px;
+            -webkit-align-items: center; align-items: center;
+        }
+
+        .icon-btn {
+            background: var(--surface); border: none; cursor: pointer; color: var(--text);
+            width: 58px; height: 58px; border-radius: 50%;
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            -webkit-box-shadow: 0 5px 15px rgba(0,0,0,0.08); box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            -webkit-transition: all 0.2s; transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-main {
+            background: var(--gold); border: none; padding: 20px 0; border-radius: 40px;
+            cursor: pointer; font-family: inherit; font-size: 1.3rem; font-weight: 900;
+            color: #ffffff;
+            -webkit-box-shadow: 0 12px 30px var(--glow); box-shadow: 0 12px 30px var(--glow);
+            width: 240px;
+            -webkit-transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent; text-transform: uppercase;
+        }
+        .btn-main:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
+
+        .cycle-progress {
+            margin-top: 12px; display: -webkit-flex; display: flex;
+            gap: 6px; -webkit-justify-content: center; justify-content: center;
+            -webkit-flex-wrap: wrap; flex-wrap: wrap; width: 85%;
+        }
+        .cycle-dot {
+            width: 9px; height: 9px; border-radius: 50%; background: var(--circle-bg);
+            -webkit-transition: 0.4s; transition: 0.4s;
+        }
+        .cycle-dot.active { background: var(--gold); -webkit-transform: scale(1.3); transform: scale(1.3); }
+
+        /* БЛОК СТАТИСТИКИ */
+        .stat-container {
+            margin-top: 15px; display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            cursor: pointer; -webkit-tap-highlight-color: transparent;
+            min-height: 44px;
+        }
+        .stat-label {
+            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em;
+            color: var(--accent); text-transform: uppercase; margin-bottom: 2px;
+            -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease;
+        }
+        .stat-value {
+            font-size: 1.2rem; font-weight: 700; color: var(--gold);
+            font-variant-numeric: tabular-nums;
+            -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .stat-value.fade { opacity: 0; -webkit-transform: translateY(5px); transform: translateY(5px); }
+
+        .version-tag {
+            margin-top: 6px; font-size: 0.55rem; letter-spacing: 0.15em;
+            color: var(--accent); opacity: 0.4; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            padding: 8px 20px; 
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<div id="echoOverlay" onmousedown="startEchoReveal(event)" onmouseup="stopEchoReveal()" ontouchstart="startEchoReveal(event)" ontouchend="stopEchoReveal()">
+    <button id="echoClose" onclick="closeEcho(event)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <canvas id="echoCanvas"></canvas>
+    <div class="echo-content">
+        <div id="echoText"></div>
+    </div>
+    <div class="echo-hint" id="echoHint">Зажми палец в центре, чтобы притянуть Истину</div>
+</div>
+
+<div id="welcomeAlert">❤️ МАСТЕР НЕ СПИТ СЕЙЧАС 🙏</div>
+<canvas id="particleCanvas"></canvas>
+
+<div class="container">
+    <div class="visualizer" id="vizMain">
+        <svg class="triangle-svg" id="triangleSvg" viewBox="0 0 500 500">
+            <path class="edge-bg" d="M250 460 L40 60 L460 60 Z" />
+            <path id="edge0" class="edge-active" d="M250 460 L40 60" />
+            <path id="edge1" class="edge-active" d="M40 60 L460 60" />
+            <path id="edge2" class="edge-active" d="M460 60 L250 460" />
+        </svg>
+        <div class="timer-box">
+            <div class="status-inner" id="statusText">ГОТОВ</div>
+            <div class="timer-display" id="display">0</div>
+        </div>
+    </div>
+
+    <div class="intervals-grid">
+        <div class="interval-box"><span class="interval-label">Вдох</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-0" value="4"></div>
+        <div class="interval-box"><span class="interval-label">Задержка</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-1" value="16"></div>
+        <div class="interval-box"><span class="interval-label">Выдох</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-2" value="8"></div>
+        <div class="interval-box"><span class="interval-label">Круги</span><input type="text" inputmode="numeric" pattern="[0-9]*" class="interval-input" id="repeat-input" value="10"></div>
+    </div>
+
+    <div class="controls">
+        <div class="master-label">❤️ МАСТЕР 🙏</div>
+        <div class="secondary-btns">
+            <button id="themeBtn" class="icon-btn" onclick="handleTheme(event)">
+                <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg id="moonIcon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+        </div>
+        <button id="startBtn" class="btn-main" onclick="handleStart(event)">СТАРТ</button>
+    </div>
+
+    <div class="cycle-progress" id="cycleDots"></div>
+    
+    <!-- БЛОК СТАТИСТИКИ -->
+    <div class="stat-container" id="statContainer" onclick="cycleStat()">
+        <div class="stat-label" id="statLabel">ДЫХАНИЕ ВСЕЛЕННОЙ</div>
+        <div class="stat-value" id="statValue">00:00:00</div>
+    </div>
+    
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.11</div>
+</div>
+
+<script>
+    trackEvent('app_open');
+
+    // БЛОКИРОВКА ЗУМА
+    document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    var lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        var now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+    }, { passive: false });
+
+    var TWO_PI = Math.PI * 2;
+
+    var els = {
+        display: document.getElementById('display'),
+        startBtn: document.getElementById('startBtn'),
+        statusText: document.getElementById('statusText'),
+        cycleDots: document.getElementById('cycleDots'),
+        statLabel: document.getElementById('statLabel'),
+        statValue: document.getElementById('statValue'),
+        edges: [document.getElementById('edge0'), document.getElementById('edge1'), document.getElementById('edge2')],
+        inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
+        repeats: document.getElementById('repeat-input'),
+        canvas: document.getElementById('particleCanvas'),
+        welcome: document.getElementById('welcomeAlert'),
+        echo: document.getElementById('echoOverlay'),
+        echoText: document.getElementById('echoText'),
+        echoCanvas: document.getElementById('echoCanvas'),
+        echoHint: document.getElementById('echoHint'),
+        triangleSvg: document.getElementById('triangleSvg')
+    };
+
+    var state = {
+        idx: 0, timeLeft: 0, dur: 0, running: false, paused: false,
+        totalSec: 0, ints: [4, 16, 8, 0.2], reps: 10, curRep: 1,
+        night: false, lastTick: 0
+    };
+
+    var edgeLengths = [450, 420, 450];
+
+    // === СТАТИСТИКА ===
+    var appStats = {
+        totalVdoh: parseInt(localStorage.getItem('mb_total_vdoh')) || 0,
+        totalHold: parseInt(localStorage.getItem('mb_total_hold')) || 0,
+        maxCycles: parseInt(localStorage.getItem('mb_max_cycles')) || 0,
+        maxVdoh: parseFloat(localStorage.getItem('mb_max_vdoh')) || 0,
+        maxHold: parseFloat(localStorage.getItem('mb_max_hold')) || 0,
+        maxOut: parseFloat(localStorage.getItem('mb_max_out')) || 0,
+        streak: parseInt(localStorage.getItem('mb_streak')) || 1,
+        lastDate: localStorage.getItem('mb_last_date') || ''
+    };
+
+    var todayStr = new Date().toDateString();
+    if (appStats.lastDate !== todayStr) {
+        var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; } 
+        else if (appStats.lastDate !== '') { appStats.streak = 1; }
+        appStats.lastDate = todayStr;
+        localStorage.setItem('mb_streak', appStats.streak);
+        localStorage.setItem('mb_last_date', appStats.lastDate);
+    }
+
+    var statModes = [
+        { id: 'time', label: 'Дыхание Вселенной' },
+        { id: 'count', label: 'Количество вдохов всего' },
+        { id: 'hold', label: 'Общее время задержки' },
+        { id: 'streak', label: 'Дни подряд' },
+        { id: 'max_c', label: 'Рекорд в кругах' },
+        { id: 'max_v', label: 'Рекорд во вдохе' },
+        { id: 'max_h', label: 'Рекорд в задержке' },
+        { id: 'max_o', label: 'Рекорд в выдохе' }
+    ];
+    var currentStatIdx = Math.floor(Math.random() * statModes.length);
+
+    function formatTime(totalSeconds) {
+        var h = Math.floor(totalSeconds / 3600), m = Math.floor((totalSeconds % 3600) / 60), s = totalSeconds % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function renderStatText() {
+        var mode = statModes[currentStatIdx];
+        els.statLabel.textContent = mode.label;
+        if (mode.id === 'time') { els.statValue.textContent = formatTime(state.totalSec); }
+        else if (mode.id === 'count') { els.statValue.textContent = appStats.totalVdoh; }
+        else if (mode.id === 'hold') { els.statValue.textContent = formatTime(appStats.totalHold); }
+        else if (mode.id === 'streak') { els.statValue.textContent = appStats.streak + " ДН."; }
+        else if (mode.id === 'max_c') { els.statValue.textContent = appStats.maxCycles; }
+        else if (mode.id === 'max_v') { els.statValue.textContent = appStats.maxVdoh + " С."; }
+        else if (mode.id === 'max_h') { els.statValue.textContent = appStats.maxHold + " С."; }
+        else if (mode.id === 'max_o') { els.statValue.textContent = appStats.maxOut + " С."; }
+    }
+
+    function cycleStat() {
+        els.statValue.classList.add('fade'); els.statLabel.style.opacity = 0;
+        setTimeout(function() {
+            currentStatIdx = (currentStatIdx + 1) % statModes.length;
+            renderStatText();
+            els.statValue.classList.remove('fade'); els.statLabel.style.opacity = 1;
+        }, 300);
+    }
+
+    var cachedGold = '#c2a05e';
+    function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
+
+    var advaitaQuotes = [
+        "Мир — это лишь игра света в твоем осознавании. Нет никого, кто играет.",
+        "Прекрати искать и увидишь, что Ты — то, что ищет.",
+        "Тишина — это не отсутствие звука. Это присутствие Тебя без мыслей.",
+        "Нет пути к Себе. Есть только осознание, что Ты никогда не уходил.",
+        "Ты — экран, на котором разворачивается кино жизни. Экран всегда чист.",
+        "Все, что появляется и исчезает — не Ты. Свидетель остается всегда.",
+        "Ничего не удерживай. Ничего не отталкивай. Просто будь.",
+        "Твоя истинная природа — безграничное блаженство, скрытое шумом ума.",
+        "Ты не в мире. Мир в Тебе.",
+        "Единственная реальность — это Я ЕСТЬ здесь и сейчас.",
+        "Когда искатель исчезает, остаётся только Истина.",
+        "Ум создаёт разделение. Сердце знает единство.",
+        "Ты — пространство, в котором происходит всё. Пространство не затронуто.",
+        "Отпусти того, кем ты себя считаешь. Останется то, чем Ты являешься.",
+        "Нет ничего, что нужно достичь. Есть только иллюзия, которую нужно отпустить.",
+        "Наблюдай мысли, не следуя за ними. Ты — небо, они — облака.",
+        "Страдание заканчивается там, где заканчивается «я».",
+        "Тот, кто ищет просветления, и есть единственное препятствие к нему.",
+        "В глубокой тишине ум растворяется, и остаётся только Бытие.",
+        "Реальность не нуждается в доказательствах. Она просто есть.",
+        "Между двумя мыслями — бесконечность. Это и есть Ты.",
+        "Всё, что ты ищешь, уже здесь. Просто перестань убегать.",
+        "Присутствие — это не практика. Это твоя природа.",
+        "Каждый вдох — напоминание: Ты жив. Ты есть. Этого достаточно.",
+        "Не спрашивай «кто я?» умом. Почувствуй ответ тишиной.",
+        "Волна не перестаёт быть океан, даже когда забывает об этом.",
+        "Свобода — не в выборе. Свобода — в осознании того, кто выбирает.",
+        "Любовь — это не чувство. Это отсутствие границ между тобой и миром.",
+        "Когда ты по-настоящему тих, вселенная начинает говорить.",
+        "То, что ты есть, невозможно потерять. То, чем ты не являешься, невозможно удержать."
+    ];
+
+    var audio = null;
+    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
+
+    var wakeLock = null;
+    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
+    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
+
+    function resetZoom() {
+        document.activeElement.blur();
+        var vp = document.querySelector('meta[name="viewport"]');
+        vp.setAttribute('content', 'width=device-width, initial-scale=0.9999, maximum-scale=0.9999, user-scalable=no, viewport-fit=cover');
+        requestAnimationFrame(function() { vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'); });
+        window.scrollTo(0, 0);
+    }
+
+    var allInputs = document.querySelectorAll('.interval-input');
+    for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
+
+    var echoParticles = [], isEchoHolding = false, echoGain = null, echoDroneOscs = [], revealTimer = null, touchX = 0, touchY = 0;
+    function openEcho() { trackEvent('echo_open'); initAudio(); els.echo.classList.add('active'); var idx = Math.floor(Math.random() * advaitaQuotes.length); els.echoText.textContent = advaitaQuotes[idx]; els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; initEchoCanvas(); }
+    function closeEcho(e) { if(e) { e.preventDefault(); e.stopPropagation(); } els.echo.classList.remove('active'); stopEchoReveal(); }
+    function initEchoCanvas() {
+        var c = els.echoCanvas; var ctxE = c.getContext('2d'); c.width = window.innerWidth; c.height = window.innerHeight;
+        echoParticles = []; for(var i=0; i<200; i++) { echoParticles.push({ x: Math.random()*c.width, y: Math.random()*c.height, s: Math.random()*2+0.5, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, a: Math.random()*0.4+0.1 }); }
+        function drawE() { if(!els.echo.classList.contains('active')) return; ctxE.clearRect(0,0,c.width,c.height); var color = cachedGold; for(var j=0; j<echoParticles.length; j++) { var p = echoParticles[j]; if(isEchoHolding) { var dx = touchX-p.x, dy = touchY-p.y; var dist = Math.sqrt(dx*dx+dy*dy); if(dist>5){ p.vx += (dx/dist)*0.6; p.vy += (dy/dist)*0.6; } p.vx *= 0.94; p.vy *= 0.94; } else { p.vx += (Math.random()-0.5)*0.05; p.vy += (Math.random()-0.5)*0.05; p.vx *= 0.98; p.vy *= 0.98; } p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>c.width) p.vx *= -1; if(p.y<0||p.y>c.height) p.vy *= -1; ctxE.globalAlpha = isEchoHolding ? 0.8 : p.a; ctxE.fillStyle = color; ctxE.beginPath(); ctxE.arc(p.x,p.y,p.s,0,TWO_PI); ctxE.fill(); } requestAnimationFrame(drawE); }
+        drawE();
+    }
+    function startEchoReveal(e) { if(e.target.closest('#echoClose')) return; e.preventDefault(); isEchoHolding = true; touchX = e.clientX || (e.touches && e.touches[0].clientX); touchY = e.clientY || (e.touches && e.touches[0].clientY); clearTimeout(revealTimer); revealTimer = setTimeout(function() { if(isEchoHolding) { els.echoText.classList.add('reveal'); els.echoHint.style.opacity = "0"; } }, 3000 + Math.random() * 4000); startEchoSound(); }
+    function stopEchoReveal() { isEchoHolding = false; clearTimeout(revealTimer); els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; stopEchoSound(); }
+    function startEchoSound() { var now = audio.currentTime; if (echoDroneOscs.length === 0) { echoGain = audio.createGain(); echoGain.gain.setValueAtTime(0, now); echoGain.connect(audio.destination); var tones = [{f:73.42,v:0.1,t:'sine'},{f:73.7,v:0.06,t:'sine'},{f:146.83,v:0.04,t:'sine'},{f:220,v:0.02,t:'sine'},{f:110,v:0.03,t:'triangle'}]; for (var i=0; i<tones.length; i++) { var t = tones[i]; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = t.t; osc.frequency.setValueAtTime(t.f, now); g.gain.value = t.v; var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 0.15 + Math.random()*0.3; lfoG.gain.value = 0.4; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(echoGain); osc.start(now); echoDroneOscs.push({ osc:osc, lfo:lfo, g:g }); } } echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(1, now + 2); }
+    function stopEchoSound() { if (echoGain) { var now = audio.currentTime; echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(0, now + 1.5); setTimeout(function() { if (!isEchoHolding && echoDroneOscs.length > 0) { for(var i=0;i<echoDroneOscs.length;i++){ try{echoDroneOscs[i].osc.stop();echoDroneOscs[i].lfo.stop();}catch(e){} } echoDroneOscs = []; } }, 1600); } }
+
+    var reverbNode = null;
+    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.2); } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
+    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; var buf = audio.createBuffer(1, bufLen, audio.sampleRate); var data = buf.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); var noise = audio.createBufferSource(); noise.buffer = buf; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[1.003,0.1,4.8,0],[2.71,0.06,3.5,0.5],[2.72,0.04,3.3,0],[4.16,0.03,2.5,0.8],[5.43,0.015,2,1],[6.8,0.008,1.5,1.2]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
+    function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
+    function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
+
+    var BREATH_MIN = 1.0, BREATH_MAX = 1.12;
+    function updateBreathAnimation(progress) { var scale; if (state.idx === 0) scale = BREATH_MIN + (BREATH_MAX-BREATH_MIN)*progress; else if (state.idx === 1) scale = BREATH_MAX + Math.sin(progress*TWO_PI*2)*0.008; else if (state.idx === 2) scale = BREATH_MAX - (BREATH_MAX-BREATH_MIN)*progress; else scale = BREATH_MIN; els.triangleSvg.style.transform = 'scale('+scale+')'; }
+
+    for(var ei=0; ei<els.edges.length; ei++) { els.edges[ei].style.strokeDasharray = edgeLengths[ei]; els.edges[ei].style.strokeDashoffset = edgeLengths[ei]; }
+
+    try {
+        state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
+        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = parseFloat(saved[si]) || state.ints[si]; }
+        state.reps = parseInt(localStorage.getItem('mb_repeats')) || 10;
+        state.night = localStorage.getItem('mb_night') === 'true';
+        for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
+        els.repeats.value = state.reps; if (state.night) applyTheme();
+    } catch(e){}
+
+    updateCachedGold();
+
+    function handleStart(e) {
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        trackEvent('practice_start'); initAudio(); resetZoom();
+        if(!state.running){
+            state.ints = [];
+            for(var i=0;i<els.inputs.length;i++) {
+                var val = parseFloat(els.inputs[i].value)||1; state.ints.push(val);
+                if(i===0 && val > appStats.maxVdoh) { appStats.maxVdoh = val; localStorage.setItem('mb_max_vdoh', val); }
+                if(i===1 && val > appStats.maxHold) { appStats.maxHold = val; localStorage.setItem('mb_max_hold', val); }
+                if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
+            }
+            state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
+            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); renderDots(); runIdx(0);
+        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'ПРОДОЛЖИТЬ'; releaseWakeLock(); } 
+        else { state.paused = false; els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
+    }
+
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+
+    function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
+    function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
+
+    function runIdx(idx) {
+        if(idx >= 4) {
+            appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
+            if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
+            renderStatText();
+            if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
+            return;
+        }
+        state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
+        var labels = ["Вдох","Задержка","Выдох","Пауза"]; els.statusText.textContent = labels[idx];
+        if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
+    }
+
+    function engine(now) {
+        if(!state.running||state.paused) return;
+        var delta = now - state.lastTick; state.lastTick = now;
+        state.timeLeft -= delta;
+        if (state.idx === 1) { 
+            var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
+            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', Math.floor(appStats.totalHold)); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
+        }
+        var sec = Math.ceil(state.timeLeft/1000);
+        if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
+        updateEdges((state.timeLeft/state.dur)*100); updateBreathAnimation(1 - (state.timeLeft/state.dur));
+        if(state.timeLeft<=0) runIdx(state.idx+1); else requestAnimationFrame(engine);
+    }
+
+    function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
+    function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
+    function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
+    function updJournal() { localStorage.setItem('mb_total', state.totalSec); if (statModes[currentStatIdx].id === 'time') renderStatText(); }
+
+    var ctx = els.canvas.getContext('2d'); var parts = [];
+    function resize() { els.canvas.width = window.innerWidth; els.canvas.height = window.innerHeight; }
+    window.onresize = resize; resize();
+    function Particle() { this.reset(); }
+    Particle.prototype.reset = function() { this.x = Math.random()*els.canvas.width; this.y = Math.random()*els.canvas.height; this.s = Math.random()*2+0.5; this.vX = (Math.random()-0.5)*0.2; this.vY = (Math.random()-0.5)*0.2; this.a = 0; this.f = Math.random()*0.01+0.005; this.m = Math.random()*0.4+0.1; this.growing = true; };
+    Particle.prototype.update = function() { this.x += this.vX; this.y += this.vY; if(this.growing){ this.a += this.f; if(this.a>=this.m) this.growing=false; } else { this.a -= this.f; if(this.a<=0) this.reset(); } };
+    Particle.prototype.draw = function() { ctx.fillStyle = cachedGold; ctx.globalAlpha = this.a; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,TWO_PI); ctx.fill(); };
+    for(var pi=0; pi<35; pi++) parts.push(new Particle());
+    function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
+    anim();
+
+    setInterval(function() { if(state.running&&!state.paused&&state.idx!==3) { state.totalSec++; updJournal(); } }, 1000);
+    renderStatText(); renderDots();
+
+    var lastSeenW = localStorage.getItem('mb_v19_welcome');
+    if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) { setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000); localStorage.setItem('mb_v19_welcome', Date.now().toString()); }
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(function(){}); }
+</script>
+</body>
+</html>
