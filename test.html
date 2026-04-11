@@ -429,7 +429,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.18 (TEST)</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.19 (TEST)</div>
 </div>
 
 <script>
@@ -594,17 +594,53 @@
 
     function updateNostrilVisuals() {
         if(!els.niL) return;
-        els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim');
-        if (state.idx === 3) { els.statusText.textContent = "СМЕНА"; return; }
-        if (state.idx === 0) { 
-            if(state.nostrilMode === 'L') { els.niL.classList.add('active'); els.niR.classList.add('dim'); } 
-            else { els.niR.classList.add('active'); els.niL.classList.add('dim'); }
-        } else if (state.idx === 2) { 
-            if(state.nostrilMode === 'L') { els.niR.classList.add('active'); els.niL.classList.add('dim'); } 
-            else { els.niL.classList.add('active'); els.niR.classList.add('dim'); }
-        } else if (state.idx === 1) { els.niL.classList.add('dim'); els.niR.classList.add('dim'); }
-    }
 
+        // 1. Сброс состояний
+        els.niL.classList.remove('active', 'dim');
+        els.niR.classList.remove('active', 'dim');
+        els.arrowL.classList.remove('down');
+        els.arrowR.classList.remove('down');
+
+        if (state.idx === 3) { 
+            els.statusText.textContent = "СМЕНА"; 
+            return; 
+        }
+
+        if (state.idx === 0) { // ВДОХ
+            els.statusText.textContent = "Вдох";
+            if (state.nostrilMode === 'L') {
+                els.niL.classList.add('active'); // Л активно ↑
+                els.niR.classList.add('dim');    // П тускло
+                els.arrowR.classList.add('down'); // П намек на ↓
+            } else {
+                els.niR.classList.add('active'); // П активно ↑
+                els.niL.classList.add('dim');    // Л тускло
+                els.arrowL.classList.add('down'); // Л намек на ↓
+            }
+        } 
+        else if (state.idx === 1) { // ЗАДЕРЖКА
+            els.statusText.textContent = "Задержка";
+            els.niL.classList.add('dim');
+            els.niR.classList.add('dim');
+            if (state.nostrilMode === 'L') {
+                els.arrowR.classList.add('down'); // Намек, что выдох будет справа
+            } else {
+                els.arrowL.classList.add('down'); // Намек, что выдох будет слева
+            }
+        }
+        else if (state.idx === 2) { // ВЫДОХ
+            els.statusText.textContent = "Выдох";
+            if (state.nostrilMode === 'L') {
+                els.niR.classList.add('active');
+                els.arrowR.classList.add('down'); // П активно ↓
+                els.niL.classList.add('dim');     // Л тускло ↑ (намек на след. вдох)
+            } else {
+                els.niL.classList.add('active');
+                els.arrowL.classList.add('down'); // Л активно ↓
+                els.niR.classList.add('dim');     // П тускло ↑ (намек на след. вдох)
+            }
+        }
+    }
     var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
     function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
@@ -706,7 +742,6 @@
         }
         state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
         updateNostrilVisuals();
-        var labels = ["Вдох","Задержка","Выдох","Пауза"]; if(state.idx < 3) els.statusText.textContent = labels[idx];
         if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
     }
 
