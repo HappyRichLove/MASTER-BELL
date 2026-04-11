@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#f4f1ea">
-    <title>❤️ MASTER BREATH🙏</title>
+    <title>❤️ MASTER BREATH🙏 (TEST)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -184,6 +184,8 @@
         .triangle-svg {
             width: 100%; height: 100%;
             -webkit-transform: scale(1.05); transform: scale(1.05);
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
             z-index: 5;
         }
         .edge-bg {
@@ -208,16 +210,18 @@
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
             color: var(--gold); opacity: 0.15;
-            -webkit-transition: opacity 0.4s; transition: opacity 0.4s;
+            -webkit-transition: opacity 0.4s, -webkit-transform 0.4s;
+            transition: opacity 0.4s, transform 0.4s;
             z-index: 10; pointer-events: none;
         }
-        .ni-box.active { opacity: 1; }
+        .ni-box.active { opacity: 1; -webkit-transform: translateY(-50%) scale(1.15); transform: translateY(-50%) scale(1.15); }
         .ni-box.dim { opacity: 0.15; }
         .ni-l { left: -15%; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
         .ni-r { right: -15%; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
         
         .ni-arrow-svg {
             width: 24px; height: 24px; margin-bottom: 2px;
+            -webkit-transition: -webkit-transform 0.4s ease; transition: transform 0.4s ease;
         }
         .ni-arrow-svg.down { -webkit-transform: rotate(180deg); transform: rotate(180deg); }
         .ni-letter { font-size: 1.2rem; font-weight: 200; letter-spacing: 0.05em; }
@@ -371,6 +375,7 @@
 <div class="container">
     <div class="visualizer" id="vizMain">
         <div class="aura" id="aura"></div>
+        
         <!-- ИНДИКАТОРЫ НОЗДРЕЙ -->
         <div id="niL" class="ni-box ni-l">
             <svg class="ni-arrow-svg" id="arrowL" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -459,11 +464,11 @@
         echoCanvas: document.getElementById('echoCanvas'),
         echoHint: document.getElementById('echoHint'),
         triangleSvg: document.getElementById('triangleSvg'),
+        aura: document.getElementById('aura'),
         niL: document.getElementById('niL'),
         niR: document.getElementById('niR'),
         arrowL: document.getElementById('arrowL'),
-        arrowR: document.getElementById('arrowR'),
-        aura: document.getElementById('aura')
+        arrowR: document.getElementById('arrowR')
     };
 
     var state = {
@@ -653,27 +658,57 @@
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
             state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
-            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); renderDots(); runIdx(0);
+            state.running = true; state.paused = false; state.curRep = 1; state.nostrilMode = 'L'; document.body.classList.add('running'); els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); renderDots(); runIdx(0);
         } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'ПРОДОЛЖИТЬ'; releaseWakeLock(); } 
         else { state.paused = false; els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
     }
 
-    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim'); releaseWakeLock(); renderDots(); }
 
     function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
 
     function runIdx(idx) {
         if(idx >= 4) {
-            appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
-            if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
-            renderStatText();
-            if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
+            if(state.nostrilMode === 'L') { state.nostrilMode = 'R'; runIdx(0); }
+            else {
+                state.nostrilMode = 'L';
+                appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
+                if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
+                renderStatText();
+                if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
+            }
             return;
         }
         state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
+        
+        updateNostrilVisuals();
+        
         var labels = ["Вдох","Задержка","Выдох","Пауза"]; els.statusText.textContent = labels[idx];
         if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
+    }
+
+    function updateNostrilVisuals() {
+        els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim');
+        if (state.idx === 3) return;
+        
+        if (state.idx === 0) { // ВДОХ
+            if(state.nostrilMode === 'L') { 
+                els.niL.classList.add('active'); els.arrowL.classList.remove('down'); 
+                els.niR.classList.add('dim'); els.arrowR.classList.add('down'); 
+            } else { 
+                els.niR.classList.add('active'); els.arrowR.classList.remove('down'); 
+                els.niL.classList.add('dim'); els.arrowL.classList.add('down'); 
+            }
+        } else if (state.idx === 2) { // ВЫДОХ
+            if(state.nostrilMode === 'L') { 
+                els.niR.classList.add('active'); els.arrowR.classList.add('down'); 
+                els.niL.classList.add('dim'); els.arrowL.classList.remove('down'); 
+            } else { 
+                els.niL.classList.add('active'); els.arrowL.classList.add('down'); 
+                els.niR.classList.add('dim'); els.arrowR.classList.remove('down'); 
+            }
+        }
     }
 
     function engine(now) {
@@ -686,11 +721,42 @@
         }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
-        updateEdges(progress); updateBreathAnimation(1 - (state.timeLeft/state.dur));
+        var progress = 1 - (state.timeLeft/state.dur);
+        updateEdges(progress);
+        updateBreathAnimation(progress);
         if(state.timeLeft<=0) runIdx(state.idx+1); else requestAnimationFrame(engine);
     }
 
-    function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
+    function updateEdges(progress) {
+        if(state.idx===0) {
+            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(progress*edgeLengths[0]);
+            els.edges[1].style.opacity=0; els.edges[2].style.opacity=0;
+        } else if(state.idx===1) {
+            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0;
+            els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(progress*edgeLengths[1]);
+            els.edges[2].style.opacity=0;
+        } else if(state.idx===2) {
+            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0;
+            els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0;
+            els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(progress*edgeLengths[2]);
+        }
+    }
+
+    function updateBreathAnimation(progress) {
+        var scale = 1.05;
+        if (state.idx === 0) scale = 1.05 + 0.07*progress;
+        else if (state.idx === 1) scale = 1.12 + Math.sin(progress*TWO_PI*2)*0.008;
+        else if (state.idx === 2) scale = 1.12 - 0.07*progress;
+        els.triangleSvg.style.transform = 'scale('+scale+')';
+        
+        if (state.running && !state.paused && state.idx < 3) {
+            els.aura.style.opacity = (state.idx === 1) ? 0.9 : (state.idx === 0 ? progress * 0.9 : (1 - progress) * 0.9);
+            els.aura.style.transform = 'translate(-50%, -50%) scale(' + (scale * 1.4) + ')';
+        } else {
+            els.aura.style.opacity = 0;
+        }
+    }
+
     function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
     function updJournal() { localStorage.setItem('mb_total', state.totalSec); if (statModes[currentStatIdx].id === 'time') renderStatText(); }
