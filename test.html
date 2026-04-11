@@ -592,10 +592,9 @@
         }
     }
 
-    function updateNostrilVisuals() {
+    function updateNostrilVisuals(isPreHint) {
         if(!els.niL) return;
 
-        // 1. Сброс состояний
         els.niL.classList.remove('active', 'dim');
         els.niR.classList.remove('active', 'dim');
         els.arrowL.classList.remove('down');
@@ -609,39 +608,41 @@
         if (state.idx === 0) { // ВДОХ
             els.statusText.textContent = "Вдох";
             if (state.nostrilMode === 'L') {
-                els.niL.classList.add('active'); // Л активно ↑
-                els.niR.classList.add('dim');    // П тускло
-                els.arrowR.classList.add('down'); // П намек на ↓
+                els.niL.classList.add('active'); 
+                els.niR.classList.add('dim');    
+                els.arrowR.classList.add('down'); 
             } else {
-                els.niR.classList.add('active'); // П активно ↑
-                els.niL.classList.add('dim');    // Л тускло
-                els.arrowL.classList.add('down'); // Л намек на ↓
+                els.niR.classList.add('active'); 
+                els.niL.classList.add('dim');    
+                els.arrowL.classList.add('down'); 
             }
         } 
         else if (state.idx === 1) { // ЗАДЕРЖКА
             els.statusText.textContent = "Задержка";
-            els.niL.classList.add('dim');
-            els.niR.classList.add('dim');
-            if (state.nostrilMode === 'L') {
-                els.arrowR.classList.add('down'); // Намек, что выдох будет справа
+            var targetL = state.nostrilMode !== 'L';
+
+            if (isPreHint) {
+                if (targetL) { els.niL.classList.add('active'); els.arrowL.classList.add('down'); els.niR.classList.add('dim'); }
+                else { els.niR.classList.add('active'); els.arrowR.classList.add('down'); els.niL.classList.add('dim'); }
             } else {
-                els.arrowL.classList.add('down'); // Намек, что выдох будет слева
+                els.niL.classList.add('dim');
+                els.niR.classList.add('dim');
+                if (state.nostrilMode === 'L') els.arrowR.classList.add('down'); else els.arrowL.classList.add('down');
             }
         }
         else if (state.idx === 2) { // ВЫДОХ
             els.statusText.textContent = "Выдох";
             if (state.nostrilMode === 'L') {
                 els.niR.classList.add('active');
-                els.arrowR.classList.add('down'); // П активно ↓
-                els.niL.classList.add('dim');     // Л тускло ↑ (намек на след. вдох)
+                els.arrowR.classList.add('down'); 
+                els.niL.classList.add('dim');     
             } else {
                 els.niL.classList.add('active');
-                els.arrowL.classList.add('down'); // Л активно ↓
-                els.niR.classList.add('dim');     // П тускло ↑ (намек на след. вдох)
+                els.arrowL.classList.add('down'); 
+                els.niR.classList.add('dim');     
             }
         }
-    }
-    var wakeLock = null;
+    }    var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
     function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
 
@@ -741,6 +742,7 @@
             return;
         }
         state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
+        state.preHintSent = false;
         updateNostrilVisuals();
         if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
     }
@@ -749,6 +751,12 @@
         if(!state.running||state.paused) return;
         var delta = now - state.lastTick; state.lastTick = now;
         state.timeLeft -= delta;
+
+        if (state.timeLeft < 1000 && state.timeLeft > 0 && !state.preHintSent) {
+            updateNostrilVisuals(true);
+            state.preHintSent = true;
+        }
+
         if (state.idx === 1) { 
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
             if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
