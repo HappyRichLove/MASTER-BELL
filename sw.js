@@ -1,4 +1,4 @@
-var CACHE = 'master-v19.8';
+var CACHE = 'master-v19.18';
 var FILES = ['./index.html', './favicon.svg', './manifest.json'];
 
 self.addEventListener('install', function(e) {

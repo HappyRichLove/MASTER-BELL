@@ -23,17 +23,9 @@
        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
        var METRICA_ID = 108490319; 
-       ym(METRICA_ID, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true
-       });
+       ym(METRICA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
 
-       function trackEvent(eventName) {
-           if (typeof ym === 'function') {
-               ym(METRICA_ID, 'reachGoal', eventName);
-           }
-       }
+       function trackEvent(eventName) { if (typeof ym === 'function') { ym(METRICA_ID, 'reachGoal', eventName); } }
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/108490319" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
@@ -51,6 +43,7 @@
             --glow: rgba(194, 160, 94, 0.4);
             --triangle-stroke: rgba(194, 160, 94, 0.25);
             --triangle-glow: rgba(194, 160, 94, 0.15);
+            --aura-color: rgba(194, 160, 94, 0.1);
         }
 
         .night-theme {
@@ -63,6 +56,7 @@
             --glow: rgba(212, 175, 55, 0.5);
             --triangle-stroke: rgba(212, 175, 55, 0.35);
             --triangle-glow: rgba(212, 175, 55, 0.25);
+            --aura-color: rgba(212, 175, 55, 0.15);
         }
 
         html { background-color: var(--bg); }
@@ -169,7 +163,22 @@
             -webkit-justify-content: center; justify-content: center;
             -webkit-align-items: center; align-items: center;
             z-index: 5; pointer-events: none;
-            margin-bottom: -10px; overflow: hidden;
+            margin-bottom: -10px; overflow: visible; /* Разрешаем ауре выходить за границы */
+        }
+
+        /* ПУЛЬСИРУЮЩАЯ АУРА */
+        .aura {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, var(--aura-color) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 4;
+            opacity: 0;
+            pointer-events: none;
+            -webkit-transition: transform 0.1s linear, opacity 0.5s ease;
+            transition: transform 0.1s linear, opacity 0.5s ease;
         }
 
         .triangle-svg {
@@ -177,6 +186,7 @@
             -webkit-transform: scale(1.05); transform: scale(1.05);
             -webkit-transition: -webkit-transform 0.3s ease-out;
             transition: transform 0.3s ease-out;
+            z-index: 5;
         }
         .edge-bg {
             fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
@@ -341,6 +351,7 @@
 
 <div class="container">
     <div class="visualizer" id="vizMain">
+        <div class="aura" id="aura"></div>
         <svg class="triangle-svg" id="triangleSvg" viewBox="0 0 500 500">
             <path class="edge-bg" d="M250 460 L40 60 L460 60 Z" />
             <path id="edge0" class="edge-active" d="M250 460 L40 60" />
@@ -381,7 +392,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.12</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.13</div>
 </div>
 
 <script>
@@ -414,7 +425,8 @@
         echoText: document.getElementById('echoText'),
         echoCanvas: document.getElementById('echoCanvas'),
         echoHint: document.getElementById('echoHint'),
-        triangleSvg: document.getElementById('triangleSvg')
+        triangleSvg: document.getElementById('triangleSvg'),
+        aura: document.getElementById('aura')
     };
 
     var state = {
@@ -562,7 +574,22 @@
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
     var BREATH_MIN = 1.0, BREATH_MAX = 1.12;
-    function updateBreathAnimation(progress) { var scale; if (state.idx === 0) scale = BREATH_MIN + (BREATH_MAX-BREATH_MIN)*progress; else if (state.idx === 1) scale = BREATH_MAX + Math.sin(progress*TWO_PI*2)*0.008; else if (state.idx === 2) scale = BREATH_MAX - (BREATH_MAX-BREATH_MIN)*progress; else scale = BREATH_MIN; els.triangleSvg.style.transform = 'scale('+scale+')'; }
+    function updateBreathAnimation(progress) {
+        var scale;
+        if (state.idx === 0) scale = BREATH_MIN + (BREATH_MAX-BREATH_MIN)*progress;
+        else if (state.idx === 1) scale = BREATH_MAX + Math.sin(progress*TWO_PI*2)*0.008;
+        else if (state.idx === 2) scale = BREATH_MAX - (BREATH_MAX-BREATH_MIN)*progress;
+        else scale = BREATH_MIN;
+        els.triangleSvg.style.transform = 'scale('+scale+')';
+        
+        // АУРА
+        if (state.running && !state.paused && state.idx < 3) {
+            els.aura.style.opacity = (state.idx === 1) ? 0.8 : (state.idx === 0 ? progress : 1 - progress);
+            els.aura.style.transform = 'translate(-50%, -50%) scale(' + (scale * 1.4) + ')';
+        } else {
+            els.aura.style.opacity = 0;
+        }
+    }
 
     for(var ei=0; ei<els.edges.length; ei++) { els.edges[ei].style.strokeDasharray = edgeLengths[ei]; els.edges[ei].style.strokeDashoffset = edgeLengths[ei]; }
 

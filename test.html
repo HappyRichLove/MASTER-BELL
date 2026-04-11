@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#f4f1ea">
-    <title>❤️ MASTER BREATH🙏 (TEST)</title>
+    <title>❤️ MASTER BREATH🙏</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -43,7 +43,7 @@
             --glow: rgba(194, 160, 94, 0.4);
             --triangle-stroke: rgba(194, 160, 94, 0.25);
             --triangle-glow: rgba(194, 160, 94, 0.15);
-            --aura-color: rgba(194, 160, 94, 0.25);
+            --aura-color: rgba(194, 160, 94, 0.45);
         }
 
         .night-theme {
@@ -56,7 +56,7 @@
             --glow: rgba(212, 175, 55, 0.5);
             --triangle-stroke: rgba(212, 175, 55, 0.35);
             --triangle-glow: rgba(212, 175, 55, 0.25);
-            --aura-color: rgba(212, 175, 55, 0.30);
+            --aura-color: rgba(212, 175, 55, 0.35);
         }
 
         html { background-color: var(--bg); }
@@ -212,37 +212,18 @@
             color: var(--gold); opacity: 0.15;
             -webkit-transition: opacity 0.4s; transition: opacity 0.4s;
             z-index: 10; pointer-events: none;
-            top: 65%; /* Опустили ниже */
+            top: 65%;
         }
         .ni-box.active { opacity: 1; }
         .ni-box.dim { opacity: 0.15; }
+        .ni-l { left: 12%; } .ni-r { right: 12%; }
+        .ni-arrow-svg { width: 22px; height: 22px; margin-bottom: 2px; }
         
-        .ni-l { left: 15%; } /* Сдвинули внутрь */
-        .ni-r { right: 15%; } /* Сдвинули внутрь */
-        
-        .ni-arrow-svg {
-            width: 22px; height: 22px; margin-bottom: 2px;
-            -webkit-transition: -webkit-transform 0.4s ease; transition: transform 0.4s ease;
-        }
-        
-        /* Анимация Вдоха (вверх) */
-        .ni-box.active .ni-arrow-svg:not(.down) {
-            animation: arrowUp 1.5s infinite ease-in-out;
-        }
-        /* Анимация Выдоха (вниз) */
-        .ni-box.active .ni-arrow-svg.down {
-            animation: arrowDown 1.5s infinite ease-in-out;
-        }
+        .ni-box.active .ni-arrow-svg:not(.down) { animation: arrowUp 1.5s infinite ease-in-out; }
+        .ni-box.active .ni-arrow-svg.down { animation: arrowDown 1.5s infinite ease-in-out; }
 
-        @keyframes arrowUp {
-            0%, 100% { transform: translateY(4px); opacity: 0.4; }
-            50% { transform: translateY(-4px); opacity: 1; }
-        }
-        @keyframes arrowDown {
-            0%, 100% { transform: rotate(180deg) translateY(4px); opacity: 0.4; }
-            50% { transform: rotate(180deg) translateY(-4px); opacity: 1; }
-        }
-
+        @keyframes arrowUp { 0%, 100% { transform: translateY(4px); opacity: 0.4; } 50% { transform: translateY(-4px); opacity: 1; } }
+        @keyframes arrowDown { 0%, 100% { transform: rotate(180deg) translateY(4px); opacity: 0.4; } 50% { transform: rotate(180deg) translateY(-4px); opacity: 1; } }
         .ni-letter { font-size: 1.2rem; font-weight: 100; letter-spacing: 0.05em; }
 
         .timer-box {
@@ -304,7 +285,17 @@
             -webkit-align-items: center; align-items: center;
             gap: 15px; width: 100%;
         }
-        .master-label { font-weight: 700; letter-spacing: 0.2em; font-size: 1.2rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+        .master-label { 
+            font-weight: 700; letter-spacing: 0.25em; text-indent: 0.25em; 
+            font-size: 1.2rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; 
+            cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative;
+        }
+
+        /* ПОТОК БЛАГОДАРНОСТИ */
+        .heart { position: fixed; pointer-events: none; color: var(--gold); font-size: 1.5rem; z-index: 9999; animation: flyHeart 2s forwards ease-out; }
+        @keyframes flyHeart { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; transform: translateY(-20px) scale(1.2); } 100% { transform: translateY(-120px) translateX(var(--random-x)) scale(1); opacity: 0; } }
+        .gratitude-popup { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); color: var(--gold); font-size: 1.8rem; font-weight: 200; letter-spacing: 0.3em; text-indent: 0.3em; z-index: 10000; opacity: 0; pointer-events: none; transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; width: 100%; }
+        .gratitude-popup.show { opacity: 1; transform: translate(-50%, -80%); }
 
         .secondary-btns {
             display: -webkit-flex; display: flex;
@@ -377,6 +368,8 @@
 </head>
 <body oncontextmenu="return false;">
 
+<div id="gratitudePopup" class="gratitude-popup">БЛАГОДАРЮ 🙏</div>
+
 <div id="echoOverlay" onmousedown="startEchoReveal(event)" onmouseup="stopEchoReveal()" ontouchstart="startEchoReveal(event)" ontouchend="stopEchoReveal()">
     <button id="echoClose" onclick="closeEcho(event)">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -394,21 +387,8 @@
 <div class="container">
     <div class="visualizer" id="vizMain">
         <div class="aura" id="aura"></div>
-        
-        <!-- ИНДИКАТОРЫ НОЗДРЕЙ -->
-        <div id="niL" class="ni-box ni-l">
-            <svg class="ni-arrow-svg" id="arrowL" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="ni-letter">Л</span>
-        </div>
-        <div id="niR" class="ni-box ni-r">
-            <svg class="ni-arrow-svg" id="arrowR" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="ni-letter">П</span>
-        </div>
-
+        <div id="niL" class="ni-box ni-l"><svg class="ni-arrow-svg" id="arrowL" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19V5M12 5L5 12M12 5L19 12" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ni-letter">Л</span></div>
+        <div id="niR" class="ni-box ni-r"><svg class="ni-arrow-svg" id="arrowR" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19V5M12 5L5 12M12 5L19 12" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ni-letter">П</span></div>
         <svg class="triangle-svg" id="triangleSvg" viewBox="0 0 500 500">
             <path class="edge-bg" d="M250 460 L40 60 L460 60 Z" />
             <path id="edge0" class="edge-active" d="M250 460 L40 60" />
@@ -429,7 +409,7 @@
     </div>
 
     <div class="controls">
-        <div class="master-label">❤️ МАСТЕР 🙏</div>
+        <div class="master-label" id="masterLabel" onclick="handleMasterClick(event)">❤️ МАСТЕР 🙏</div>
         <div class="secondary-btns">
             <button id="themeBtn" class="icon-btn" onclick="handleTheme(event)">
                 <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -449,7 +429,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.17 (TEST)</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.18 (TEST)</div>
 </div>
 
 <script>
@@ -493,7 +473,7 @@
     var state = {
         idx: 0, timeLeft: 0, dur: 0, running: false, paused: false,
         totalSec: 0, ints: [4, 16, 8, 0.2], reps: 10, curRep: 1,
-        night: false, lastTick: 0, nostrilMode: 'L'
+        night: false, lastTick: 0, nostrilMode: 'L', masterClicks: 0, nextGratitude: 10 + Math.floor(Math.random()*11)
     };
 
     var edgeLengths = [450, 420, 450];
@@ -598,6 +578,33 @@
     var audio = null;
     function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
 
+    function handleMasterClick(e) {
+        state.masterClicks++;
+        var h = document.createElement('div'); h.className = 'heart'; h.textContent = '❤️';
+        h.style.left = e.clientX + 'px'; h.style.top = e.clientY + 'px';
+        h.style.setProperty('--random-x', (Math.random()*60 - 30) + 'px');
+        document.body.appendChild(h);
+        setTimeout(function(){ h.remove(); }, 2000);
+        if(state.masterClicks >= state.nextGratitude) {
+            state.masterClicks = 0; state.nextGratitude = 10 + Math.floor(Math.random()*11);
+            var p = document.getElementById('gratitudePopup'); p.classList.add('show');
+            setTimeout(function(){ p.classList.remove('show'); }, 3000);
+        }
+    }
+
+    function updateNostrilVisuals() {
+        if(!els.niL) return;
+        els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim');
+        if (state.idx === 3) { els.statusText.textContent = "СМЕНА"; return; }
+        if (state.idx === 0) { 
+            if(state.nostrilMode === 'L') { els.niL.classList.add('active'); els.niR.classList.add('dim'); } 
+            else { els.niR.classList.add('active'); els.niL.classList.add('dim'); }
+        } else if (state.idx === 2) { 
+            if(state.nostrilMode === 'L') { els.niR.classList.add('active'); els.niL.classList.add('dim'); } 
+            else { els.niL.classList.add('active'); els.niR.classList.add('dim'); }
+        } else if (state.idx === 1) { els.niL.classList.add('dim'); els.niR.classList.add('dim'); }
+    }
+
     var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
     function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
@@ -682,7 +689,7 @@
         else { state.paused = false; els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
     }
 
-    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim'); releaseWakeLock(); renderDots(); }
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
 
     function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
@@ -691,43 +698,16 @@
         if(idx >= 4) {
             if(state.nostrilMode === 'L') { state.nostrilMode = 'R'; runIdx(0); }
             else {
-                state.nostrilMode = 'L';
-                appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
+                state.nostrilMode = 'L'; appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
                 if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
-                renderStatText();
-                if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
+                renderStatText(); if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
             }
             return;
         }
         state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
-        
         updateNostrilVisuals();
-        
-        var labels = ["Вдох","Задержка","Выдох","Пауза"]; els.statusText.textContent = labels[idx];
+        var labels = ["Вдох","Задержка","Выдох","Пауза"]; if(state.idx < 3) els.statusText.textContent = labels[idx];
         if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
-    }
-
-    function updateNostrilVisuals() {
-        els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim');
-        if (state.idx === 3) return;
-        
-        if (state.idx === 0) { // ВДОХ
-            if(state.nostrilMode === 'L') { 
-                els.niL.classList.add('active'); els.arrowL.classList.remove('down'); 
-                els.niR.classList.add('dim'); els.arrowR.classList.add('down'); 
-            } else { 
-                els.niR.classList.add('active'); els.arrowR.classList.remove('down'); 
-                els.niL.classList.add('dim'); els.arrowL.classList.add('down'); 
-            }
-        } else if (state.idx === 2) { // ВЫДОХ
-            if(state.nostrilMode === 'L') { 
-                els.niR.classList.add('active'); els.arrowR.classList.add('down'); 
-                els.niL.classList.add('dim'); els.arrowL.classList.remove('down'); 
-            } else { 
-                els.niL.classList.add('active'); els.arrowL.classList.add('down'); 
-                els.niR.classList.add('dim'); els.arrowR.classList.remove('down'); 
-            }
-        }
     }
 
     function engine(now) {
@@ -740,42 +720,11 @@
         }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
-        var progress = 1 - (state.timeLeft/state.dur);
-        updateEdges(progress);
-        updateBreathAnimation(progress);
+        var progress = 1 - (state.timeLeft/state.dur); updateEdges(progress); updateBreathAnimation(progress);
         if(state.timeLeft<=0) runIdx(state.idx+1); else requestAnimationFrame(engine);
     }
 
-    function updateEdges(progress) {
-        if(state.idx===0) {
-            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(progress*edgeLengths[0]);
-            els.edges[1].style.opacity=0; els.edges[2].style.opacity=0;
-        } else if(state.idx===1) {
-            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0;
-            els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(progress*edgeLengths[1]);
-            els.edges[2].style.opacity=0;
-        } else if(state.idx===2) {
-            els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0;
-            els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0;
-            els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(progress*edgeLengths[2]);
-        }
-    }
-
-    function updateBreathAnimation(progress) {
-        var scale = 1.05;
-        if (state.idx === 0) scale = 1.05 + 0.07*progress;
-        else if (state.idx === 1) scale = 1.12 + Math.sin(progress*TWO_PI*2)*0.008;
-        else if (state.idx === 2) scale = 1.12 - 0.07*progress;
-        els.triangleSvg.style.transform = 'scale('+scale+')';
-        
-        if (state.running && !state.paused && state.idx < 3) {
-            els.aura.style.opacity = (state.idx === 1) ? 0.9 : (state.idx === 0 ? progress * 0.9 : (1 - progress) * 0.9);
-            els.aura.style.transform = 'translate(-50%, -50%) scale(' + (scale * 1.4) + ')';
-        } else {
-            els.aura.style.opacity = 0;
-        }
-    }
-
+    function updateEdges(progress) { if (state.idx === 0) { els.edges[0].style.opacity = 1; els.edges[0].style.strokeDashoffset = edgeLengths[0] * (1 - progress); els.edges[1].style.opacity = 0; els.edges[2].style.opacity = 0; } else if (state.idx === 1) { els.edges[0].style.opacity = 1; els.edges[0].style.strokeDashoffset = 0; els.edges[1].style.opacity = 1; els.edges[1].style.strokeDashoffset = edgeLengths[1] * (1 - progress); els.edges[2].style.opacity = 0; } else if (state.idx === 2) { els.edges[0].style.opacity = 1; els.edges[1].style.opacity = 1; els.edges[1].style.strokeDashoffset = 0; els.edges[2].style.opacity = 1; els.edges[2].style.strokeDashoffset = edgeLengths[2] * (1 - progress); } }
     function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
     function updJournal() { localStorage.setItem('mb_total', state.totalSec); if (statModes[currentStatIdx].id === 'time') renderStatText(); }
