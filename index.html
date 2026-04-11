@@ -155,6 +155,21 @@
             padding-top: 5px;
         }
 
+                /* ИНДИКАТОРЫ НОЗДРЕЙ */
+        .ni-box {
+            position: absolute; display: flex; flex-direction: column; align-items: center;
+            color: var(--gold); opacity: 0.15; transition: opacity 0.4s;
+            z-index: 10; pointer-events: none; top: 65%;
+        }
+        .ni-box.active { opacity: 1; }
+        .ni-l { left: 12%; } .ni-r { right: 12%; }
+        .ni-arrow-svg { width: 22px; height: 22px; margin-bottom: 2px; }
+        .ni-box.active .ni-arrow-svg:not(.down) { animation: arrowUp 1.5s infinite ease-in-out; }
+        .ni-box.active .ni-arrow-svg.down { animation: arrowDown 1.5s infinite ease-in-out; }
+        @keyframes arrowUp { 0%, 100% { transform: translateY(4px); opacity: 0.4; } 50% { transform: translateY(-4px); opacity: 1; } }
+        @keyframes arrowDown { 0%, 100% { transform: rotate(180deg) translateY(4px); opacity: 0.4; } 50% { transform: rotate(180deg) translateY(-4px); opacity: 1; } }
+        .ni-letter { font-size: 1.2rem; font-weight: 100; letter-spacing: 0.05em; }
+
         .visualizer {
             position: relative;
             width: 80vw; max-width: 340px;
@@ -202,29 +217,6 @@
             -webkit-transition: opacity 0.2s;
             transition: opacity 0.2s;
         }
-
-        /* ИНДИКАТОРЫ НОЗДРЕЙ */
-        .ni-box {
-            position: absolute;
-            display: -webkit-flex; display: flex;
-            -webkit-flex-direction: column; flex-direction: column;
-            -webkit-align-items: center; align-items: center;
-            color: var(--gold); opacity: 0.15;
-            -webkit-transition: opacity 0.4s; transition: opacity 0.4s;
-            z-index: 10; pointer-events: none;
-            top: 65%;
-        }
-        .ni-box.active { opacity: 1; }
-        .ni-box.dim { opacity: 0.15; }
-        .ni-l { left: 12%; } .ni-r { right: 12%; }
-        .ni-arrow-svg { width: 22px; height: 22px; margin-bottom: 2px; }
-        
-        .ni-box.active .ni-arrow-svg:not(.down) { animation: arrowUp 1.5s infinite ease-in-out; }
-        .ni-box.active .ni-arrow-svg.down { animation: arrowDown 1.5s infinite ease-in-out; }
-
-        @keyframes arrowUp { 0%, 100% { transform: translateY(4px); opacity: 0.4; } 50% { transform: translateY(-4px); opacity: 1; } }
-        @keyframes arrowDown { 0%, 100% { transform: rotate(180deg) translateY(4px); opacity: 0.4; } 50% { transform: rotate(180deg) translateY(-4px); opacity: 1; } }
-        .ni-letter { font-size: 1.2rem; font-weight: 100; letter-spacing: 0.05em; }
 
         .timer-box {
             position: absolute;
@@ -285,17 +277,17 @@
             -webkit-align-items: center; align-items: center;
             gap: 15px; width: 100%;
         }
-        .master-label { 
-            font-weight: 700; letter-spacing: 0.25em; text-indent: 0.25em; 
-            font-size: 1.2rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; 
+                .master-label { 
+            font-weight: 700; letter-spacing: 0.25em; text-indent: 0.25em; font-size: 1.2rem; 
+            color: var(--gold); text-transform: uppercase; margin-bottom: 5px; 
             cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative;
         }
-
         /* ПОТОК БЛАГОДАРНОСТИ */
         .heart { position: fixed; pointer-events: none; color: var(--gold); font-size: 1.5rem; z-index: 9999; animation: flyHeart 2s forwards ease-out; }
         @keyframes flyHeart { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; transform: translateY(-20px) scale(1.2); } 100% { transform: translateY(-120px) translateX(var(--random-x)) scale(1); opacity: 0; } }
         .gratitude-popup { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); color: var(--gold); font-size: 1.8rem; font-weight: 200; letter-spacing: 0.3em; text-indent: 0.3em; z-index: 10000; opacity: 0; pointer-events: none; transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; width: 100%; }
         .gratitude-popup.show { opacity: 1; transform: translate(-50%, -80%); }
+
 
         .secondary-btns {
             display: -webkit-flex; display: flex;
@@ -429,7 +421,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.21</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.13</div>
 </div>
 
 <script>
@@ -463,20 +455,13 @@
         echoCanvas: document.getElementById('echoCanvas'),
         echoHint: document.getElementById('echoHint'),
         triangleSvg: document.getElementById('triangleSvg'),
-        aura: document.getElementById('aura'),
-        niL: document.getElementById('niL'),
-        niR: document.getElementById('niR'),
-        arrowL: document.getElementById('arrowL'),
-        arrowR: document.getElementById('arrowR')
+        aura: document.getElementById('aura'), niL: document.getElementById('niL'), niR: document.getElementById('niR'), arrowL: document.getElementById('arrowL'), arrowR: document.getElementById('arrowR')
     };
 
     var state = {
         idx: 0, timeLeft: 0, dur: 0, running: false, paused: false,
         totalSec: 0, ints: [4, 16, 8, 0.2], reps: 10, curRep: 1,
-        night: false, lastTick: 0, nostrilMode: 'L', masterClicks: 0, 
-        isGratitudeEnabled: true, currentEmoji: '❤️',
-        nextGratitude: 10 + Math.floor(Math.random()*11),
-        nextAwareness: 30 + Math.floor(Math.random()*21)
+        night: false, lastTick: 0
     };
 
     var edgeLengths = [450, 420, 450];
@@ -579,92 +564,52 @@
     ];
 
     var audio = null;
-    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
-
-    function handleMasterClick(e) {
+        function handleMasterClick(e) {
         if (!state.isGratitudeEnabled) return;
         state.masterClicks++;
-
-        if (state.masterClicks === 88) {
-            state.isGratitudeEnabled = false;
-            return;
-        }
-
-        var h = document.createElement('div');
-        h.className = 'heart'; h.textContent = state.currentEmoji;
+        if (state.masterClicks === 88) { state.isGratitudeEnabled = false; return; }
+        var h = document.createElement('div'); h.className = 'heart'; h.textContent = state.currentEmoji;
         h.style.left = e.clientX + 'px'; h.style.top = e.clientY + 'px';
         h.style.setProperty('--random-x', (Math.random()*60 - 30) + 'px');
         document.body.appendChild(h);
         setTimeout(function(){ h.remove(); }, 2000);
-
         var p = document.getElementById('gratitudePopup');
-        
-        if (state.masterClicks === state.nextGratitude) {
-            p.textContent = "БЛАГОДАРЮ 🙏"; p.classList.add('show');
-            setTimeout(function(){ p.classList.remove('show'); }, 3000);
-        } 
-        else if (state.masterClicks === state.nextAwareness) {
-            p.textContent = "На жизнь внимание обрати 😳"; p.classList.add('show');
-            state.currentEmoji = '😳';
-            setTimeout(function(){ p.classList.remove('show'); }, 4000);
-        }
-        else if (state.masterClicks === 66) {
-            p.textContent = "Я есть ТО 🕉"; p.classList.add('show');
-            setTimeout(function(){ p.classList.remove('show'); }, 5000);
-        }
+        if (state.masterClicks === state.nextGratitude) { p.textContent = "БЛАГОДАРЮ 🙏"; p.classList.add('show'); setTimeout(function(){ p.classList.remove('show'); }, 3000); } 
+        else if (state.masterClicks === state.nextAwareness) { p.textContent = "На жизнь внимание обрати 😳"; p.classList.add('show'); state.currentEmoji = '😳'; setTimeout(function(){ p.classList.remove('show'); }, 4000); }
+        else if (state.masterClicks === 66) { p.textContent = "Я есть ТО 🕉"; p.classList.add('show'); setTimeout(function(){ p.classList.remove('show'); }, 5000); }
     }
 
     function updateNostrilVisuals(isPreHint) {
         if(!els.niL) return;
-
-        els.niL.classList.remove('active', 'dim');
-        els.niR.classList.remove('active', 'dim');
-        els.arrowL.classList.remove('down');
-        els.arrowR.classList.remove('down');
-
-        if (state.idx === 3) { 
-            els.statusText.textContent = "СМЕНА"; 
-            return; 
-        }
-
-        if (state.idx === 0) { // ВДОХ
+        els.niL.classList.remove('active', 'dim'); els.niR.classList.remove('active', 'dim');
+        els.arrowL.classList.remove('down'); els.arrowR.classList.remove('down');
+        if (state.idx === 3) { els.statusText.textContent = "СМЕНА"; return; }
+        if (state.idx === 0) {
             els.statusText.textContent = "Вдох";
-            if (state.nostrilMode === 'L') {
-                els.niL.classList.add('active'); 
-                els.niR.classList.add('dim');    
-                els.arrowR.classList.add('down'); 
-            } else {
-                els.niR.classList.add('active'); 
-                els.niL.classList.add('dim');    
-                els.arrowL.classList.add('down'); 
-            }
+            if (state.nostrilMode === 'L') { els.niL.classList.add('active'); els.niR.classList.add('dim'); els.arrowR.classList.add('down'); } 
+            else { els.niR.classList.add('active'); els.niL.classList.add('dim'); els.arrowL.classList.add('down'); }
         } 
-        else if (state.idx === 1) { // ЗАДЕРЖКА
+        else if (state.idx === 1) {
             els.statusText.textContent = "Задержка";
             var targetL = state.nostrilMode !== 'L';
-
             if (isPreHint) {
                 if (targetL) { els.niL.classList.add('active'); els.arrowL.classList.add('down'); els.niR.classList.add('dim'); }
                 else { els.niR.classList.add('active'); els.arrowR.classList.add('down'); els.niL.classList.add('dim'); }
             } else {
-                els.niL.classList.add('dim');
-                els.niR.classList.add('dim');
+                els.niL.classList.add('dim'); els.niR.classList.add('dim');
                 if (state.nostrilMode === 'L') els.arrowR.classList.add('down'); else els.arrowL.classList.add('down');
             }
         }
-        else if (state.idx === 2) { // ВЫДОХ
+        else if (state.idx === 2) {
             els.statusText.textContent = "Выдох";
-            if (state.nostrilMode === 'L') {
-                els.niR.classList.add('active');
-                els.arrowR.classList.add('down'); 
-                els.niL.classList.add('dim');     
-            } else {
-                els.niL.classList.add('active');
-                els.arrowL.classList.add('down'); 
-                els.niR.classList.add('dim');     
-            }
+            if (state.nostrilMode === 'L') { els.niR.classList.add('active'); els.arrowR.classList.add('down'); els.niL.classList.add('dim'); } 
+            else { els.niL.classList.add('active'); els.arrowL.classList.add('down'); els.niR.classList.add('dim'); }
         }
-    }    var wakeLock = null;
+    }
+
+    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
+
+    var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
     function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
 
@@ -754,31 +699,23 @@
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
 
     function runIdx(idx) {
-        if(idx >= 4) {
-            if(state.nostrilMode === 'L') { state.nostrilMode = 'R'; runIdx(0); }
-            else {
-                state.nostrilMode = 'L'; appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
-                if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
-                renderStatText(); if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
-            }
+        if(idx >= 4) { if(state.nostrilMode === 'L') { state.nostrilMode = 'R'; runIdx(0); } else { state.nostrilMode = 'L';
+            appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
+            if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
+            renderStatText();
+            if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
             return;
         }
-        state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
-        state.preHintSent = false;
-        updateNostrilVisuals();
+        state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur; state.preHintSent = false; updateNostrilVisuals();
+        var labels = ["Вдох","Задержка","Выдох","Пауза"]; els.statusText.textContent = labels[idx];
         if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
     }
 
     function engine(now) {
         if(!state.running||state.paused) return;
         var delta = now - state.lastTick; state.lastTick = now;
-        state.timeLeft -= delta;
-
-        if (state.timeLeft < 1000 && state.timeLeft > 0 && !state.preHintSent) {
-            updateNostrilVisuals(true);
-            state.preHintSent = true;
-        }
-
+                state.timeLeft -= delta;
+        if (state.timeLeft < 1000 && state.timeLeft > 0 && !state.preHintSent) { updateNostrilVisuals(true); state.preHintSent = true; }
         if (state.idx === 1) { 
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
             if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
