@@ -205,26 +205,45 @@
 
         /* ИНДИКАТОРЫ НОЗДРЕЙ */
         .ni-box {
-            position: absolute; top: 50%;
+            position: absolute;
             display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
             color: var(--gold); opacity: 0.15;
-            -webkit-transition: opacity 0.4s, -webkit-transform 0.4s;
-            transition: opacity 0.4s, transform 0.4s;
+            -webkit-transition: opacity 0.4s; transition: opacity 0.4s;
             z-index: 10; pointer-events: none;
+            top: 65%; /* Опустили ниже */
         }
-        .ni-box.active { opacity: 1; -webkit-transform: translateY(-50%) scale(1.15); transform: translateY(-50%) scale(1.15); }
+        .ni-box.active { opacity: 1; }
         .ni-box.dim { opacity: 0.15; }
-        .ni-l { left: -15%; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
-        .ni-r { right: -15%; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+        
+        .ni-l { left: 15%; } /* Сдвинули внутрь */
+        .ni-r { right: 15%; } /* Сдвинули внутрь */
         
         .ni-arrow-svg {
-            width: 24px; height: 24px; margin-bottom: 2px;
+            width: 22px; height: 22px; margin-bottom: 2px;
             -webkit-transition: -webkit-transform 0.4s ease; transition: transform 0.4s ease;
         }
-        .ni-arrow-svg.down { -webkit-transform: rotate(180deg); transform: rotate(180deg); }
-        .ni-letter { font-size: 1.2rem; font-weight: 200; letter-spacing: 0.05em; }
+        
+        /* Анимация Вдоха (вверх) */
+        .ni-box.active .ni-arrow-svg:not(.down) {
+            animation: arrowUp 1.5s infinite ease-in-out;
+        }
+        /* Анимация Выдоха (вниз) */
+        .ni-box.active .ni-arrow-svg.down {
+            animation: arrowDown 1.5s infinite ease-in-out;
+        }
+
+        @keyframes arrowUp {
+            0%, 100% { transform: translateY(4px); opacity: 0.4; }
+            50% { transform: translateY(-4px); opacity: 1; }
+        }
+        @keyframes arrowDown {
+            0%, 100% { transform: rotate(180deg) translateY(4px); opacity: 0.4; }
+            50% { transform: rotate(180deg) translateY(-4px); opacity: 1; }
+        }
+
+        .ni-letter { font-size: 1.2rem; font-weight: 100; letter-spacing: 0.05em; }
 
         .timer-box {
             position: absolute;
@@ -430,7 +449,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.13</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.17 (TEST)</div>
 </div>
 
 <script>
