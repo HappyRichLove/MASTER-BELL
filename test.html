@@ -429,7 +429,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.19 (TEST)</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.21 (TEST)</div>
 </div>
 
 <script>
@@ -473,7 +473,10 @@
     var state = {
         idx: 0, timeLeft: 0, dur: 0, running: false, paused: false,
         totalSec: 0, ints: [4, 16, 8, 0.2], reps: 10, curRep: 1,
-        night: false, lastTick: 0, nostrilMode: 'L', masterClicks: 0, nextGratitude: 10 + Math.floor(Math.random()*11)
+        night: false, lastTick: 0, nostrilMode: 'L', masterClicks: 0, 
+        isGratitudeEnabled: true, currentEmoji: '❤️',
+        nextGratitude: 10 + Math.floor(Math.random()*11),
+        nextAwareness: 30 + Math.floor(Math.random()*21)
     };
 
     var edgeLengths = [450, 420, 450];
@@ -579,16 +582,35 @@
     function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
 
     function handleMasterClick(e) {
+        if (!state.isGratitudeEnabled) return;
         state.masterClicks++;
-        var h = document.createElement('div'); h.className = 'heart'; h.textContent = '❤️';
+
+        if (state.masterClicks === 88) {
+            state.isGratitudeEnabled = false;
+            return;
+        }
+
+        var h = document.createElement('div');
+        h.className = 'heart'; h.textContent = state.currentEmoji;
         h.style.left = e.clientX + 'px'; h.style.top = e.clientY + 'px';
         h.style.setProperty('--random-x', (Math.random()*60 - 30) + 'px');
         document.body.appendChild(h);
         setTimeout(function(){ h.remove(); }, 2000);
-        if(state.masterClicks >= state.nextGratitude) {
-            state.masterClicks = 0; state.nextGratitude = 10 + Math.floor(Math.random()*11);
-            var p = document.getElementById('gratitudePopup'); p.classList.add('show');
+
+        var p = document.getElementById('gratitudePopup');
+        
+        if (state.masterClicks === state.nextGratitude) {
+            p.textContent = "БЛАГОДАРЮ 🙏"; p.classList.add('show');
             setTimeout(function(){ p.classList.remove('show'); }, 3000);
+        } 
+        else if (state.masterClicks === state.nextAwareness) {
+            p.textContent = "На жизнь внимание обрати 😳"; p.classList.add('show');
+            state.currentEmoji = '😳';
+            setTimeout(function(){ p.classList.remove('show'); }, 4000);
+        }
+        else if (state.masterClicks === 66) {
+            p.textContent = "Я есть ТО 🕉"; p.classList.add('show');
+            setTimeout(function(){ p.classList.remove('show'); }, 5000);
         }
     }
 
