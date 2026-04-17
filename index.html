@@ -90,7 +90,7 @@
             -webkit-justify-content: center; justify-content: center;
             opacity: 0;
             -webkit-transition: opacity 0.8s ease; transition: opacity 0.8s ease;
-            -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.85); /* Replaced blur with solid color for MAX performance */
             -webkit-user-select: none; user-select: none;
         }
         #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
@@ -166,20 +166,7 @@
             margin-bottom: -10px; overflow: visible; /* Разрешаем ауре выходить за границы */
         }
 
-        /* ПУЛЬСИРУЮЩАЯ АУРА */
-        .aura {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%; height: 100%;
-            background: radial-gradient(circle, var(--aura-color) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: 4;
-            opacity: 0;
-            pointer-events: none;
-            -webkit-transition: transform 0.1s linear, opacity 0.5s ease;
-            transition: transform 0.1s linear, opacity 0.5s ease;
-        }
+
 
         .triangle-svg {
             width: 100%; height: 100%;
@@ -190,14 +177,14 @@
         }
         .edge-bg {
             fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
-            -webkit-filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
-            filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+            
+            
         }
         .edge-active {
             fill: none; stroke: var(--gold); stroke-width: 10;
             stroke-linecap: round;
-            -webkit-filter: drop-shadow(0 0 12px var(--gold));
-            filter: drop-shadow(0 0 12px var(--gold));
+            
+            
             opacity: 0;
             -webkit-transition: opacity 0.2s;
             transition: opacity 0.2s;
@@ -351,7 +338,6 @@
 
 <div class="container">
     <div class="visualizer" id="vizMain">
-        <div class="aura" id="aura"></div>
         <svg class="triangle-svg" id="triangleSvg" viewBox="0 0 500 500">
             <path class="edge-bg" d="M250 460 L40 60 L460 60 Z" />
             <path id="edge0" class="edge-active" d="M250 460 L40 60" />
@@ -391,7 +377,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.25 (MAX FIX)</div></div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.27 (MAX FIX)</div></div>
 
 <script>
     trackEvent('app_open');
@@ -422,8 +408,7 @@
         echoText: document.getElementById('echoText'),
         echoCanvas: document.getElementById('echoCanvas'),
         echoHint: document.getElementById('echoHint'),
-        triangleSvg: document.getElementById('triangleSvg'),
-        aura: document.getElementById('aura')
+        triangleSvg: document.getElementById('triangleSvg')
     };
 
     var state = {
@@ -539,7 +524,7 @@
     function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; } } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
     var strikeNoiseBuffer = null;
     function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; if (!strikeNoiseBuffer) { strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate); var data = strikeNoiseBuffer.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); } var noise = audio.createBufferSource(); noise.buffer = strikeNoiseBuffer; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[1.003,0.1,4.8,0],[2.71,0.06,3.5,0.5],[2.72,0.04,3.3,0],[4.16,0.03,2.5,0.8],[5.43,0.015,2,1],[6.8,0.008,1.5,1.2]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; // Reduced from 7 to 3 for max performance on Android for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
     function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
@@ -552,13 +537,7 @@
         else scale = BREATH_MIN;
         els.triangleSvg.style.transform = 'scale('+scale+')';
         
-        // АУРА
-        if (state.running && !state.paused && state.idx < 3) {
-            els.aura.style.opacity = (state.idx === 1) ? 0.8 : (state.idx === 0 ? progress : 1 - progress);
-            els.aura.style.transform = 'translate(-50%, -50%) scale(' + (scale * 1.4) + ')';
-        } else {
-            els.aura.style.opacity = 0;
-        }
+
     }
 
     for(var ei=0; ei<els.edges.length; ei++) { els.edges[ei].style.strokeDasharray = edgeLengths[ei]; els.edges[ei].style.strokeDashoffset = edgeLengths[ei]; }
@@ -635,7 +614,7 @@
     Particle.prototype.reset = function() { this.x = Math.random()*els.canvas.width; this.y = Math.random()*els.canvas.height; this.s = Math.random()*2+0.5; this.vX = (Math.random()-0.5)*0.2; this.vY = (Math.random()-0.5)*0.2; this.a = 0; this.f = Math.random()*0.01+0.005; this.m = Math.random()*0.4+0.1; this.growing = true; };
     Particle.prototype.update = function() { this.x += this.vX; this.y += this.vY; if(this.growing){ this.a += this.f; if(this.a>=this.m) this.growing=false; } else { this.a -= this.f; if(this.a<=0) this.reset(); } };
     Particle.prototype.draw = function() { ctx.fillStyle = cachedGold; ctx.globalAlpha = this.a; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,TWO_PI); ctx.fill(); };
-    for(var pi=0; pi<35; pi++) parts.push(new Particle());
+    for(var pi=0; pi<10; pi++) parts.push(new Particle());
     function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
     anim();
 

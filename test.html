@@ -90,7 +90,7 @@
             -webkit-justify-content: center; justify-content: center;
             opacity: 0;
             -webkit-transition: opacity 0.8s ease; transition: opacity 0.8s ease;
-            -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.85); /* Replaced blur with solid color for MAX performance */
             -webkit-user-select: none; user-select: none;
         }
         #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
@@ -177,14 +177,14 @@
         }
         .edge-bg {
             fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
-            -webkit-filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
-            filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+            
+            
         }
         .edge-active {
             fill: none; stroke: var(--gold); stroke-width: 10;
             stroke-linecap: round;
-            -webkit-filter: drop-shadow(0 0 12px var(--gold));
-            filter: drop-shadow(0 0 12px var(--gold));
+            
+            
             opacity: 0;
             -webkit-transition: opacity 0.2s;
             transition: opacity 0.2s;
@@ -377,7 +377,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.25 (MAX FIX)</div></div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.27 (MAX FIX)</div></div>
 
 <script>
     trackEvent('app_open');
