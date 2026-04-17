@@ -95,7 +95,7 @@
         }
         #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
 
-        #echoCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5001; pointer-events: none; }
+        
 
         .echo-content {
             position: relative; z-index: 5005;
@@ -177,14 +177,14 @@
         }
         .edge-bg {
             fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
-            -webkit-filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
-            filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+            
+            
         }
         .edge-active {
             fill: none; stroke: var(--gold); stroke-width: 10;
             stroke-linecap: round;
-            -webkit-filter: drop-shadow(0 0 12px var(--gold));
-            filter: drop-shadow(0 0 12px var(--gold));
+            
+            
             opacity: 0;
             -webkit-transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
             transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
@@ -372,12 +372,11 @@
 
     <div class="cycle-progress" id="cycleDots"></div>
     
-    <div class="stat-container" id="statContainer" onclick="cycleStat()">
-        <div class="stat-label" id="statLabel">ДЫХАНИЕ ВСЕЛЕННОЙ</div>
-        <div class="stat-value" id="statValue">00:00:00</div>
+    <div class="stat-container" id="statContainer">
+                <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.13</div>
+    <div class="version-tag" id="versionTag" >v19.32 (TEST)</div>
 </div>
 
 <script>
@@ -399,7 +398,6 @@
         startBtn: document.getElementById('startBtn'),
         statusText: document.getElementById('statusText'),
         cycleDots: document.getElementById('cycleDots'),
-        statLabel: document.getElementById('statLabel'),
         statValue: document.getElementById('statValue'),
         edges: [document.getElementById('edge0'), document.getElementById('edge1'), document.getElementById('edge2')],
         inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
@@ -441,45 +439,7 @@
         localStorage.setItem('mb_last_date', appStats.lastDate);
     }
 
-    var statModes = [
-        { id: 'time', label: 'Дыхание Вселенной' },
-        { id: 'count', label: 'Количество вдохов всего' },
-        { id: 'hold', label: 'Общее время задержки' },
-        { id: 'streak', label: 'Дни подряд' },
-        { id: 'max_c', label: 'Рекорд в кругах' },
-        { id: 'max_v', label: 'Рекорд во вдохе' },
-        { id: 'max_h', label: 'Рекорд в задержке' },
-        { id: 'max_o', label: 'Рекорд в выдохе' }
-    ];
-    var currentStatIdx = Math.floor(Math.random() * statModes.length);
-
-    function formatTime(totalSeconds) {
-        var rounded = Math.floor(totalSeconds);
-        var h = Math.floor(rounded / 3600), m = Math.floor((rounded % 3600) / 60), s = rounded % 60;
-        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-    }
-
-    function renderStatText() {
-        var mode = statModes[currentStatIdx];
-        els.statLabel.textContent = mode.label;
-        if (mode.id === 'time') { els.statValue.textContent = formatTime(state.totalSec); }
-        else if (mode.id === 'count') { els.statValue.textContent = appStats.totalVdoh; }
-        else if (mode.id === 'hold') { els.statValue.textContent = formatTime(appStats.totalHold); }
-        else if (mode.id === 'streak') { els.statValue.textContent = appStats.streak + " ДН."; }
-        else if (mode.id === 'max_c') { els.statValue.textContent = appStats.maxCycles; }
-        else if (mode.id === 'max_v') { els.statValue.textContent = appStats.maxVdoh + " С."; }
-        else if (mode.id === 'max_h') { els.statValue.textContent = appStats.maxHold + " С."; }
-        else if (mode.id === 'max_o') { els.statValue.textContent = appStats.maxOut + " С."; }
-    }
-
-    function cycleStat() {
-        els.statValue.classList.add('fade'); els.statLabel.style.opacity = 0;
-        setTimeout(function() {
-            currentStatIdx = (currentStatIdx + 1) % statModes.length;
-            renderStatText();
-            els.statValue.classList.remove('fade'); els.statLabel.style.opacity = 1;
-        }, 300);
-    }
+    
 
     var cachedGold = '#c2a05e';
     function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
@@ -518,44 +478,111 @@
     ];
 
     var audio = null;
-    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
+    var audioBuffers = {}; // Кэш для "файлов"
+    var soundsGenerated = false;
 
-    var wakeLock = null;
-    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
-    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
-
-    function resetZoom() {
-        document.activeElement.blur();
-        var vp = document.querySelector('meta[name="viewport"]');
-        vp.setAttribute('content', 'width=device-width, initial-scale=0.9999, maximum-scale=0.9999, user-scalable=no, viewport-fit=cover');
-        requestAnimationFrame(function() { vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'); });
-        window.scrollTo(0, 0);
+    function initAudio() { 
+        if (!audio) {
+            audio = new (window.AudioContext || window.webkitAudioContext)(); 
+            generateAudioFiles(); // Запускаем фоновую генерацию при первом клике
+        }
+        if (audio.state === 'suspended') audio.resume(); 
     }
 
-    var allInputs = document.querySelectorAll('.interval-input');
-    for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
+    // Эта функция работает как виртуальная "студия звукозаписи"
+    // Она генерирует звуки 1 раз в фоновом режиме и сохраняет их как аудиофайлы в памяти
+    function generateAudioFiles() {
+        if (soundsGenerated) return;
+        soundsGenerated = true;
 
-    var echoParticles = [], isEchoHolding = false, echoGain = null, echoDroneOscs = [], revealTimer = null, touchX = 0, touchY = 0;
-    function openEcho() { trackEvent('echo_open'); initAudio(); els.echo.classList.add('active'); var idx = Math.floor(Math.random() * advaitaQuotes.length); els.echoText.textContent = advaitaQuotes[idx]; els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; initEchoCanvas(); }
-    function closeEcho(e) { if(e) { e.preventDefault(); e.stopPropagation(); } els.echo.classList.remove('active'); stopEchoReveal(); }
-    function initEchoCanvas() {
-        var c = els.echoCanvas; var ctxE = c.getContext('2d'); c.width = window.innerWidth; c.height = window.innerHeight;
-        echoParticles = []; for(var i=0; i<200; i++) { echoParticles.push({ x: Math.random()*c.width, y: Math.random()*c.height, s: Math.random()*2+0.5, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, a: Math.random()*0.4+0.1 }); }
-        function drawE() { if(!els.echo.classList.contains('active')) return; ctxE.clearRect(0,0,c.width,c.height); var color = cachedGold; for(var j=0; j<echoParticles.length; j++) { var p = echoParticles[j]; if(isEchoHolding) { var dx = touchX-p.x, dy = touchY-p.y; var dist = Math.sqrt(dx*dx+dy*dy); if(dist>5){ p.vx += (dx/dist)*0.6; p.vy += (dy/dist)*0.6; } p.vx *= 0.94; p.vy *= 0.94; } else { p.vx += (Math.random()-0.5)*0.05; p.vy += (Math.random()-0.5)*0.05; p.vx *= 0.98; p.vy *= 0.98; } p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>c.width) p.vx *= -1; if(p.y<0||p.y>c.height) p.vy *= -1; ctxE.globalAlpha = isEchoHolding ? 0.8 : p.a; ctxE.fillStyle = color; ctxE.beginPath(); ctxE.arc(p.x,p.y,p.s,0,TWO_PI); ctxE.fill(); } requestAnimationFrame(drawE); }
-        drawE();
+        var bases = [349.23, 440, 293.66, 0, 523.25];
+        var gongBase = 196.00;
+
+        function renderSound(name, baseFreq, duration, strikeVol, isGong) {
+            var offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, audio.sampleRate * duration, audio.sampleRate);
+            
+            // Простой ревербератор
+            var len = offlineCtx.sampleRate * 2.5; 
+            var buf = offlineCtx.createBuffer(1, len, offlineCtx.sampleRate); 
+            var data = buf.getChannelData(0); 
+            for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; }
+            var reverbNode = offlineCtx.createConvolver(); 
+            reverbNode.buffer = buf; 
+            reverbNode.connect(offlineCtx.destination);
+
+            var dry = offlineCtx.createGain(); 
+            var wet = offlineCtx.createGain(); 
+            dry.gain.value = 0.7; wet.gain.value = 0.3; 
+            dry.connect(offlineCtx.destination); wet.connect(reverbNode); 
+            
+            var harmonics = isGong 
+                ? [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]] 
+                : [[1,0.12,5,0],[2.71,0.06,3.5,0.5]];
+
+            var now = 0;
+            var decayExtra = isGong ? 2 : 0;
+            var vol = isGong ? 1.2 : 1;
+
+            for (var i = 0; i < harmonics.length; i++) { 
+                var h = harmonics[i]; 
+                var decay = h[2] + decayExtra; 
+                var hVol = h[1] * vol; 
+                var osc = offlineCtx.createOscillator(); 
+                var g = offlineCtx.createGain(); 
+                osc.type = 'sine'; 
+                osc.frequency.value = baseFreq * h[0] + h[3]; 
+                g.gain.setValueAtTime(0, now); 
+                g.gain.linearRampToValueAtTime(hVol, now + 0.015); 
+                g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); 
+                g.gain.exponentialRampToValueAtTime(0.0001, now + decay); 
+                
+                osc.connect(g); g.connect(dry); g.connect(wet); 
+                osc.start(now); osc.stop(now + decay + 0.5); 
+            } 
+            
+            // Шум удара
+            var noiseDur = 0.06;
+            var noiseBufLen = Math.floor(offlineCtx.sampleRate * noiseDur); 
+            var noiseBuf = offlineCtx.createBuffer(1, noiseBufLen, offlineCtx.sampleRate); 
+            var nData = noiseBuf.getChannelData(0); 
+            for (var i = 0; i < noiseBufLen; i++) nData[i] = (Math.random()*2-1) * Math.exp(-i/(offlineCtx.sampleRate*0.008));
+            var noise = offlineCtx.createBufferSource(); 
+            noise.buffer = noiseBuf; 
+            var bp = offlineCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; 
+            var ng = offlineCtx.createGain(); ng.gain.setValueAtTime(strikeVol, now); ng.gain.exponentialRampToValueAtTime(0.0001, now + noiseDur); 
+            noise.connect(bp); bp.connect(ng); ng.connect(dry); 
+            noise.start(now); noise.stop(now + noiseDur);
+
+            offlineCtx.startRendering().then(function(renderedBuffer) {
+                audioBuffers[name] = renderedBuffer;
+            }).catch(function(err){});
+        }
+
+        // Рендерим 3 звука: Вдох (0), Задержка (1), Выдох (2) и Гонг
+        renderSound('stage0', bases[0], 6, 0.04, false);
+        renderSound('stage1', bases[1], 6, 0.02, false);
+        renderSound('stage2', bases[2], 6, 0.04, false);
+        renderSound('stage4', bases[4], 6, 0.04, false); // Переходный
+        renderSound('gong', gongBase, 10, 0.04, true);
     }
-    function startEchoReveal(e) { if(e.target.closest('#echoClose')) return; e.preventDefault(); isEchoHolding = true; touchX = e.clientX || (e.touches && e.touches[0].clientX); touchY = e.clientY || (e.touches && e.touches[0].clientY); clearTimeout(revealTimer); revealTimer = setTimeout(function() { if(isEchoHolding) { els.echoText.classList.add('reveal'); els.echoHint.style.opacity = "0"; } }, 3000 + Math.random() * 4000); startEchoSound(); }
-    function stopEchoReveal() { isEchoHolding = false; clearTimeout(revealTimer); els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; stopEchoSound(); }
-    function startEchoSound() { var now = audio.currentTime; if (echoDroneOscs.length === 0) { echoGain = audio.createGain(); echoGain.gain.setValueAtTime(0, now); echoGain.connect(audio.destination); var tones = [{f:73.42,v:0.1,t:'sine'},{f:73.7,v:0.06,t:'sine'},{f:146.83,v:0.04,t:'sine'},{f:220,v:0.02,t:'sine'},{f:110,v:0.03,t:'triangle'}]; for (var i=0; i<tones.length; i++) { var t = tones[i]; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = t.t; osc.frequency.setValueAtTime(t.f, now); g.gain.value = t.v; var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 0.15 + Math.random()*0.3; lfoG.gain.value = 0.4; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(echoGain); osc.start(now); echoDroneOscs.push({ osc:osc, lfo:lfo, g:g }); } } echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(1, now + 2); }
-    function stopEchoSound() { if (echoGain) { var now = audio.currentTime; echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(0, now + 1.5); setTimeout(function() { if (!isEchoHolding && echoDroneOscs.length > 0) { for(var i=0;i<echoDroneOscs.length;i++){ try{echoDroneOscs[i].osc.stop();echoDroneOscs[i].lfo.stop();}catch(e){} } echoDroneOscs = []; } }, 1600); } }
 
-    var reverbNode = null;
-    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.2); } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
-    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; var buf = audio.createBuffer(1, bufLen, audio.sampleRate); var data = buf.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); var noise = audio.createBufferSource(); noise.buffer = buf; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[1.003,0.1,4.8,0],[2.71,0.06,3.5,0.5],[2.72,0.04,3.3,0],[4.16,0.03,2.5,0.8],[5.43,0.015,2,1],[6.8,0.008,1.5,1.2]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
-    function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
-    function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
+    function playFile(name) {
+        if (!audio || !audioBuffers[name]) return; // Если еще не сгенерировалось или нет звука
+        var source = audio.createBufferSource();
+        source.buffer = audioBuffers[name];
+        source.connect(audio.destination);
+        source.start();
+    }
 
+    function playSingingBowl(stage) { 
+        if (stage === 3) return; 
+        playFile('stage' + stage);
+        if (stage === 4) setTimeout(function(){ playFile('stage2'); }, 300); 
+    }
+    
+    function playMegaGong() { 
+        playFile('gong'); 
+    }
     var BREATH_MIN = 1.0, BREATH_MAX = 1.12;
     function updateBreathAnimation(progress) {
         var scale;
@@ -578,6 +605,21 @@
         for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
         els.repeats.value = state.reps; if (state.night) applyTheme();
     } catch(e){}
+
+    var wakeLock = null;
+    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
+    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
+
+    function resetZoom() {
+        document.activeElement.blur();
+        var vp = document.querySelector('meta[name="viewport"]');
+        vp.setAttribute('content', 'width=device-width, initial-scale=0.9999, maximum-scale=0.9999, user-scalable=no, viewport-fit=cover');
+        requestAnimationFrame(function() { vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'); });
+        window.scrollTo(0, 0);
+    }
+
+    var allInputs = document.querySelectorAll('.interval-input');
+    for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
 
     updateCachedGold();
 
@@ -622,7 +664,7 @@
         state.timeLeft -= delta;
         if (state.idx === 1) { 
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
-            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
+            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
         }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
@@ -633,7 +675,7 @@
     function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
     function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
-    function updJournal() { localStorage.setItem('mb_total', state.totalSec); if (statModes[currentStatIdx].id === 'time') renderStatText(); }
+    function updJournal() { if (state.totalSec % 10 === 0) localStorage.setItem('mb_total', state.totalSec); renderStatText(); }
 
 
 
