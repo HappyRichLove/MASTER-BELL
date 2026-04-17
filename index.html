@@ -199,8 +199,8 @@
             -webkit-filter: drop-shadow(0 0 12px var(--gold));
             filter: drop-shadow(0 0 12px var(--gold));
             opacity: 0;
-            -webkit-transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
-            transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
+            -webkit-transition: opacity 0.2s;
+            transition: opacity 0.2s;
         }
 
         .timer-box {
@@ -392,7 +392,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
     
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.22 (SIMPLE)</div>
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.23 (MAX FIX)</div>
 </div>
 
 <script>
@@ -460,13 +460,12 @@
 
     var statModes = [
         { id: 'time', label: 'Дыхание Вселенной' },
-        { id: 'count', label: 'Количество вдохов всего' },
         { id: 'hold', label: 'Общее время задержки' },
         { id: 'streak', label: 'Дни подряд' },
         { id: 'max_c', label: 'Рекорд в кругах' },
-        { id: 'max_v', label: 'Рекорд во вдохе' },
-        { id: 'max_h', label: 'Рекорд в задержке' },
-        { id: 'max_o', label: 'Рекорд в выдохе' }
+        { id: 'max_v', label: 'Рекорд: Вдох' },
+        { id: 'max_h', label: 'Рекорд: Задержка' },
+        { id: 'max_o', label: 'Рекорд: Выдох' }
     ];
     var currentStatIdx = Math.floor(Math.random() * statModes.length);
 
