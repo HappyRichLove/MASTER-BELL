@@ -90,7 +90,7 @@
             -webkit-justify-content: center; justify-content: center;
             opacity: 0;
             -webkit-transition: opacity 0.8s ease; transition: opacity 0.8s ease;
-            background: rgba(0, 0, 0, 0.85); /* Replaced blur with solid color for MAX performance */
+            -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px);
             -webkit-user-select: none; user-select: none;
         }
         #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
@@ -177,17 +177,17 @@
         }
         .edge-bg {
             fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
-            
-            
+            -webkit-filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
+            filter: drop-shadow(0 0 6px var(--triangle-glow)) drop-shadow(0 0 14px var(--triangle-glow));
         }
         .edge-active {
             fill: none; stroke: var(--gold); stroke-width: 10;
             stroke-linecap: round;
-            
-            
+            -webkit-filter: drop-shadow(0 0 12px var(--gold));
+            filter: drop-shadow(0 0 12px var(--gold));
             opacity: 0;
-            -webkit-transition: opacity 0.2s;
-            transition: opacity 0.2s;
+            -webkit-transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
+            transition: stroke-dashoffset 0.1s linear, opacity 0.2s;
         }
 
         .timer-box {
@@ -334,7 +334,6 @@
 </div>
 
 <div id="welcomeAlert">❤️ МАСТЕР НЕ СПИТ СЕЙЧАС 🙏</div>
-<canvas id="particleCanvas"></canvas>
 
 <div class="container">
     <div class="visualizer" id="vizMain">
@@ -373,11 +372,13 @@
 
     <div class="cycle-progress" id="cycleDots"></div>
     
-    <div class="stat-container" id="statContainer">
+    <div class="stat-container" id="statContainer" onclick="cycleStat()">
+        <div class="stat-label" id="statLabel">ДЫХАНИЕ ВСЕЛЕННОЙ</div>
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
-
-    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.28 (MAX FIX)</div></div>
+    
+    <div class="version-tag" id="versionTag" onclick="openEcho()">v19.13</div>
+</div>
 
 <script>
     trackEvent('app_open');
@@ -398,11 +399,11 @@
         startBtn: document.getElementById('startBtn'),
         statusText: document.getElementById('statusText'),
         cycleDots: document.getElementById('cycleDots'),
-                statValue: document.getElementById('statValue'),
+        statLabel: document.getElementById('statLabel'),
+        statValue: document.getElementById('statValue'),
         edges: [document.getElementById('edge0'), document.getElementById('edge1'), document.getElementById('edge2')],
         inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
         repeats: document.getElementById('repeat-input'),
-        canvas: document.getElementById('particleCanvas'),
         welcome: document.getElementById('welcomeAlert'),
         echo: document.getElementById('echoOverlay'),
         echoText: document.getElementById('echoText'),
@@ -440,7 +441,17 @@
         localStorage.setItem('mb_last_date', appStats.lastDate);
     }
 
-
+    var statModes = [
+        { id: 'time', label: 'Дыхание Вселенной' },
+        { id: 'count', label: 'Количество вдохов всего' },
+        { id: 'hold', label: 'Общее время задержки' },
+        { id: 'streak', label: 'Дни подряд' },
+        { id: 'max_c', label: 'Рекорд в кругах' },
+        { id: 'max_v', label: 'Рекорд во вдохе' },
+        { id: 'max_h', label: 'Рекорд в задержке' },
+        { id: 'max_o', label: 'Рекорд в выдохе' }
+    ];
+    var currentStatIdx = Math.floor(Math.random() * statModes.length);
 
     function formatTime(totalSeconds) {
         var rounded = Math.floor(totalSeconds);
@@ -449,7 +460,25 @@
     }
 
     function renderStatText() {
-        els.statValue.textContent = formatTime(state.totalSec);
+        var mode = statModes[currentStatIdx];
+        els.statLabel.textContent = mode.label;
+        if (mode.id === 'time') { els.statValue.textContent = formatTime(state.totalSec); }
+        else if (mode.id === 'count') { els.statValue.textContent = appStats.totalVdoh; }
+        else if (mode.id === 'hold') { els.statValue.textContent = formatTime(appStats.totalHold); }
+        else if (mode.id === 'streak') { els.statValue.textContent = appStats.streak + " ДН."; }
+        else if (mode.id === 'max_c') { els.statValue.textContent = appStats.maxCycles; }
+        else if (mode.id === 'max_v') { els.statValue.textContent = appStats.maxVdoh + " С."; }
+        else if (mode.id === 'max_h') { els.statValue.textContent = appStats.maxHold + " С."; }
+        else if (mode.id === 'max_o') { els.statValue.textContent = appStats.maxOut + " С."; }
+    }
+
+    function cycleStat() {
+        els.statValue.classList.add('fade'); els.statLabel.style.opacity = 0;
+        setTimeout(function() {
+            currentStatIdx = (currentStatIdx + 1) % statModes.length;
+            renderStatText();
+            els.statValue.classList.remove('fade'); els.statLabel.style.opacity = 1;
+        }, 300);
     }
 
     var cachedGold = '#c2a05e';
@@ -521,10 +550,9 @@
     function stopEchoSound() { if (echoGain) { var now = audio.currentTime; echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(0, now + 1.5); setTimeout(function() { if (!isEchoHolding && echoDroneOscs.length > 0) { for(var i=0;i<echoDroneOscs.length;i++){ try{echoDroneOscs[i].osc.stop();echoDroneOscs[i].lfo.stop();}catch(e){} } echoDroneOscs = []; } }, 1600); } }
 
     var reverbNode = null;
-    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; } } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
-    var strikeNoiseBuffer = null;
-    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; if (!strikeNoiseBuffer) { strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate); var data = strikeNoiseBuffer.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); } var noise = audio.createBufferSource(); noise.buffer = strikeNoiseBuffer; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; /* Reduced from 7 to 3 for max performance on Android */ for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
+    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.2); } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
+    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; var buf = audio.createBuffer(1, bufLen, audio.sampleRate); var data = buf.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); var noise = audio.createBufferSource(); noise.buffer = buf; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[1.003,0.1,4.8,0],[2.71,0.06,3.5,0.5],[2.72,0.04,3.3,0],[4.16,0.03,2.5,0.8],[5.43,0.015,2,1],[6.8,0.008,1.5,1.2]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
     function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
@@ -594,7 +622,7 @@
         state.timeLeft -= delta;
         if (state.idx === 1) { 
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
-            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
+            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); if (statModes[currentStatIdx].id === 'hold') renderStatText(); }
         }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
@@ -605,18 +633,9 @@
     function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
     function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
-    function updJournal() { if (state.totalSec % 10 === 0) localStorage.setItem('mb_total', state.totalSec); renderStatText(); }
+    function updJournal() { localStorage.setItem('mb_total', state.totalSec); if (statModes[currentStatIdx].id === 'time') renderStatText(); }
 
-    var ctx = els.canvas.getContext('2d'); var parts = [];
-    function resize() { els.canvas.width = window.innerWidth; els.canvas.height = window.innerHeight; }
-    window.onresize = resize; resize();
-    function Particle() { this.reset(); }
-    Particle.prototype.reset = function() { this.x = Math.random()*els.canvas.width; this.y = Math.random()*els.canvas.height; this.s = Math.random()*2+0.5; this.vX = (Math.random()-0.5)*0.2; this.vY = (Math.random()-0.5)*0.2; this.a = 0; this.f = Math.random()*0.01+0.005; this.m = Math.random()*0.4+0.1; this.growing = true; };
-    Particle.prototype.update = function() { this.x += this.vX; this.y += this.vY; if(this.growing){ this.a += this.f; if(this.a>=this.m) this.growing=false; } else { this.a -= this.f; if(this.a<=0) this.reset(); } };
-    Particle.prototype.draw = function() { ctx.fillStyle = cachedGold; ctx.globalAlpha = this.a; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,TWO_PI); ctx.fill(); };
-    for(var pi=0; pi<10; pi++) parts.push(new Particle());
-    function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
-    anim();
+
 
     setInterval(function() { if(state.running&&!state.paused&&state.idx!==3) { state.totalSec++; updJournal(); } }, 1000);
     renderStatText(); renderDots();
