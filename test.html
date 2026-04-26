@@ -363,6 +363,9 @@
                 <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 <svg id="moonIcon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
+            <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            </button>
             <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
@@ -437,12 +440,19 @@
         appStats.lastDate = todayStr;
         localStorage.setItem('mb_streak', appStats.streak);
         localStorage.setItem('mb_last_date', appStats.lastDate);
-    }
+        }
 
-    
+        function formatTime(totalSeconds) {
+        var rounded = Math.floor(totalSeconds);
+        var h = Math.floor(rounded / 3600), m = Math.floor((rounded % 3600) / 60), s = rounded % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        }
 
-    var cachedGold = '#c2a05e';
-    function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
+        function renderStatText() {
+        els.statValue.textContent = formatTime(state.totalSec);
+        }
+
+        var cachedGold = '#c2a05e';    function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
 
     var advaitaQuotes = [
         "Мир — это лишь игра света в твоем осознавании. Нет никого, кто играет.",

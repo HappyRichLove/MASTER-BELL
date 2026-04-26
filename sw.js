@@ -1,5 +1,5 @@
 var CACHE = 'master-v19.29';
-var FILES = ['./index.html', './favicon.svg', './manifest.json'];
+var FILES = ['./index.html', './favicon.svg', './manifest.json', './metronome.html'];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(FILES); }));

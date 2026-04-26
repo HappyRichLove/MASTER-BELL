@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#f4f1ea">
+    <title>❤️ MASTER METRONOME 🙏</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --bg: #f4f1ea; --surface: #ffffff; --text: #000000;
+            --accent: #8e806a; --gold: #c2a05e;
+            --glow: rgba(194, 160, 94, 0.4);
+        }
+        .night-theme {
+            --bg: #000000; --surface: #1c1c1e; --text: #ffffff;
+            --accent: #8e8e93; --gold: #d4af37;
+            --glow: rgba(212, 175, 55, 0.5);
+        }
+        body {
+            margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg); color: var(--text);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; height: 100dvh; width: 100vw; overflow: hidden;
+            transition: background-color 0.8s ease; touch-action: none; user-select: none;
+        }
+
+        .back-btn {
+            position: absolute; top: 30px; left: 30px; z-index: 100;
+            color: var(--accent); opacity: 0.6; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .timer-display {
+            font-size: 6rem; font-weight: 100; font-variant-numeric: tabular-nums;
+            color: var(--gold); letter-spacing: -0.02em;
+            text-shadow: 0 0 10px transparent;
+            transition: transform 0.2s, text-shadow 0.2s, opacity 0.2s;
+            cursor: pointer;
+        }
+        .timer-display.pulse {
+            transform: scale(1.05); text-shadow: 0 0 20px var(--glow);
+        }
+
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 5vh; width: 100%; max-width: 400px; }
+        .secondary-btns { display: flex; justify-content: center; gap: 30px; margin-bottom: 10px; align-items: center; }
+        .icon-btn { background: var(--surface); border: none; cursor: pointer; color: var(--text); width: 58px; height: 58px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .icon-btn:active { transform: scale(0.9); }
+        .btn-main { background: var(--gold); border: none; padding: 18px 0; border-radius: 40px; cursor: pointer; font-family: inherit; font-size: 1.2rem; font-weight: 900; color: #ffffff; box-shadow: 0 8px 25px var(--glow); width: 220px; transition: all 0.3s; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
+        .btn-main:active { transform: scale(0.95); }
+
+        .bottom-stats { position: absolute; bottom: 8vh; display: flex; flex-direction: column; align-items: center; opacity: 0.6; }
+        .stat-label { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="back-btn" onclick="window.location.href='index.html'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    </div>
+
+    <div class="timer-display" id="display" onclick="handleStart(event)">00:00</div>
+
+    <div class="controls">
+        <div class="secondary-btns">
+            <button id="themeBtn" class="icon-btn" onclick="handleTheme(event)">
+                <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg id="moonIcon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+        </div>
+        <button id="startBtn" class="btn-main" onclick="handleStart(event)">СТАРТ</button>
+    </div>
+
+    <div class="bottom-stats">
+        <div class="stat-label">НАКОПЛЕНО В МЕДИТАЦИИ</div>
+        <div class="stat-value" id="totalMinutes">0 мин</div>
+    </div>
+
+<script>
+    document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    var lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) { var now = Date.now(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, { passive: false });
+
+    var els = {
+        display: document.getElementById('display'),
+        startBtn: document.getElementById('startBtn'),
+        totalMins: document.getElementById('totalMinutes')
+    };
+
+    var state = { running: false, sec: 0, totalGlobalSec: 0, night: false, nextTick: 0 };
+    var audio = null;
+
+    function formatMMSS(s) {
+        var m = Math.floor(s / 60), sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function initAudio() { 
+        if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); 
+        if (audio.state === 'suspended') audio.resume(); 
+    }
+
+    function playTick() {
+        if (!audio) return;
+        var t = audio.currentTime;
+        var osc = audio.createOscillator();
+        var gain = audio.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+        gain.gain.setValueAtTime(0.15, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        osc.connect(gain); gain.connect(audio.destination);
+        osc.start(t); osc.stop(t + 0.05);
+    }
+
+    function engine(now) {
+        if(!state.running) return;
+        if(now >= state.nextTick) {
+            state.sec++;
+            state.totalGlobalSec++;
+            els.display.textContent = formatMMSS(state.sec);
+            els.display.classList.add('pulse');
+            setTimeout(function(){ els.display.classList.remove('pulse'); }, 150);
+            playTick();
+            
+            if (state.totalGlobalSec % 10 === 0) {
+                localStorage.setItem('mb_total', state.totalGlobalSec);
+                updateTotalMins();
+            }
+            state.nextTick = now + 1000;
+        }
+        requestAnimationFrame(engine);
+    }
+
+    function handleStart(e) {
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        initAudio();
+        if(!state.running) {
+            state.running = true; els.startBtn.textContent = 'ПАУЗА';
+            requestWakeLock();
+            state.nextTick = performance.now() + 1000;
+            requestAnimationFrame(engine);
+            els.display.classList.add('pulse'); setTimeout(function(){ els.display.classList.remove('pulse'); }, 150);
+            playTick();
+        } else {
+            state.running = false; els.startBtn.textContent = 'ПРОДОЛЖИТЬ';
+            releaseWakeLock();
+        }
+    }
+
+    function handleReset(e) { 
+        if(e) { e.preventDefault(); e.stopPropagation(); } 
+        state.running = false; els.startBtn.textContent = 'СТАРТ'; 
+        state.sec = 0; els.display.textContent = '00:00'; 
+        releaseWakeLock(); 
+    }
+
+    function applyTheme() { 
+        document.body.classList.toggle('night-theme', state.night); 
+        document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; 
+        document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; 
+        var meta = document.querySelector('meta[name="theme-color"]'); 
+        if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); 
+    }
+    function handleTheme(e) { 
+        if(e) { e.preventDefault(); e.stopPropagation(); } 
+        state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); 
+    }
+
+    function updateTotalMins() {
+        var mins = Math.floor(state.totalGlobalSec / 60);
+        els.totalMins.textContent = mins + ' мин';
+    }
+
+    var wakeLock = null;
+    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
+    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
+
+    try {
+        state.totalGlobalSec = parseInt(localStorage.getItem('mb_total')) || 0;
+        state.night = localStorage.getItem('mb_night') === 'true';
+        if (state.night) applyTheme();
+        updateTotalMins();
+    } catch(e){}
+
+</script>
+</body>
+</html>
