@@ -1,6 +1,6 @@
 {
-  "name": "Каштанка",
-  "short_name": "Каштанка",
+  "name": "MASTER",
+  "short_name": "MASTER",
   "description": "Практика осознанности, Сандхья-кала и дыхательный таймер",
   "start_url": "./index.html",
   "display": "standalone",

@@ -1,5 +1,5 @@
-/* Service Worker — Каштанка v20.07 */
-var CACHE_NAME = 'kashtanka-v20.07';
+/* Service Worker — MASTER v20.08 */
+var CACHE_NAME = 'master-v20.08';
 var ASSETS = [
   './',
   './index.html',
@@ -80,7 +80,7 @@ self.addEventListener('push', function(e) {
   if (!e.data) return;
   var data = e.data.json();
   e.waitUntil(
-    self.registration.showNotification(data.title || '🙏 Каштанка', {
+    self.registration.showNotification(data.title || '🙏 MASTER', {
       body: data.body || 'Время практики',
       icon: './icon-192.png',
       badge: './icon-192.png',
