@@ -834,7 +834,7 @@
                 <svg id="moonIcon" style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
             <button id="sandhyaInfoBtn" class="icon-btn" onclick="showSandhyaCard()" title="Сандхья-кала">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M12 22v-2"/><circle cx="12" cy="12" r="4"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </button>
             <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
@@ -1013,6 +1013,13 @@
     var sandhyaTimers = [];
     var sandhyaData = null;
 
+    var sandhyaHideTimeout;
+    function showSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        card.classList.add('visible');
+        clearTimeout(sandhyaHideTimeout);
+        sandhyaHideTimeout = setTimeout(hideSandhyaCard, 15000);
+    }
     function hideSandhyaCard() {
         var card = document.getElementById('sandhyaCard');
         if(card) card.classList.remove('visible');
