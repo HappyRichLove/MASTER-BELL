@@ -1303,16 +1303,10 @@
     }, 1000);
     renderStatText(); renderDots();
 
-    /* WELCOME */
-    var lastSeenW = localStorage.getItem('mb_v20_welcome');
     // Hide install guide button if standalone via JS as well for iOS
     if (window.navigator.standalone === true) {
         var installBtn = document.getElementById('installGuideBtn');
         if(installBtn) installBtn.style.display = 'none';
-    }
-    if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) {
-        setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000);
-        localStorage.setItem('mb_v20_welcome', Date.now().toString());
     }
 
     /* INIT SANDHYA */
