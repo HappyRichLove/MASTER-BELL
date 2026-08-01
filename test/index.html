@@ -729,10 +729,12 @@
 <body oncontextmenu="return false;">
 
 <!-- SANDHYA CARD -->
-<div id="sandhyaCard">
-    <div class="sandhya-header">
-        <div class="sandhya-title">Сандхья-кала</div>
-        <div class="sandhya-city-btn" id="cityToggleBtn">🧭 <span id="cityLabel">Авто</span></div>
+<div id="sandhyaCard" onclick="hideSandhyaCard()">
+    <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="sandhya-title" style="position: static; transform: none; left: auto;">Сандхья-кала</div>
+        <div class="sandhya-city-label" style="font-size: 0.5rem; font-weight: 300; margin-top: 4px; color: var(--accent); opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">
+            🧭 <span id="cityLabel">Авто</span>
+        </div>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
         <div class="sandhya-period" id="sp-morning">
@@ -836,7 +838,6 @@
             </button>
         </div>
         <button id="installGuideBtn" onclick="openInstallOverlay()">Как установить приложение</button>
-        <button id="feedbackBtn" onclick="window.location.href='mailto:sergpolik@gmail.com?subject=Отзыв%20о%20приложении%20Мастер'" style="background:transparent; border:none; color:var(--accent); font-size:0.8rem; text-decoration:underline; cursor:pointer; margin-top:10px;">💡 Оставить отзыв / Идею</button>
         <div class="main-action-btns">
             <button id="startBtn" class="btn-main" style="width: 100%; max-width: 260px;" onclick="handleStart(event)">НАЧАТЬ</button>
             <!-- <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button> -->
@@ -849,7 +850,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.06 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.07 (SANDHYA / KASHTANKA)</div>
 </div>
 
 <div id="installOverlay">
@@ -1201,7 +1202,7 @@
         navigator.geolocation.getCurrentPosition(function(pos) {
             sandhyaLat = pos.coords.latitude;
             sandhyaLng = pos.coords.longitude;
-            sandhyaCityName = 'Авто 📍';
+            sandhyaCityName = 'Авто';
             localStorage.setItem('sandhya_lat', sandhyaLat);
             localStorage.setItem('sandhya_lng', sandhyaLng);
             localStorage.setItem('sandhya_city', sandhyaCityName);
