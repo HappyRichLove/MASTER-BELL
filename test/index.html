@@ -10,8 +10,8 @@
     <meta name="theme-color" content="#f4f1ea">
     <meta name="description" content="Каштанка — приложение для практики осознанности. Сандхья-кала, дыхательный таймер, медитация.">
     <title>🐕 Каштанка</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
 
     <!-- Yandex.Metrika counter -->
@@ -1282,6 +1282,7 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
+        setTimeout(function() { openMediaPlayer(); }, 2000);
     }
 
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
