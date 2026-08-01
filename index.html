@@ -412,70 +412,6 @@
             border-radius: 20px;
             padding: 10px 20px;
             font-family: inherit;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text);
-            cursor: pointer;
-            margin-top: 12px;
-            width: 100%;
-            -webkit-tap-highlight-color: transparent;
-            transition: all 0.2s;
-        }
-        .media-timer-btn:active { transform: scale(0.97); }
-        .media-close-btn {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 10px;
-            font-family: inherit;
-            font-size: 0.75rem;
-            color: var(--accent);
-            cursor: pointer;
-            margin-top: 4px;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* MANTRA TIMER (21 min timer mode) */
-        #mantraTimerOverlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 5000;
-            background: var(--bg);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        #mantraTimerOverlay.show { display: flex; }
-        .mantra-time-display {
-            font-size: 5rem;
-            font-weight: 100;
-            color: var(--text);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .mantra-label {
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 32px;
-        }
-        .mantra-close {
-            background: transparent;
-            border: 1.5px solid var(--sandhya-border);
-            border-radius: 20px;
-            padding: 12px 32px;
-            font-family: inherit;
-            font-size: 0.8rem;
-            color: var(--accent);
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         /* MAIN CONTAINER */
         .container {
             width: 100%; max-width: 600px; text-align: center;
@@ -772,31 +708,7 @@
     <button class="notif-close" onclick="closeNotifBanner()">Хорошо</button>
 </div>
 
-<!-- MEDIA PLAYER (after timer) -->
-<div id="mediaPlayer">
-    <div class="media-header">
-        <div class="media-title">🙏 САНДХЬЯ-КАЛА</div>
-    </div>
-    <div class="media-progress-container">
-        <span id="mediaTimeCurrent">0:00</span>
-        <input type="range" id="mediaProgress" class="media-progress" value="0" min="0" max="100" step="0.1" oninput="seekMedia(event)">
-        <span id="mediaTimeTotal">0:00</span>
-    </div>
-    <div class="media-controls">
-        <button class="media-btn" onclick="rewindMedia()" title="Назад 10с"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
-        <button class="media-btn play-btn" id="playPauseBtn" onclick="toggleMediaPlay()"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-        <button class="media-btn" onclick="closeMediaPlayer()" title="Стоп"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
-    </div>
-    <button class="media-timer-btn" onclick="startMantraTimer()">⏱ Таймер мантры 21 минута</button>
-    <button class="media-close-btn" onclick="closeMediaPlayer()">Пропустить</button>
-</div>
 
-<!-- MANTRA TIMER (21 min) -->
-<div id="mantraTimerOverlay">
-    <div class="mantra-label">🙏 Сандхья-кала</div>
-    <div class="mantra-time-display" id="mantraDisplay">21:00</div>
-    <button class="mantra-close" onclick="stopMantraTimer()">Завершить</button>
-</div>
 
 <canvas id="particleCanvas"></canvas>
 
@@ -1219,20 +1131,7 @@
         if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
     }
 
-    /* =====================================================
-       MEDIA PLAYER (after timer done)
-       ===================================================== */
-    var mediaAudio = null;
-    var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
 
-    function openMediaPlayer() {
-        if(state.running && !state.paused) {
-            state.paused = true;
-            els.startBtn.textContent = 'Продолжить';
-            releaseWakeLock();
-        }
-        document.getElementById('mediaPlayer').classList.add('show');
-    }
     function openInstallOverlay() {
         document.getElementById('installOverlay').classList.add('show');
         var ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -1267,103 +1166,7 @@
         }
     }
 
-    function closeMediaPlayer() {
-        document.getElementById('mediaPlayer').classList.remove('show');
-        if (mediaAudio) {
-            mediaAudio.pause();
-            mediaAudio = null;
-        }
-        document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-        document.getElementById('mediaProgress').value = 0;
-        document.getElementById('mediaTimeCurrent').textContent = "0:00";
-    }
-    function toggleMediaPlay() {
-        if (MANTRA_URL === 'PLACEHOLDER_URL') {
-            closeMediaPlayer();
-            startMantraTimer();
-            return;
-        }
-        if (!mediaAudio) {
-            mediaAudio = new Audio(MANTRA_URL);
-            mediaAudio.preload = 'auto';
-            mediaAudio.onloadedmetadata = function() {
-                document.getElementById('mediaTimeTotal').textContent = formatHHMMSS(mediaAudio.duration);
-            };
-            mediaAudio.ontimeupdate = function() {
-                if(!mediaAudio.duration) return;
-                var progress = (mediaAudio.currentTime / mediaAudio.duration) * 100;
-                document.getElementById('mediaProgress').value = progress;
-                document.getElementById('mediaTimeCurrent').textContent = formatHHMMSS(mediaAudio.currentTime);
-            };
-            mediaAudio.onended = function() {
-                document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-                document.getElementById('mediaProgress').value = 0;
-            };
-        }
-        if (mediaAudio.paused) {
-            if (mediaAudio.currentTime > 0) mediaAudio.currentTime = 0;
-            var playPromise = mediaAudio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    alert('Ошибка загрузки аудио: ' + error.message + '\n\nФайл недоступен или заблокирован сервером.');
-                    document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-                });
-            }
-            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        } else {
-            mediaAudio.pause();
-            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-        }
-    }
-    function seekMedia(e) {
-        if (mediaAudio && mediaAudio.duration) {
-            var val = e.target.value;
-            mediaAudio.currentTime = (val / 100) * mediaAudio.duration;
-        }
-    }
-    function formatHHMMSS(sec) {
-        if(isNaN(sec)) return "0:00";
-        var m = Math.floor(sec / 60);
-        var s = Math.floor(sec % 60);
-        return m + ":" + (s < 10 ? '0' : '') + s;
-    }
-    function rewindMedia() {
-        if (mediaAudio) { mediaAudio.currentTime = Math.max(0, mediaAudio.currentTime - 10); }
-    }
 
-    /* =====================================================
-       MANTRA TIMER (21 min)
-       ===================================================== */
-    var mantraIntervalId = null;
-    var mantraSecondsLeft = 21 * 60;
-
-    function startMantraTimer() {
-        closeMediaPlayer();
-        mantraSecondsLeft = 21 * 60;
-        document.getElementById('mantraDisplay').textContent = '21:00';
-        document.getElementById('mantraTimerOverlay').classList.add('show');
-        requestWakeLock();
-        if (mantraIntervalId) clearInterval(mantraIntervalId);
-        mantraIntervalId = setInterval(function() {
-            mantraSecondsLeft--;
-            var m = Math.floor(mantraSecondsLeft / 60);
-            var s = mantraSecondsLeft % 60;
-            document.getElementById('mantraDisplay').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-            if (mantraSecondsLeft <= 0) {
-                clearInterval(mantraIntervalId);
-                mantraIntervalId = null;
-                initAudio();
-                playMegaGong();
-                releaseWakeLock();
-                setTimeout(function() { stopMantraTimer(); }, 3000);
-            }
-        }, 1000);
-    }
-    function stopMantraTimer() {
-        if (mantraIntervalId) { clearInterval(mantraIntervalId); mantraIntervalId = null; }
-        document.getElementById('mantraTimerOverlay').classList.remove('show');
-        releaseWakeLock();
-    }
 
     /* =====================================================
        AUDIO ENGINE (original, unchanged)
@@ -1474,7 +1277,6 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
-        setTimeout(function() { openMediaPlayer(); }, 2000);
     }
 
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
@@ -1494,9 +1296,7 @@
 
     setInterval(function() { 
         var isBreathing = state.running && !state.paused && state.idx !== 3;
-        var isAudioPlaying = mediaAudio && !mediaAudio.paused;
-        var isMantraTimerRunning = mantraIntervalId !== null;
-        if (isBreathing || isAudioPlaying || isMantraTimerRunning) { 
+        if (isBreathing) { 
             state.totalSec++; 
             updJournal(); 
         } 
