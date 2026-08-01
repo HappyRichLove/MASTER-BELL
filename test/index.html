@@ -573,7 +573,7 @@
         .secondary-btns {
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
-            gap: 36px; margin-bottom: 4px;
+            gap: 24px; margin-bottom: 4px;
             -webkit-align-items: center; align-items: center;
         }
 
@@ -587,6 +587,14 @@
             -webkit-transition: all 0.2s; transition: all 0.2s;
             -webkit-tap-highlight-color: transparent;
         }
+
+        #installGuideBtn {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 8px 16px; border-radius: 20px; font-family: inherit; font-size: 0.8rem;
+            cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.1em;
+            text-decoration: none; display: inline-block;
+        }
+        @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
 
         .main-action-btns {
             display: -webkit-flex; display: flex;
@@ -751,6 +759,9 @@
                 <svg id="sunIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 <svg id="moonIcon" style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
+            <button id="sandhyaInfoBtn" class="icon-btn" onclick="showSandhyaCard()" title="Сандхья-кала">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M12 22v-2"/><circle cx="12" cy="12" r="4"/></svg>
+            </button>
             <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
             </button>
@@ -758,6 +769,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
         </div>
+        <a id="installGuideBtn" href="install.html">Как установить приложение</a>
         <div class="main-action-btns">
             <button id="startBtn" class="btn-main" onclick="handleStart(event)">1. Дыхание</button>
             <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button>
@@ -1313,6 +1325,11 @@
 
     /* WELCOME */
     var lastSeenW = localStorage.getItem('mb_v20_welcome');
+    // Hide install guide button if standalone via JS as well for iOS
+    if (window.navigator.standalone === true) {
+        var installBtn = document.getElementById('installGuideBtn');
+        if(installBtn) installBtn.style.display = 'none';
+    }
     if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) {
         setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000);
         localStorage.setItem('mb_v20_welcome', Date.now().toString());

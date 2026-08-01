@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Установка приложения МАСТЕР</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent-color: #c9a050;
+            --card-bg: #2a2a2a;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .tab.active {
+            background: var(--bg-color);
+            color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .content {
+            display: none;
+        }
+        .content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-right: 16px;
+        }
+        .step-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+        .step-text b {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        .emoji-icon {
+            font-size: 22px;
+            margin: 0 4px;
+            vertical-align: middle;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>МАСТЕР</h1>
+        <p class="subtitle">Установите приложение для быстрого доступа</p>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('ios')">iOS (Apple)</div>
+            <div class="tab" onclick="switchTab('android')">Android</div>
+        </div>
+
+        <div id="ios" class="content active">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">Откройте этот сайт в браузере <b>Safari</b>. В нижнем меню нажмите на иконку «Поделиться» <span class="emoji-icon">⍐</span> (квадрат со стрелочкой вверх).</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">В появившемся меню прокрутите немного вниз и выберите пункт <b>«На экран "Домой"»</b> <span class="emoji-icon">➕</span>.</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">В правом верхнем углу нажмите кнопку <b>«Добавить»</b>. Готово! Иконка МАСТЕР появится на вашем экране.</div>
+            </div>
+        </div>
+
+        <div id="android" class="content">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">Откройте этот сайт в браузере <b>Google Chrome</b>. В правом верхнем углу нажмите на иконку меню <span class="emoji-icon">⋮</span> (три точки).</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">В открывшемся списке выберите <b>«Установить приложение»</b> или «Добавить на главный экран».</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">Подтвердите действие, нажав <b>«Установить»</b>. Готово! Приложение появится в списке ваших программ.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(platform) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            
+            if(platform === 'ios') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('ios').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('android').classList.add('active');
+            }
+        }
+        
+        // Автоматическое определение ОС пользователя для удобства
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(userAgent)) {
+            switchTab('android');
+        }
+    </script>
+</body>
+</html>
