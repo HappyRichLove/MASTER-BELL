@@ -770,7 +770,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.01 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.02 (SANDHYA / KASHTANKA)</div>
 </div>
 
 <script>
@@ -1109,6 +1109,7 @@
             };
         }
         if (mediaAudio.paused) {
+            if (mediaAudio.currentTime > 0) mediaAudio.currentTime = 0;
             var playPromise = mediaAudio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(function(error) {

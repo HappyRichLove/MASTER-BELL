@@ -1,5 +1,5 @@
-/* Service Worker — Каштанка v20.00 */
-var CACHE_NAME = 'kashtanka-v20.00';
+/* Service Worker — Каштанка v20.02 */
+var CACHE_NAME = 'kashtanka-v20.02';
 var ASSETS = [
   './',
   './index.html',
@@ -34,12 +34,18 @@ self.addEventListener('fetch', function(e) {
   var url = e.request.url;
   /* Media files: cache-first (audio from S3) */
   if (url.includes('.m4a') || url.includes('.mp3') || url.includes('.ogg')) {
+    // Bypass SW for external audio to fix Safari Range request (The operation was aborted) error
+    if (url.startsWith('http') && !url.includes(self.location.hostname)) {
+      return; 
+    }
     e.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(e.request).then(function(cached) {
           if (cached) return cached;
           return fetch(e.request).then(function(resp) {
-            cache.put(e.request, resp.clone());
+            if (resp.status === 200) {
+              cache.put(e.request, resp.clone());
+            }
             return resp;
           });
         });
