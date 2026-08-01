@@ -1,5 +1,5 @@
-/* Service Worker — Каштанка v20.03 */
-var CACHE_NAME = 'kashtanka-v20.03';
+/* Service Worker — Каштанка v20.04 */
+var CACHE_NAME = 'kashtanka-v20.04';
 var ASSETS = [
   './',
   './index.html',

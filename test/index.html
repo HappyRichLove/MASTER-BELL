@@ -649,6 +649,26 @@
             color: var(--text); font-size: 0.95rem; line-height: 1.4;
         }
         .install-step-text b { color: var(--gold); }
+        .install-accordion-btn {
+            background: var(--bg); border: 1px solid var(--accent); color: var(--accent);
+            padding: 10px; border-radius: 12px; width: 100%; font-family: inherit;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 10px;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s;
+        }
+        .install-accordion-content {
+            display: none; margin-top: 16px; padding-top: 16px;
+            border-top: 1px solid var(--sandhya-border);
+            max-height: 50vh; overflow-y: auto; padding-right: 8px;
+        }
+        .install-accordion-content.show { display: block; }
+        .install-accordion-content img {
+            width: 100%; border-radius: 16px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .install-img-caption {
+            font-size: 0.85rem; color: var(--text); opacity: 0.8;
+            margin-bottom: 8px; font-weight: 600; text-align: center;
+        }
 
         .main-action-btns {
             display: -webkit-flex; display: flex;
@@ -836,7 +856,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.03 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.04 (SANDHYA / KASHTANKA)</div>
 </div>
 
 <div id="installOverlay">
@@ -851,19 +871,33 @@
         <div class="install-content active" id="contentIOS">
             <div class="install-step">
                 <div class="install-step-num">1</div>
-                <div class="install-step-text">Откройте этот сайт в браузере <b>Safari</b>.</div>
+                <div class="install-step-text">Внизу экрана нажмите на меню <b>«Три точки» (...)</b>, затем выберите <b>«Поделиться»</b>.</div>
             </div>
             <div class="install-step">
                 <div class="install-step-num">2</div>
-                <div class="install-step-text">В самом низу экрана нажмите на иконку <b>«Поделиться»</b> (квадратик со стрелочкой вверх).</div>
+                <div class="install-step-text">В появившемся меню пролистайте вниз и найдите пункт <b>«На экран "Домой"»</b> (иконка с плюсиком). Если его нет, нажмите <b>«Показать больше»</b>.</div>
             </div>
             <div class="install-step">
                 <div class="install-step-num">3</div>
-                <div class="install-step-text">В появившемся меню пролистайте немного вниз и выберите пункт <b>«На экран "Домой"»</b> (иконка с плюсиком).</div>
+                <div class="install-step-text">Нажмите кнопку <b>«Добавить»</b> в правом верхнем углу.</div>
             </div>
-            <div class="install-step">
-                <div class="install-step-num">4</div>
-                <div class="install-step-text">В правом верхнем углу нажмите кнопку <b>«Добавить»</b>. Готово! Иконка появится на рабочем столе.</div>
+
+            <button class="install-accordion-btn" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+            <div class="install-accordion-content">
+                <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (...) в нижней панели браузера</div>
+                <img src="img/ios-step1.png" alt="Шаг 1" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 2: В открывшемся меню нажмите «Поделиться»</div>
+                <img src="img/ios-step2.png" alt="Шаг 2" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 3: Пролистайте вниз до конца. Если кнопки нет, нажмите «Показать больше»</div>
+                <img src="img/ios-step3.png" alt="Шаг 3" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 4: Выберите пункт «Добавить на экран "Домой"»</div>
+                <img src="img/ios-step4.png" alt="Шаг 4" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 5: Нажмите синюю кнопку «Добавить» сверху</div>
+                <img src="img/ios-step5.png" alt="Шаг 5" loading="lazy">
             </div>
         </div>
 
@@ -1211,6 +1245,16 @@
         } else {
             document.getElementById('tabAndroid').classList.add('active');
             document.getElementById('contentAndroid').classList.add('active');
+        }
+    }
+    function toggleInstallAccordion(btn) {
+        var content = btn.nextElementSibling;
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            btn.innerHTML = '📸 Показать инструкцию с фото';
+        } else {
+            content.classList.add('show');
+            btn.innerHTML = 'Скрыть фото';
         }
     }
 
