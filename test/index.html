@@ -110,12 +110,14 @@
             border-bottom: 1px solid var(--sandhya-border);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 10px 16px 8px;
+            padding: calc(10px + env(safe-area-inset-top)) 16px 8px;
             display: flex;
             flex-direction: column;
             gap: 4px;
             transform: translateY(-100%);
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         #sandhyaCard.visible { transform: translateY(0); }
 
@@ -201,22 +203,7 @@
             margin-top: 1px;
         }
 
-        /* Завтра утро */
-        .sandhya-tomorrow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 3px 0 0;
-            border-top: 1px solid var(--sandhya-border);
-            font-size: 0.55rem;
-            color: var(--accent);
-            letter-spacing: 0.1em;
-        }
-        .sandhya-tomorrow span {
-            font-weight: 700;
-            color: var(--gold);
-        }
+        /* Завтра утро - удалено по запросу */
 
         /* Обратный отсчёт до ближайшей */
         #sandhyaCountdown {
@@ -483,7 +470,7 @@
             display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
-            padding-top: 95px; /* отступ под sandhya card */
+            padding-top: calc(40px + env(safe-area-inset-top)); /* отступ под sandhya card (уменьшен, так как она будет скрываться) */
             padding-bottom: 5px;
         }
 
@@ -592,15 +579,24 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        .main-action-btns {
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            gap: 12px; width: 100%; max-width: 340px;
+        }
         .btn-main {
             background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
-            cursor: pointer; font-family: inherit; font-size: 1.2rem; font-weight: 900;
+            cursor: pointer; font-family: inherit; font-size: 1rem; font-weight: 900;
             color: #ffffff;
             -webkit-box-shadow: 0 12px 30px var(--glow); box-shadow: 0 12px 30px var(--glow);
-            width: 220px;
+            flex: 1;
             -webkit-transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent; text-transform: uppercase;
+        }
+        .btn-alt {
+            background: transparent; color: var(--gold);
+            border: 2px solid var(--gold); box-shadow: none;
         }
         .btn-main:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
 
@@ -638,10 +634,10 @@
 <body oncontextmenu="return false;">
 
 <!-- SANDHYA CARD -->
-<div id="sandhyaCard">
+<div id="sandhyaCard" onclick="hideSandhyaCard()">
     <div class="sandhya-header">
         <div class="sandhya-title">🙏 Сандхья-кала</div>
-        <button class="sandhya-city-btn" id="cityToggleBtn" onclick="openCityModal()">📍 <span id="cityLabel">Гео</span></button>
+        <button class="sandhya-city-btn" id="cityToggleBtn" onclick="event.stopPropagation(); openCityModal()">📍 <span id="cityLabel">Гео</span></button>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
         <div class="sandhya-period" id="sp-morning">
@@ -670,9 +666,6 @@
         </div>
     </div>
     <div id="sandhyaCountdown">—</div>
-    <div class="sandhya-tomorrow" id="sandhyaTomorrow">
-        Завтра утро: <span id="tomorrowMorning">--:--</span>
-    </div>
 </div>
 
 <!-- CITY MODAL -->
@@ -696,8 +689,8 @@
 <!-- MEDIA PLAYER (after timer) -->
 <div id="mediaPlayer">
     <div class="media-header">
-        <div class="media-title">🕉 После практики</div>
-        <div class="media-subtitle" id="mediaSubtitle">Мантры</div>
+        <div class="media-title">🕉 Мантра</div>
+        <div class="media-subtitle" id="mediaSubtitle">Садхгуру</div>
     </div>
     <div class="media-controls">
         <button class="media-btn" onclick="rewindMedia()" title="Назад 10с">⏮</button>
@@ -754,7 +747,10 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
         </div>
-        <button id="startBtn" class="btn-main" onclick="handleStart(event)">СТАРТ</button>
+        <div class="main-action-btns">
+            <button id="startBtn" class="btn-main" onclick="handleStart(event)">1. Дыхание</button>
+            <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button>
+        </div>
     </div>
 
     <div class="cycle-progress" id="cycleDots"></div>
@@ -858,22 +854,23 @@
     var sandhyaTimers = [];
     var sandhyaData = null;
 
+    function hideSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        if(card) card.classList.remove('visible');
+    }
+
     function computeSandhya(date, lat, lng) {
         var times = SunCalc.getTimes(date, lat, lng);
         var sunrise = times.sunrise;
         var solarNoon = times.solarNoon;
         var sunset = times.sunset;
         var nadir = times.nadir;
-        // Morning: Brahma Muhurta = 96 min before sunrise, window 96 min
         var morningStart = new Date(sunrise.getTime() - 96 * 60000);
         var morningEnd   = sunrise;
-        // Midday: ±24 min around solarNoon
         var middayStart  = new Date(solarNoon.getTime() - 24 * 60000);
         var middayEnd    = new Date(solarNoon.getTime() + 24 * 60000);
-        // Evening: sunset → +48 min
         var eveningStart = sunset;
         var eveningEnd   = new Date(sunset.getTime() + 48 * 60000);
-        // Night: nadir ±24 min
         var nightStart   = new Date(nadir.getTime() - 24 * 60000);
         var nightEnd     = new Date(nadir.getTime() + 24 * 60000);
         return {
@@ -887,11 +884,8 @@
     function renderSandhya() {
         if (!sandhyaLat || !sandhyaLng) return;
         var now = new Date();
-        // Use noon to avoid timezone date shifting in SunCalc
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
-        var tomorrow = new Date(today.getTime() + 86400000);
         sandhyaData = computeSandhya(today, sandhyaLat, sandhyaLng);
-        var tomorrowData = computeSandhya(tomorrow, sandhyaLat, sandhyaLng);
 
         var periods = [
             { key: 'morning', id: 'morning' },
@@ -921,7 +915,6 @@
                 elPeriod.classList.add('passed');
             } else {
                 elPeriod.classList.add('active');
-                // track nearest upcoming
                 if (d.start.getTime() < nextMs) {
                     nextMs = d.start.getTime();
                     nextPeriod = { name: getperiodName(p.key), start: d.start, notifyAt: new Date(d.start.getTime() - 30 * 60000) };
@@ -929,18 +922,10 @@
             }
         });
 
-        // Tomorrow morning
-        document.getElementById('tomorrowMorning').textContent = formatHHMM(tomorrowData.morning.peak);
-
-        // Countdown
         updateCountdown(nextPeriod);
-
-        // Schedule notification
         scheduleNotification(nextPeriod);
-
-        // Show card
         document.getElementById('sandhyaCard').classList.add('visible');
-        updateCityLabel();
+        setTimeout(hideSandhyaCard, 15000);
     }
 
     function getperiodName(key) {
@@ -986,7 +971,6 @@
         if (msUntilNotif > 0 && msUntilNotif < 86400000) {
             var t = setTimeout(function() {
                 showNotificationBanner(nextPeriod.name, '🙏 Время практики через 30 минут');
-                // also use Notification API if granted
                 if (window.Notification && Notification.permission === 'granted') {
                     new Notification('🙏 ' + nextPeriod.name, { body: 'Время практики через 30 минут', icon: 'icon-192.png', silent: false });
                 }
@@ -1006,7 +990,6 @@
         document.getElementById('notifSub').textContent = sub;
         var banner = document.getElementById('notifBanner');
         banner.classList.add('show');
-        // play gentle sound
         initAudio();
         playSingingBowl(0);
     }
@@ -1044,7 +1027,7 @@
         localStorage.setItem('sandhya_city', sandhyaCityName);
         closeCityModal();
         renderSandhya();
-        startCountdownLoop(null); // will recalc inside renderSandhya
+        startCountdownLoop(null);
     }
     function useGeolocation() {
         if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
@@ -1061,18 +1044,15 @@
             alert('Не удалось получить геолокацию. Выберите город вручную.');
         });
     }
-    function updateCityLabel() {
-        document.getElementById('cityLabel').textContent = sandhyaCityName || 'Гео';
-    }
 
     /* =====================================================
        MEDIA PLAYER (after timer done)
        ===================================================== */
     var mediaAudio = null;
-    var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3'; // TODO: вставить URL с S3
+    var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
 
     function showMediaPlayer() {
-        document.getElementById('mediaSubtitle').textContent = 'Мантры · загружается из облака';
+        document.getElementById('mediaSubtitle').textContent = 'Садхгуру — Мантры';
         document.getElementById('mediaPlayer').classList.add('show');
     }
     function closeMediaPlayer() {
@@ -1085,7 +1065,6 @@
     }
     function toggleMediaPlay() {
         if (MANTRA_URL === 'PLACEHOLDER_URL') {
-            // URL не задан — показываем таймер вместо плеера
             closeMediaPlayer();
             startMantraTimer();
             return;
@@ -1208,12 +1187,12 @@
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
             state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
-            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); renderDots(); runIdx(0);
-        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'ПРОДОЛЖИТЬ'; releaseWakeLock(); }
-        else { state.paused = false; els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
+            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'Пауза'; requestWakeLock(); renderDots(); runIdx(0);
+        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'Продолжить'; releaseWakeLock(); }
+        else { state.paused = false; els.startBtn.textContent = 'Пауза'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
     }
 
-    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = '1. Дыхание'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
 
     function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
@@ -1251,7 +1230,6 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
-        // Show media player after gong fades
         setTimeout(function() { showMediaPlayer(); }, 2000);
     }
 
@@ -1283,7 +1261,6 @@
     /* INIT SANDHYA */
     if (sandhyaLat && sandhyaLng) {
         renderSandhya();
-        // Recalculate next period for countdown
         var nextPeriodForLoop = null;
         if (sandhyaData) {
             var nowMs = Date.now();
