@@ -596,6 +596,60 @@
         }
         @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
 
+        /* Install Overlay */
+        #installOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 5000;
+            display: none; -webkit-flex-direction: column; flex-direction: column;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        #installOverlay.show { display: -webkit-flex; display: flex; }
+        .install-card {
+            background: var(--surface); padding: 24px; border-radius: 24px;
+            width: 100%; max-width: 400px; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--sandhya-border);
+        }
+        .install-close {
+            position: absolute; top: 16px; right: 16px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--text); cursor: pointer; opacity: 0.6;
+        }
+        .install-title {
+            text-align: center; color: var(--gold); font-size: 1.2rem;
+            font-weight: 800; letter-spacing: 0.1em; margin-bottom: 20px;
+        }
+        .install-tabs {
+            display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 16px;
+        }
+        .install-tab {
+            flex: 1; padding: 10px; text-align: center; background: var(--bg);
+            border-radius: 12px; color: var(--accent); font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .install-tab.active {
+            background: var(--gold); color: #fff;
+        }
+        .install-content { display: none; }
+        .install-content.active { display: block; }
+        .install-step {
+            display: -webkit-flex; display: flex; gap: 12px; margin-bottom: 16px;
+            align-items: flex-start;
+        }
+        .install-step-num {
+            background: var(--gold); color: #fff; width: 28px; height: 28px;
+            border-radius: 50%; display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .install-step-text {
+            color: var(--text); font-size: 0.95rem; line-height: 1.4;
+        }
+        .install-step-text b { color: var(--gold); }
+
         .main-action-btns {
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
@@ -769,7 +823,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
         </div>
-        <a id="installGuideBtn" href="install.html">Как установить приложение</a>
+        <button id="installGuideBtn" onclick="openInstallOverlay()">Как установить приложение</button>
         <div class="main-action-btns">
             <button id="startBtn" class="btn-main" onclick="handleStart(event)">1. Дыхание</button>
             <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button>
@@ -782,7 +836,56 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.02 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.03 (SANDHYA / KASHTANKA)</div>
+</div>
+
+<div id="installOverlay">
+    <div class="install-card">
+        <button class="install-close" onclick="closeInstallOverlay()">×</button>
+        <div class="install-title">УСТАНОВКА</div>
+        <div class="install-tabs">
+            <div class="install-tab active" id="tabIOS" onclick="switchInstallTab('ios')">Apple (iOS)</div>
+            <div class="install-tab" id="tabAndroid" onclick="switchInstallTab('android')">Android</div>
+        </div>
+        
+        <div class="install-content active" id="contentIOS">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Откройте этот сайт в браузере <b>Safari</b>.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">В самом низу экрана нажмите на иконку <b>«Поделиться»</b> (квадратик со стрелочкой вверх).</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">В появившемся меню пролистайте немного вниз и выберите пункт <b>«На экран "Домой"»</b> (иконка с плюсиком).</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">4</div>
+                <div class="install-step-text">В правом верхнем углу нажмите кнопку <b>«Добавить»</b>. Готово! Иконка появится на рабочем столе.</div>
+            </div>
+        </div>
+
+        <div class="install-content" id="contentAndroid">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Откройте сайт в <b>Google Chrome</b> или другом браузере.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">Нажмите на иконку меню <b>«Три точки»</b> в правом верхнем углу.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">В списке найдите и выберите <b>«Установить приложение»</b> или «Добавить на главный экран».</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">4</div>
+                <div class="install-step-text">Подтвердите установку. Готово! Приложение появится на рабочем столе.</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -1087,6 +1190,30 @@
         }
         document.getElementById('mediaPlayer').classList.add('show');
     }
+    function openInstallOverlay() {
+        document.getElementById('installOverlay').classList.add('show');
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(ua)) switchInstallTab('android');
+        else switchInstallTab('ios');
+    }
+    function closeInstallOverlay() {
+        document.getElementById('installOverlay').classList.remove('show');
+    }
+    function switchInstallTab(platform) {
+        document.getElementById('tabIOS').classList.remove('active');
+        document.getElementById('tabAndroid').classList.remove('active');
+        document.getElementById('contentIOS').classList.remove('active');
+        document.getElementById('contentAndroid').classList.remove('active');
+        
+        if (platform === 'ios') {
+            document.getElementById('tabIOS').classList.add('active');
+            document.getElementById('contentIOS').classList.add('active');
+        } else {
+            document.getElementById('tabAndroid').classList.add('active');
+            document.getElementById('contentAndroid').classList.add('active');
+        }
+    }
+
     function closeMediaPlayer() {
         document.getElementById('mediaPlayer').classList.remove('show');
         if (mediaAudio) {
