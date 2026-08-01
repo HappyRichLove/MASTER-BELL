@@ -485,8 +485,8 @@
 
         .visualizer {
             position: relative;
-            width: 80vw; max-width: 300px;
-            height: 40vh; max-height: 300px;
+            width: 90vw; max-width: 380px;
+            height: 45vh; max-height: 380px;
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
             -webkit-align-items: center; align-items: center;
@@ -568,7 +568,7 @@
             -webkit-align-items: center; align-items: center;
             gap: 14px; width: 100%;
         }
-        .master-label { font-weight: 700; letter-spacing: 0.2em; font-size: 1.1rem; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+        .master-label { font-weight: 300; letter-spacing: 0.2em; font-size: 1.1rem; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
 
         .secondary-btns {
             display: -webkit-flex; display: flex;
@@ -594,6 +594,7 @@
             cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.1em;
             text-decoration: none; display: inline-block;
         }
+        .sandhya-period .s-name { font-weight: 800; color: #fff; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
         @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
 
         /* Install Overlay */
@@ -728,29 +729,25 @@
 <div id="sandhyaCard" onclick="hideSandhyaCard()">
     <div class="sandhya-header">
         <div class="sandhya-title">🙏 Сандхья-кала</div>
-        <button class="sandhya-city-btn" id="cityToggleBtn" onclick="event.stopPropagation(); openCityModal()">📍 <span id="cityLabel">Гео</span></button>
+        <button class="sandhya-city-btn" id="cityToggleBtn" onclick="event.stopPropagation(); openCityModal()">🧭 <span id="cityLabel">Гео</span></button>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
         <div class="sandhya-period" id="sp-morning">
-            <div class="s-emoji">☀️</div>
             <div class="s-name">Утро</div>
             <div class="s-time" id="st-morning">--:--</div>
             <div class="s-window" id="sw-morning"></div>
         </div>
         <div class="sandhya-period" id="sp-midday">
-            <div class="s-emoji">🌞</div>
             <div class="s-name">Полдень</div>
             <div class="s-time" id="st-midday">--:--</div>
             <div class="s-window" id="sw-midday"></div>
         </div>
         <div class="sandhya-period" id="sp-evening">
-            <div class="s-emoji">🌅</div>
             <div class="s-name">Вечер</div>
             <div class="s-time" id="st-evening">--:--</div>
             <div class="s-window" id="sw-evening"></div>
         </div>
         <div class="sandhya-period" id="sp-night">
-            <div class="s-emoji">🌙</div>
             <div class="s-name">Полночь</div>
             <div class="s-time" id="st-night">--:--</div>
             <div class="s-window" id="sw-night"></div>
@@ -845,8 +842,8 @@
         </div>
         <button id="installGuideBtn" onclick="openInstallOverlay()">Как установить приложение</button>
         <div class="main-action-btns">
-            <button id="startBtn" class="btn-main" onclick="handleStart(event)">1. Дыхание</button>
-            <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button>
+            <button id="startBtn" class="btn-main" style="width: 100%; max-width: 260px;" onclick="handleStart(event)">НАЧАТЬ</button>
+            <!-- <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button> -->
         </div>
     </div>
 
@@ -856,7 +853,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.04 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.05 (SANDHYA / KASHTANKA)</div>
 </div>
 
 <div id="installOverlay">
@@ -1002,8 +999,6 @@
         { name: 'Новосибирск',   lat: 55.0084, lng: 82.9357 },
         { name: 'Челябинск',     lat: 55.1644, lng: 61.4368 },
         { name: 'Алматы',        lat: 43.2220, lng: 76.8512 },
-        { name: 'Ришикеш',       lat: 30.0869, lng: 78.2676 },
-        { name: 'Варанаси',      lat: 25.3176, lng: 82.9739 },
         { name: 'Бали (Убуд)',   lat: -8.5069, lng: 115.2625 }
     ];
 
@@ -1132,18 +1127,7 @@
     }
 
     function scheduleNotification(nextPeriod) {
-        clearAllNotifTimeouts();
-        if (!nextPeriod) return;
-        var msUntilNotif = nextPeriod.notifyAt.getTime() - Date.now();
-        if (msUntilNotif > 0 && msUntilNotif < 86400000) {
-            var t = setTimeout(function() {
-                showNotificationBanner(nextPeriod.name, '🙏 Время практики через 30 минут');
-                if (window.Notification && Notification.permission === 'granted') {
-                    new Notification('🙏 ' + nextPeriod.name, { body: 'Время практики через 30 минут', icon: 'icon-192.png', silent: false });
-                }
-            }, msUntilNotif);
-            notifTimeouts.push(t);
-        }
+        // Уведомления отключены по просьбе
     }
 
     function requestNotificationPermission() {
