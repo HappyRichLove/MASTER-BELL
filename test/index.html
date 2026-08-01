@@ -716,9 +716,8 @@
 
 <!-- MANTRA TIMER (21 min) -->
 <div id="mantraTimerOverlay">
-    <div class="mantra-label">🕉 Практика мантры</div>
+    <div class="mantra-label">🙏 Сандхья-кала</div>
     <div class="mantra-time-display" id="mantraDisplay">21:00</div>
-    <div style="font-size:0.6rem;color:var(--accent);letter-spacing:0.1em;margin-bottom:24px;">ОСТАЛОСЬ</div>
     <button class="mantra-close" onclick="stopMantraTimer()">Завершить</button>
 </div>
 
@@ -771,7 +770,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.00 (SANDHYA / KASHTANKA)</div>
+    <div class="version-tag" id="versionTag">v20.01 (SANDHYA / KASHTANKA)</div>
 </div>
 
 <script>
@@ -1110,7 +1109,13 @@
             };
         }
         if (mediaAudio.paused) {
-            mediaAudio.play();
+            var playPromise = mediaAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    alert('Ошибка загрузки аудио: ' + error.message + '\n\nФайл недоступен или заблокирован сервером.');
+                    document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                });
+            }
             document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         } else {
             mediaAudio.pause();
@@ -1293,7 +1298,15 @@
     function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
     anim();
 
-    setInterval(function() { if(state.running&&!state.paused&&state.idx!==3) { state.totalSec++; updJournal(); } }, 1000);
+    setInterval(function() { 
+        var isBreathing = state.running && !state.paused && state.idx !== 3;
+        var isAudioPlaying = mediaAudio && !mediaAudio.paused;
+        var isMantraTimerRunning = mantraIntervalId !== null;
+        if (isBreathing || isAudioPlaying || isMantraTimerRunning) { 
+            state.totalSec++; 
+            updJournal(); 
+        } 
+    }, 1000);
     renderStatText(); renderDots();
 
     /* WELCOME */
