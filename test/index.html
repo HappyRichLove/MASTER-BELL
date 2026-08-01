@@ -86,21 +86,6 @@
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* WELCOME ALERT */
-        #welcomeAlert {
-            position: fixed; top: -100px; left: 50%;
-            -webkit-transform: translateX(-50%); transform: translateX(-50%);
-            background: var(--surface); color: var(--gold);
-            padding: 12px 30px; border-radius: 40px;
-            -webkit-box-shadow: 0 15px 40px rgba(0,0,0,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
-            z-index: 10000; font-size: 0.85rem;
-            -webkit-transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            white-space: nowrap;
-        }
-        #welcomeAlert.show { top: 40px; }
-
         /* SANDHYA CARD */
         #sandhyaCard {
             position: fixed;
@@ -364,6 +349,35 @@
         .media-subtitle {
             font-size: 0.75rem;
             color: var(--accent);
+        }
+        .media-progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        .media-progress {
+            flex: 1;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--circle-bg);
+            border-radius: 4px;
+            outline: none;
+        }
+        .media-progress::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         .media-controls {
             display: flex;
@@ -689,8 +703,13 @@
 <!-- MEDIA PLAYER (after timer) -->
 <div id="mediaPlayer">
     <div class="media-header">
-        <div class="media-title">🕉 Мантра</div>
-        <div class="media-subtitle" id="mediaSubtitle">Садхгуру</div>
+        <div class="media-title">🙏 САНДХЬЯ-КАЛА</div>
+        <div class="media-subtitle" id="mediaSubtitle">Медитация</div>
+    </div>
+    <div class="media-progress-container">
+        <span id="mediaTimeCurrent">0:00</span>
+        <input type="range" id="mediaProgress" class="media-progress" value="0" min="0" max="100" step="0.1" oninput="seekMedia(event)">
+        <span id="mediaTimeTotal">0:00</span>
     </div>
     <div class="media-controls">
         <button class="media-btn" onclick="rewindMedia()" title="Назад 10с">⏮</button>
@@ -709,7 +728,6 @@
     <button class="mantra-close" onclick="stopMantraTimer()">Завершить</button>
 </div>
 
-<div id="welcomeAlert">❤️ МАСТЕР НЕ СПИТ СЕЙЧАС 🙏</div>
 <canvas id="particleCanvas"></canvas>
 
 <div class="container">
@@ -786,7 +804,6 @@
         inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
         repeats: document.getElementById('repeat-input'),
         canvas: document.getElementById('particleCanvas'),
-        welcome: document.getElementById('welcomeAlert'),
         triangleSvg: document.getElementById('triangleSvg')
     };
 
@@ -925,6 +942,7 @@
         updateCountdown(nextPeriod);
         scheduleNotification(nextPeriod);
         document.getElementById('sandhyaCard').classList.add('visible');
+        updateCityLabel();
         setTimeout(hideSandhyaCard, 15000);
     }
 
@@ -1045,14 +1063,19 @@
         });
     }
 
+    function updateCityLabel() {
+        var lbl = document.getElementById('cityLabel');
+        if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
+    }
+
     /* =====================================================
        MEDIA PLAYER (after timer done)
        ===================================================== */
     var mediaAudio = null;
     var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
 
-    function showMediaPlayer() {
-        document.getElementById('mediaSubtitle').textContent = 'Садхгуру — Мантры';
+    function openMediaPlayer() {
+        document.getElementById('mediaSubtitle').textContent = 'Медитация · Садхгуру';
         document.getElementById('mediaPlayer').classList.add('show');
     }
     function closeMediaPlayer() {
@@ -1062,6 +1085,8 @@
             mediaAudio = null;
         }
         document.getElementById('playPauseBtn').textContent = '▶';
+        document.getElementById('mediaProgress').value = 0;
+        document.getElementById('mediaTimeCurrent').textContent = "0:00";
     }
     function toggleMediaPlay() {
         if (MANTRA_URL === 'PLACEHOLDER_URL') {
@@ -1072,8 +1097,18 @@
         if (!mediaAudio) {
             mediaAudio = new Audio(MANTRA_URL);
             mediaAudio.preload = 'auto';
+            mediaAudio.onloadedmetadata = function() {
+                document.getElementById('mediaTimeTotal').textContent = formatHHMMSS(mediaAudio.duration);
+            };
+            mediaAudio.ontimeupdate = function() {
+                if(!mediaAudio.duration) return;
+                var progress = (mediaAudio.currentTime / mediaAudio.duration) * 100;
+                document.getElementById('mediaProgress').value = progress;
+                document.getElementById('mediaTimeCurrent').textContent = formatHHMMSS(mediaAudio.currentTime);
+            };
             mediaAudio.onended = function() {
                 document.getElementById('playPauseBtn').textContent = '▶';
+                document.getElementById('mediaProgress').value = 0;
             };
         }
         if (mediaAudio.paused) {
@@ -1083,6 +1118,18 @@
             mediaAudio.pause();
             document.getElementById('playPauseBtn').textContent = '▶';
         }
+    }
+    function seekMedia(e) {
+        if (mediaAudio && mediaAudio.duration) {
+            var val = e.target.value;
+            mediaAudio.currentTime = (val / 100) * mediaAudio.duration;
+        }
+    }
+    function formatHHMMSS(sec) {
+        if(isNaN(sec)) return "0:00";
+        var m = Math.floor(sec / 60);
+        var s = Math.floor(sec % 60);
+        return m + ":" + (s < 10 ? '0' : '') + s;
     }
     function rewindMedia() {
         if (mediaAudio) { mediaAudio.currentTime = Math.max(0, mediaAudio.currentTime - 10); }
@@ -1230,7 +1277,7 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
-        setTimeout(function() { showMediaPlayer(); }, 2000);
+        setTimeout(function() { openMediaPlayer(); }, 2000);
     }
 
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
