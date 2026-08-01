@@ -1,5 +1,5 @@
 /* Service Worker — MASTER v20.09 */
-var CACHE_NAME = 'master-v20.09';
+var CACHE_NAME = 'master-v20.10';
 var ASSETS = [
   './',
   './index.html',
