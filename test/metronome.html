@@ -78,7 +78,9 @@
     </div>
 
     <div class="master-title">МАСТЕР</div>
-    <div class="timer-display" id="display" onclick="handleStart(event)">00:00</div>
+    <div class="timer-display" id="display" onclick="handleStart(event)">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8ZM12 6a1 1 0 0 0-1 1v4.58L9.29 13.3a1 1 0 0 0 1.42 1.4L13 12.42V7A1 1 0 0 0 12 6Z"/></svg>
+    </div>
 
     <div class="controls">
         <div class="secondary-btns">
@@ -142,7 +144,7 @@
         if(now >= state.nextTick) {
             state.sec++;
             state.totalGlobalSec++;
-            els.display.textContent = formatMMSS(state.sec);
+            // els.display.textContent = formatMMSS(state.sec); // Hidden per request
             els.display.classList.add('pulse');
             setTimeout(function(){ els.display.classList.remove('pulse'); }, 150);
             playTick();
@@ -175,7 +177,7 @@
     function handleReset(e) { 
         if(e) { e.preventDefault(); e.stopPropagation(); } 
         state.running = false; els.startBtn.textContent = 'СТАРТ'; 
-        state.sec = 0; els.display.textContent = '00:00'; 
+        state.sec = 0; // els.display.textContent = '00:00'; 
         releaseWakeLock(); 
     }
 
@@ -202,7 +204,8 @@
 
     try {
         state.totalGlobalSec = parseInt(localStorage.getItem('mb_total')) || 0;
-        state.night = localStorage.getItem('mb_night') === 'true';
+        var mbNight = localStorage.getItem('mb_night');
+        state.night = mbNight === null ? true : (mbNight === 'true');
         if (state.night) applyTheme();
         updateTotalMins();
     } catch(e){}

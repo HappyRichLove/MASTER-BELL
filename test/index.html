@@ -1217,7 +1217,8 @@
         state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
         var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = parseFloat(saved[si]) || state.ints[si]; }
         state.reps = parseInt(localStorage.getItem('mb_repeats')) || 10;
-        state.night = localStorage.getItem('mb_night') === 'true';
+        var mbNight = localStorage.getItem('mb_night');
+        state.night = mbNight === null ? true : (mbNight === 'true');
         for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
         els.repeats.value = state.reps; if (state.night) applyTheme();
     } catch(e){}
