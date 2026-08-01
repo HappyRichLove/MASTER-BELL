@@ -188,8 +188,6 @@
             margin-top: 1px;
         }
 
-        /* Завтра утро - удалено по запросу */
-
         /* Обратный отсчёт до ближайшей */
         #sandhyaCountdown {
             text-align: center;
@@ -322,33 +320,30 @@
         /* MEDIA PLAYER (after timer) */
         #mediaPlayer {
             position: fixed;
-            bottom: -200px;
-            left: 50%; transform: translateX(-50%);
+            bottom: 0; left: 0; right: 0;
+            transform: translateY(110%);
             z-index: 2000;
             background: var(--surface);
             border-radius: 24px 24px 0 0;
             padding: 20px 24px 34px;
             box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 480px;
-            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
-        #mediaPlayer.show { bottom: 0; }
+        #mediaPlayer.show { transform: translateY(0); }
         .media-header {
-            text-align: center;
-            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
         }
         .media-title {
-            font-size: 0.65rem;
+            font-size: 1.1rem;
             font-weight: 800;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            letter-spacing: 0.1em;
             color: var(--gold);
-            margin-bottom: 4px;
-        }
-        .media-subtitle {
-            font-size: 0.75rem;
-            color: var(--accent);
         }
         .media-progress-container {
             display: flex;
@@ -704,7 +699,6 @@
 <div id="mediaPlayer">
     <div class="media-header">
         <div class="media-title">🙏 САНДХЬЯ-КАЛА</div>
-        <div class="media-subtitle" id="mediaSubtitle">Медитация</div>
     </div>
     <div class="media-progress-container">
         <span id="mediaTimeCurrent">0:00</span>
@@ -1080,7 +1074,6 @@
             els.startBtn.textContent = 'Продолжить';
             releaseWakeLock();
         }
-        document.getElementById('mediaSubtitle').textContent = 'Медитация · Садхгуру';
         document.getElementById('mediaPlayer').classList.add('show');
     }
     function closeMediaPlayer() {
