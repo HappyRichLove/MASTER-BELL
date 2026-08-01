@@ -295,7 +295,7 @@
         /* NOTIFICATION BANNER */
         #notifBanner {
             position: fixed;
-            top: -120px; left: 50%;
+            top: -200px; left: 50%;
             transform: translateX(-50%);
             z-index: 10001;
             background: var(--surface);
@@ -712,9 +712,9 @@
         <span id="mediaTimeTotal">0:00</span>
     </div>
     <div class="media-controls">
-        <button class="media-btn" onclick="rewindMedia()" title="Назад 10с">⏮</button>
-        <button class="media-btn play-btn" id="playPauseBtn" onclick="toggleMediaPlay()">▶</button>
-        <button class="media-btn" onclick="closeMediaPlayer()" title="Стоп">⏹</button>
+        <button class="media-btn" onclick="rewindMedia()" title="Назад 10с"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+        <button class="media-btn play-btn" id="playPauseBtn" onclick="toggleMediaPlay()"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="media-btn" onclick="closeMediaPlayer()" title="Стоп"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
     </div>
     <button class="media-timer-btn" onclick="startMantraTimer()">⏱ Таймер мантры 21 минута</button>
     <button class="media-close-btn" onclick="closeMediaPlayer()">Пропустить</button>
@@ -1075,6 +1075,11 @@
     var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
 
     function openMediaPlayer() {
+        if(state.running && !state.paused) {
+            state.paused = true;
+            els.startBtn.textContent = 'Продолжить';
+            releaseWakeLock();
+        }
         document.getElementById('mediaSubtitle').textContent = 'Медитация · Садхгуру';
         document.getElementById('mediaPlayer').classList.add('show');
     }
@@ -1084,7 +1089,7 @@
             mediaAudio.pause();
             mediaAudio = null;
         }
-        document.getElementById('playPauseBtn').textContent = '▶';
+        document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
         document.getElementById('mediaProgress').value = 0;
         document.getElementById('mediaTimeCurrent').textContent = "0:00";
     }
@@ -1107,16 +1112,16 @@
                 document.getElementById('mediaTimeCurrent').textContent = formatHHMMSS(mediaAudio.currentTime);
             };
             mediaAudio.onended = function() {
-                document.getElementById('playPauseBtn').textContent = '▶';
+                document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
                 document.getElementById('mediaProgress').value = 0;
             };
         }
         if (mediaAudio.paused) {
             mediaAudio.play();
-            document.getElementById('playPauseBtn').textContent = '⏸';
+            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         } else {
             mediaAudio.pause();
-            document.getElementById('playPauseBtn').textContent = '▶';
+            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
         }
     }
     function seekMedia(e) {
@@ -1277,7 +1282,6 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
-        setTimeout(function() { openMediaPlayer(); }, 2000);
     }
 
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
