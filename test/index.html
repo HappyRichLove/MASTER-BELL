@@ -10,6 +10,7 @@
     <meta name="theme-color" content="#f4f1ea">
     <meta name="description" content="MASTER — приложение для практики осознанности. Сандхья-кала, дыхательный таймер, медитация.">
     <title>MASTER</title>
+    <meta name="apple-mobile-web-app-title" content="MASTER">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -320,160 +321,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* MEDIA PLAYER (after timer) */
-        #mediaPlayer {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            transform: translateY(110%);
-            z-index: 2000;
-            background: var(--surface);
-            border-radius: 24px 24px 0 0;
-            padding: 20px 24px 34px;
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        #mediaPlayer.show { transform: translateY(0); }
-        .media-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .media-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            color: var(--gold);
-        }
-        .media-progress-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--accent);
-            font-variant-numeric: tabular-nums;
-        }
-        .media-progress {
-            flex: 1;
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: var(--circle-bg);
-            border-radius: 4px;
-            outline: none;
-        }
-        .media-progress::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--gold);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .media-controls {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            align-items: center;
-        }
-        .media-btn {
-            background: var(--circle-bg);
-            border: none;
-            border-radius: 50%;
-            width: 52px; height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text);
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.15s;
-            font-size: 1.2rem;
-        }
-        .media-btn:active { transform: scale(0.9); }
-        .media-btn.play-btn {
-            background: var(--gold);
-            color: white;
-            width: 64px; height: 64px;
-            font-size: 1.6rem;
-            box-shadow: 0 8px 24px var(--glow);
-        }
-        .media-timer-btn {
-            background: var(--circle-bg);
-            border: 1.5px solid var(--sandhya-border);
-            border-radius: 20px;
-            padding: 10px 20px;
-            font-family: inherit;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text);
-            cursor: pointer;
-            margin-top: 12px;
-            width: 100%;
-            -webkit-tap-highlight-color: transparent;
-            transition: all 0.2s;
-        }
-        .media-timer-btn:active { transform: scale(0.97); }
-        .media-close-btn {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 10px;
-            font-family: inherit;
-            font-size: 0.75rem;
-            color: var(--accent);
-            cursor: pointer;
-            margin-top: 4px;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* MANTRA TIMER (21 min timer mode) */
-        #mantraTimerOverlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 5000;
-            background: var(--bg);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        #mantraTimerOverlay.show { display: flex; }
-        .mantra-time-display {
-            font-size: 5rem;
-            font-weight: 100;
-            color: var(--text);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .mantra-label {
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 32px;
-        }
-        .mantra-close {
-            background: transparent;
-            border: 1.5px solid var(--sandhya-border);
-            border-radius: 20px;
-            padding: 12px 32px;
-            font-family: inherit;
-            font-size: 0.8rem;
-            color: var(--accent);
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
 
         /* MAIN CONTAINER */
         .container {
@@ -731,7 +578,7 @@
 <!-- SANDHYA CARD -->
 <div id="sandhyaCard" onclick="hideSandhyaCard()">
     <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <div class="sandhya-title" style="position: static; transform: none; left: auto;">Сандхья-кала</div>
+        <div class="sandhya-title" style="display: none;"></div>
         <div class="sandhya-city-label" style="font-size: 0.5rem; font-weight: 300; margin-top: 4px; color: var(--accent); opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">
             🧭 <span id="cityLabel">Авто</span>
         </div>
@@ -771,31 +618,7 @@
     <button class="notif-close" onclick="closeNotifBanner()">Хорошо</button>
 </div>
 
-<!-- MEDIA PLAYER (after timer) -->
-<div id="mediaPlayer">
-    <div class="media-header">
-        <div class="media-title">🙏 САНДХЬЯ-КАЛА</div>
-    </div>
-    <div class="media-progress-container">
-        <span id="mediaTimeCurrent">0:00</span>
-        <input type="range" id="mediaProgress" class="media-progress" value="0" min="0" max="100" step="0.1" oninput="seekMedia(event)">
-        <span id="mediaTimeTotal">0:00</span>
-    </div>
-    <div class="media-controls">
-        <button class="media-btn" onclick="rewindMedia()" title="Назад 10с"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
-        <button class="media-btn play-btn" id="playPauseBtn" onclick="toggleMediaPlay()"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-        <button class="media-btn" onclick="closeMediaPlayer()" title="Стоп"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
-    </div>
-    <button class="media-timer-btn" onclick="startMantraTimer()">⏱ Таймер мантры 21 минута</button>
-    <button class="media-close-btn" onclick="closeMediaPlayer()">Пропустить</button>
-</div>
 
-<!-- MANTRA TIMER (21 min) -->
-<div id="mantraTimerOverlay">
-    <div class="mantra-label">🙏 Сандхья-кала</div>
-    <div class="mantra-time-display" id="mantraDisplay">21:00</div>
-    <button class="mantra-close" onclick="stopMantraTimer()">Завершить</button>
-</div>
 
 <canvas id="particleCanvas"></canvas>
 
@@ -850,7 +673,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.08 (SANDHYA / MASTER)</div>
+    <div class="version-tag" id="versionTag">v20.11 (DAY / NIGHT)</div>
 </div>
 
 <div id="installOverlay">
@@ -1166,37 +989,8 @@
     }
 
     /* =====================================================
-       CITY MODAL
+       CITY GEOLOCATION
        ===================================================== */
-    function openCityModal() {
-        var list = document.getElementById('cityList');
-        list.innerHTML = '';
-        CITIES.forEach(function(city) {
-            var btn = document.createElement('button');
-            btn.className = 'city-btn' + (sandhyaCityName === city.name ? ' selected' : '');
-            btn.textContent = city.name;
-            btn.onclick = function() { selectCity(city); };
-            list.appendChild(btn);
-        });
-        document.getElementById('cityModal').classList.add('open');
-    }
-    function closeCityModal() {
-        document.getElementById('cityModal').classList.remove('open');
-    }
-    function closeCityModalOutside(e) {
-        if (e.target === document.getElementById('cityModal')) closeCityModal();
-    }
-    function selectCity(city) {
-        sandhyaLat = city.lat;
-        sandhyaLng = city.lng;
-        sandhyaCityName = city.name;
-        localStorage.setItem('sandhya_lat', sandhyaLat);
-        localStorage.setItem('sandhya_lng', sandhyaLng);
-        localStorage.setItem('sandhya_city', sandhyaCityName);
-        closeCityModal();
-        renderSandhya();
-        startCountdownLoop(null);
-    }
     function useGeolocation() {
         if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
         navigator.geolocation.getCurrentPosition(function(pos) {
@@ -1206,10 +1000,9 @@
             localStorage.setItem('sandhya_lat', sandhyaLat);
             localStorage.setItem('sandhya_lng', sandhyaLng);
             localStorage.setItem('sandhya_city', sandhyaCityName);
-            closeCityModal();
             renderSandhya();
         }, function() {
-            alert('Не удалось получить геолокацию. Выберите город вручную.');
+            alert('Не удалось получить геолокацию.');
         });
     }
 
@@ -1218,20 +1011,7 @@
         if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
     }
 
-    /* =====================================================
-       MEDIA PLAYER (after timer done)
-       ===================================================== */
-    var mediaAudio = null;
-    var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
 
-    function openMediaPlayer() {
-        if(state.running && !state.paused) {
-            state.paused = true;
-            els.startBtn.textContent = 'Продолжить';
-            releaseWakeLock();
-        }
-        document.getElementById('mediaPlayer').classList.add('show');
-    }
     function openInstallOverlay() {
         document.getElementById('installOverlay').classList.add('show');
         var ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -1266,109 +1046,35 @@
         }
     }
 
-    function closeMediaPlayer() {
-        document.getElementById('mediaPlayer').classList.remove('show');
-        if (mediaAudio) {
-            mediaAudio.pause();
-            mediaAudio = null;
-        }
-        document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-        document.getElementById('mediaProgress').value = 0;
-        document.getElementById('mediaTimeCurrent').textContent = "0:00";
-    }
-    function toggleMediaPlay() {
-        if (MANTRA_URL === 'PLACEHOLDER_URL') {
-            closeMediaPlayer();
-            startMantraTimer();
-            return;
-        }
-        if (!mediaAudio) {
-            mediaAudio = new Audio(MANTRA_URL);
-            mediaAudio.preload = 'auto';
-            mediaAudio.onloadedmetadata = function() {
-                document.getElementById('mediaTimeTotal').textContent = formatHHMMSS(mediaAudio.duration);
-            };
-            mediaAudio.ontimeupdate = function() {
-                if(!mediaAudio.duration) return;
-                var progress = (mediaAudio.currentTime / mediaAudio.duration) * 100;
-                document.getElementById('mediaProgress').value = progress;
-                document.getElementById('mediaTimeCurrent').textContent = formatHHMMSS(mediaAudio.currentTime);
-            };
-            mediaAudio.onended = function() {
-                document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-                document.getElementById('mediaProgress').value = 0;
-            };
-        }
-        if (mediaAudio.paused) {
-            if (mediaAudio.currentTime > 0) mediaAudio.currentTime = 0;
-            var playPromise = mediaAudio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    alert('Ошибка загрузки аудио: ' + error.message + '\n\nФайл недоступен или заблокирован сервером.');
-                    document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-                });
-            }
-            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        } else {
-            mediaAudio.pause();
-            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-        }
-    }
-    function seekMedia(e) {
-        if (mediaAudio && mediaAudio.duration) {
-            var val = e.target.value;
-            mediaAudio.currentTime = (val / 100) * mediaAudio.duration;
-        }
-    }
-    function formatHHMMSS(sec) {
-        if(isNaN(sec)) return "0:00";
-        var m = Math.floor(sec / 60);
-        var s = Math.floor(sec % 60);
-        return m + ":" + (s < 10 ? '0' : '') + s;
-    }
-    function rewindMedia() {
-        if (mediaAudio) { mediaAudio.currentTime = Math.max(0, mediaAudio.currentTime - 10); }
-    }
+
 
     /* =====================================================
-       MANTRA TIMER (21 min)
-       ===================================================== */
-    var mantraIntervalId = null;
-    var mantraSecondsLeft = 21 * 60;
-
-    function startMantraTimer() {
-        closeMediaPlayer();
-        mantraSecondsLeft = 21 * 60;
-        document.getElementById('mantraDisplay').textContent = '21:00';
-        document.getElementById('mantraTimerOverlay').classList.add('show');
-        requestWakeLock();
-        if (mantraIntervalId) clearInterval(mantraIntervalId);
-        mantraIntervalId = setInterval(function() {
-            mantraSecondsLeft--;
-            var m = Math.floor(mantraSecondsLeft / 60);
-            var s = mantraSecondsLeft % 60;
-            document.getElementById('mantraDisplay').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-            if (mantraSecondsLeft <= 0) {
-                clearInterval(mantraIntervalId);
-                mantraIntervalId = null;
-                initAudio();
-                playMegaGong();
-                releaseWakeLock();
-                setTimeout(function() { stopMantraTimer(); }, 3000);
-            }
-        }, 1000);
-    }
-    function stopMantraTimer() {
-        if (mantraIntervalId) { clearInterval(mantraIntervalId); mantraIntervalId = null; }
-        document.getElementById('mantraTimerOverlay').classList.remove('show');
-        releaseWakeLock();
-    }
-
-    /* =====================================================
-       AUDIO ENGINE (original, unchanged)
+       AUDIO ENGINE (Limiter Compressor + Optimized Reverb)
        ===================================================== */
     var audio = null;
-    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
+    var masterGain = null;
+    var masterCompressor = null;
+    var reverbNode = null;
+
+    function initAudio() {
+        if (!audio) {
+            audio = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audio.createGain();
+            masterGain.gain.value = 0.85;
+
+            // Master Limiter preventing hard digital clipping/crackling on weak devices
+            masterCompressor = audio.createDynamicsCompressor();
+            masterCompressor.threshold.setValueAtTime(-6, audio.currentTime);
+            masterCompressor.knee.setValueAtTime(12, audio.currentTime);
+            masterCompressor.ratio.setValueAtTime(12, audio.currentTime);
+            masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
+            masterCompressor.release.setValueAtTime(0.25, audio.currentTime);
+
+            masterGain.connect(masterCompressor);
+            masterCompressor.connect(audio.destination);
+        }
+        if (audio.state === 'suspended') audio.resume();
+    }
 
     var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
@@ -1385,11 +1091,96 @@
     var allInputs = document.querySelectorAll('.interval-input');
     for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
 
-    var reverbNode = null;
-    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; } } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
+    function ensureReverb() {
+        if (reverbNode || !audio) return;
+        var len = Math.floor(audio.sampleRate * 1.0);
+        var buf = audio.createBuffer(2, len, audio.sampleRate);
+        for (var ch = 0; ch < 2; ch++) {
+            var data = buf.getChannelData(ch);
+            for (var i = 0; i < len; i++) {
+                var p = 1 - i / len;
+                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.5);
+            }
+        }
+        reverbNode = audio.createConvolver();
+        reverbNode.buffer = buf;
+        reverbNode.connect(masterGain);
+    }
+
     var strikeNoiseBuffer = null;
-    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; if (!strikeNoiseBuffer) { strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate); var data = strikeNoiseBuffer.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); } var noise = audio.createBufferSource(); noise.buffer = strikeNoiseBuffer; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
+    function playStrikeNoise(dest, volume, duration) {
+        var now = audio.currentTime;
+        var bufLen = Math.floor(audio.sampleRate * duration);
+        if (bufLen < 1) return;
+        if (!strikeNoiseBuffer) {
+            strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate);
+            var data = strikeNoiseBuffer.getChannelData(0);
+            for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audio.sampleRate * 0.008));
+        }
+        var noise = audio.createBufferSource();
+        noise.buffer = strikeNoiseBuffer;
+        var bp = audio.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 2500;
+        bp.Q.value = 0.8;
+        var g = audio.createGain();
+        g.gain.setValueAtTime(volume, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        noise.connect(bp);
+        bp.connect(g);
+        g.connect(dest);
+        noise.start(now);
+        noise.stop(now + duration);
+    }
+
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
+        if (!audio) return;
+        var vol = volumeMult || 1;
+        var now = audio.currentTime;
+        ensureReverb();
+
+        var dry = audio.createGain();
+        var wet = audio.createGain();
+        dry.gain.value = dryVal;
+        wet.gain.value = wetVal;
+        dry.connect(masterGain);
+        wet.connect(reverbNode || masterGain);
+
+        var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
+        for (var i = 0; i < harmonics.length; i++) {
+            var h = harmonics[i];
+            var decay = h[2] + decayExtra;
+            var hVol = h[1] * vol;
+
+            var osc = audio.createOscillator();
+            var g = audio.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now);
+
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.linearRampToValueAtTime(hVol, now + 0.015);
+            g.gain.exponentialRampToValueAtTime(Math.max(0.0001, hVol * 0.4), now + decay * 0.3);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+            var lfo = audio.createOscillator();
+            var lfoG = audio.createGain();
+            lfo.frequency.value = 3 + Math.random() * 2;
+            lfoG.gain.value = h[0] > 3 ? 1.2 : 0.4;
+            lfo.connect(lfoG);
+            lfoG.connect(osc.frequency);
+            lfo.start(now);
+
+            osc.connect(g);
+            g.connect(dry);
+            g.connect(wet);
+
+            osc.start(now);
+            osc.stop(now + decay + 0.2);
+            lfo.stop(now + decay + 0.2);
+        }
+        playStrikeNoise(dry, strikeVol, 0.05);
+    }
+
     function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
@@ -1407,8 +1198,8 @@
 
     try {
         state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
-        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = parseFloat(saved[si]) || state.ints[si]; }
-        state.reps = parseInt(localStorage.getItem('mb_repeats')) || 10;
+        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = Math.max(0.1, parseFloat(saved[si]) || state.ints[si]); }
+        state.reps = Math.max(1, parseInt(localStorage.getItem('mb_repeats')) || 10);
         var mbNight = localStorage.getItem('mb_night');
         state.night = mbNight === null ? true : (mbNight === 'true');
         for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
@@ -1424,18 +1215,25 @@
         if(!state.running){
             state.ints = [];
             for(var i=0;i<els.inputs.length;i++) {
-                var val = parseFloat(els.inputs[i].value)||1; state.ints.push(val);
+                var raw = parseFloat(els.inputs[i].value);
+                var val = (isNaN(raw) || raw <= 0) ? 1 : raw;
+                els.inputs[i].value = val;
+                state.ints.push(val);
                 if(i===0 && val > appStats.maxVdoh) { appStats.maxVdoh = val; localStorage.setItem('mb_max_vdoh', val); }
                 if(i===1 && val > appStats.maxHold) { appStats.maxHold = val; localStorage.setItem('mb_max_hold', val); }
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
-            state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
+            var rawReps = parseInt(els.repeats.value);
+            state.reps = (isNaN(rawReps) || rawReps <= 0) ? 1 : rawReps;
+            els.repeats.value = state.reps;
+            localStorage.setItem('mb_ints', JSON.stringify(state.ints));
+            localStorage.setItem('mb_repeats', state.reps);
             state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'Пауза'; requestWakeLock(); renderDots(); runIdx(0);
         } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'Продолжить'; releaseWakeLock(); }
         else { state.paused = false; els.startBtn.textContent = 'Пауза'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
     }
 
-    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = '1. Дыхание'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'НАЧАТЬ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
 
     function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
@@ -1461,6 +1259,16 @@
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000;
             if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
         }
+        // Precision timestamp tracking for totalSec without setInterval drift
+        if (state.idx !== 3) {
+            state.totalSecAcc = (state.totalSecAcc || 0) + delta / 1000;
+            if (state.totalSecAcc >= 1.0) {
+                var addSec = Math.floor(state.totalSecAcc);
+                state.totalSecAcc -= addSec;
+                state.totalSec += addSec;
+                updJournal();
+            }
+        }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
         updateEdges((state.timeLeft/state.dur)*100); updateBreathAnimation(1 - (state.timeLeft/state.dur));
@@ -1473,7 +1281,6 @@
         trackEvent('practice_finish');
         playMegaGong();
         handleReset();
-        setTimeout(function() { openMediaPlayer(); }, 2000);
     }
 
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
@@ -1491,27 +1298,12 @@
     function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
     anim();
 
-    setInterval(function() { 
-        var isBreathing = state.running && !state.paused && state.idx !== 3;
-        var isAudioPlaying = mediaAudio && !mediaAudio.paused;
-        var isMantraTimerRunning = mantraIntervalId !== null;
-        if (isBreathing || isAudioPlaying || isMantraTimerRunning) { 
-            state.totalSec++; 
-            updJournal(); 
-        } 
-    }, 1000);
     renderStatText(); renderDots();
 
-    /* WELCOME */
-    var lastSeenW = localStorage.getItem('mb_v20_welcome');
     // Hide install guide button if standalone via JS as well for iOS
     if (window.navigator.standalone === true) {
         var installBtn = document.getElementById('installGuideBtn');
         if(installBtn) installBtn.style.display = 'none';
-    }
-    if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) {
-        setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000);
-        localStorage.setItem('mb_v20_welcome', Date.now().toString());
     }
 
     /* INIT SANDHYA */

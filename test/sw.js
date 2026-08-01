@@ -1,9 +1,13 @@
-/* Service Worker — MASTER v20.08 */
-var CACHE_NAME = 'master-v20.08';
+/* Service Worker — MASTER v20.11 */
+var CACHE_NAME = 'master-v20.11';
 var ASSETS = [
   './',
   './index.html',
   './favicon.svg',
+  './favicon.ico',
+  './apple-touch-icon.png',
+  './icon-192.png',
+  './icon-512.png',
   './manifest.json',
   './metronome.html',
   './suncalc.min.js'
