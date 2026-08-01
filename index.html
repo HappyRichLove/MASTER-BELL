@@ -8,27 +8,29 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#f4f1ea">
-    <title>❤️ MASTER BREATH🙏</title>
+    <meta name="description" content="MASTER — приложение для практики осознанности. Сандхья-кала, дыхательный таймер, медитация.">
+    <title>MASTER</title>
+    <meta name="apple-mobile-web-app-title" content="MASTER">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
-    
+
     <!-- Yandex.Metrika counter -->
-    <script type="text/javascript" >
+    <script type="text/javascript">
        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
        m[i].l=1*new Date();
        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-       var METRICA_ID = 108490319; 
+       var METRICA_ID = 108490319;
        ym(METRICA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
-
        function trackEvent(eventName) { if (typeof ym === 'function') { ym(METRICA_ID, 'reachGoal', eventName); } }
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/108490319" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
+
+    <!-- SunCalc -->
+    <script src="suncalc.min.js"></script>
 
     <style>
         *, *::before, *::after { -webkit-box-sizing: border-box; box-sizing: border-box; }
@@ -44,6 +46,8 @@
             --triangle-stroke: rgba(194, 160, 94, 0.25);
             --triangle-glow: rgba(194, 160, 94, 0.15);
             --aura-color: rgba(194, 160, 94, 0.1);
+            --sandhya-bg: rgba(255,255,255,0.85);
+            --sandhya-border: rgba(194,160,94,0.2);
         }
 
         .night-theme {
@@ -57,6 +61,8 @@
             --triangle-stroke: rgba(212, 175, 55, 0.35);
             --triangle-glow: rgba(212, 175, 55, 0.25);
             --aura-color: rgba(212, 175, 55, 0.15);
+            --sandhya-bg: rgba(28,28,30,0.92);
+            --sandhya-border: rgba(212,175,55,0.25);
         }
 
         html { background-color: var(--bg); }
@@ -70,7 +76,7 @@
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
             -webkit-align-items: center; align-items: center;
-            height: 100vh; height: 100dvh;
+            min-height: 100vh; min-height: 100dvh;
             width: 100vw;
             overflow: hidden;
             -webkit-transition: background-color 0.8s ease; transition: background-color 0.8s ease;
@@ -81,92 +87,416 @@
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* ЭХО ОВЕРЛЕЙ */
-        #echoOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 5000; display: none;
-            -webkit-flex-direction: column; flex-direction: column;
-            -webkit-align-items: center; align-items: center;
-            -webkit-justify-content: center; justify-content: center;
-            opacity: 0;
-            -webkit-transition: opacity 0.8s ease; transition: opacity 0.8s ease;
-            background: rgba(0, 0, 0, 0.85); /* Replaced blur with solid color for MAX performance */
-            -webkit-user-select: none; user-select: none;
+        /* SANDHYA CARD */
+        #sandhyaCard {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: var(--sandhya-bg);
+            border-bottom: 1px solid var(--sandhya-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: calc(10px + env(safe-area-inset-top)) 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
-        #echoOverlay.active { display: -webkit-flex; display: flex; opacity: 1; }
+        #sandhyaCard.visible { transform: translateY(0); }
 
-        #echoCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5001; pointer-events: none; }
+        .sandhya-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+        }
+        .sandhya-title {
+            position: absolute;
+            left: 50%; transform: translateX(-50%);
+            font-size: 0.6rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+        .sandhya-city-btn {
+            font-size: 0.58rem;
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 20px;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
+        .sandhya-city-btn:active { opacity: 0.5; }
 
-        .echo-content {
-            position: relative; z-index: 5005;
-            padding: 40px; pointer-events: none;
-            text-align: center; width: 100%;
+        .sandhya-periods {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
         }
 
-        #echoText {
-            font-size: 1.6rem; font-weight: 300; line-height: 1.6;
-            color: var(--gold); opacity: 0;
-            -webkit-transition: opacity 2.5s ease, -webkit-transform 2.5s ease;
-            transition: opacity 2.5s ease, transform 2.5s ease;
-            -webkit-transform: scale(0.98) translateY(10px);
-            transform: scale(0.98) translateY(10px);
-            max-width: 85%; margin: 0 auto; font-style: italic;
+        .sandhya-period {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 4px;
+            border-radius: 12px;
+            transition: background 0.3s, transform 0.2s;
+            position: relative;
         }
-        #echoText.reveal { opacity: 1; -webkit-transform: scale(1) translateY(0); transform: scale(1) translateY(0); }
-
-        .echo-hint {
-            position: absolute; bottom: 10%; left: 0; width: 100%;
-            font-size: 0.75rem; letter-spacing: 0.25em; color: var(--accent);
-            text-transform: uppercase; z-index: 5010; opacity: 0.5;
-            text-align: center; pointer-events: none;
+        .sandhya-period.active {
+            background: rgba(194, 160, 94, 0.15);
+        }
+        .sandhya-period.current {
+            background: rgba(194, 160, 94, 0.25);
+            transform: scale(1.03);
+        }
+        .sandhya-period.passed {
+            opacity: 0.35;
+        }
+        .sandhya-period .s-emoji {
+            font-size: 1.1rem;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .sandhya-period .s-name {
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1px;
+        }
+        .sandhya-period .s-time {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+        .sandhya-period.current .s-time {
+            color: var(--gold);
+        }
+        .sandhya-period .s-window {
+            font-size: 0.48rem;
+            color: var(--accent);
+            opacity: 0.7;
+            margin-top: 1px;
         }
 
-        #echoClose {
-            position: absolute; top: 50px; right: 30px; z-index: 9999;
-            background: rgba(128,128,128,0.15); border: none; color: var(--gold);
-            cursor: pointer; width: 54px; height: 54px; border-radius: 50%;
-            display: -webkit-flex; display: flex;
-            -webkit-justify-content: center; justify-content: center;
-            -webkit-align-items: center; align-items: center;
+        /* Обратный отсчёт до ближайшей */
+        #sandhyaCountdown {
+            text-align: center;
+            font-size: 0.55rem;
+            color: var(--accent);
+            letter-spacing: 0.12em;
+            padding-top: 1px;
+        }
+        #sandhyaCountdown b {
+            color: var(--gold);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* CITY MODAL */
+        #cityModal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9000;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+        }
+        #cityModal.open { display: flex; }
+        .city-sheet {
+            background: var(--surface);
+            border-radius: 24px 24px 16px 16px;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px 16px 28px;
+            animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .city-sheet-title {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+        .city-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .city-btn {
+            background: var(--bg);
+            border: 1.5px solid var(--sandhya-border);
+            border-radius: 16px;
+            padding: 12px 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .city-btn:active { transform: scale(0.96); }
+        .city-btn.selected {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+        .city-geo-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: transparent;
+            border: 1.5px solid var(--gold);
+            border-radius: 16px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .city-close-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: transparent;
+            border: none;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            color: var(--accent);
+            cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* МАСТЕР НЕ СПИТ */
-        #welcomeAlert {
-            position: fixed; top: -100px; left: 50%;
-            -webkit-transform: translateX(-50%); transform: translateX(-50%);
-            background: var(--surface); color: var(--gold);
-            padding: 15px 40px; border-radius: 40px;
-            -webkit-box-shadow: 0 15px 40px rgba(0,0,0,0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;
-            z-index: 10000;
-            -webkit-transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            white-space: nowrap;
+        /* NOTIFICATION BANNER */
+        #notifBanner {
+            position: fixed;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 14px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            min-width: 280px;
+            max-width: 340px;
+            transition: top 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #welcomeAlert.show { top: 40px; }
+        #notifBanner.show { top: 52px; }
+        .notif-emoji { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+        .notif-title { font-size: 0.9rem; font-weight: 800; color: var(--gold); letter-spacing: 0.05em; }
+        .notif-sub { font-size: 0.72rem; color: var(--accent); margin-top: 2px; }
+        .notif-close { 
+            background: var(--gold); color: white; border: none; 
+            border-radius: 20px; padding: 8px 20px; margin-top: 10px;
+            font-family: inherit; font-size: 0.75rem; font-weight: 700; 
+            cursor: pointer; letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
 
+        /* MEDIA PLAYER (after timer) */
+        #mediaPlayer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            transform: translateY(110%);
+            z-index: 2000;
+            background: var(--surface);
+            border-radius: 24px 24px 0 0;
+            padding: 20px 24px 34px;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        #mediaPlayer.show { transform: translateY(0); }
+        .media-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .media-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+        }
+        .media-progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        .media-progress {
+            flex: 1;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--circle-bg);
+            border-radius: 4px;
+            outline: none;
+        }
+        .media-progress::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .media-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            align-items: center;
+        }
+        .media-btn {
+            background: var(--circle-bg);
+            border: none;
+            border-radius: 50%;
+            width: 52px; height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s;
+            font-size: 1.2rem;
+        }
+        .media-btn:active { transform: scale(0.9); }
+        .media-btn.play-btn {
+            background: var(--gold);
+            color: white;
+            width: 64px; height: 64px;
+            font-size: 1.6rem;
+            box-shadow: 0 8px 24px var(--glow);
+        }
+        .media-timer-btn {
+            background: var(--circle-bg);
+            border: 1.5px solid var(--sandhya-border);
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+        .media-timer-btn:active { transform: scale(0.97); }
+        .media-close-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            color: var(--accent);
+            cursor: pointer;
+            margin-top: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* MANTRA TIMER (21 min timer mode) */
+        #mantraTimerOverlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 5000;
+            background: var(--bg);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #mantraTimerOverlay.show { display: flex; }
+        .mantra-time-display {
+            font-size: 5rem;
+            font-weight: 100;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .mantra-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 32px;
+        }
+        .mantra-close {
+            background: transparent;
+            border: 1.5px solid var(--sandhya-border);
+            border-radius: 20px;
+            padding: 12px 32px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* MAIN CONTAINER */
         .container {
             width: 100%; max-width: 600px; text-align: center;
             position: relative; z-index: 10;
             display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
-            padding-top: 5px;
+            padding-top: calc(40px + env(safe-area-inset-top)); /* отступ под sandhya card (уменьшен, так как она будет скрываться) */
+            padding-bottom: 5px;
         }
 
         .visualizer {
             position: relative;
-            width: 80vw; max-width: 340px;
-            height: 46vh; max-height: 340px;
+            width: 90vw; max-width: 380px;
+            height: 45vh; max-height: 380px;
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
             -webkit-align-items: center; align-items: center;
             z-index: 5; pointer-events: none;
-            margin-bottom: -10px; overflow: visible; /* Разрешаем ауре выходить за границы */
+            margin-bottom: -10px; overflow: visible;
         }
-
-
 
         .triangle-svg {
             width: 100%; height: 100%;
@@ -175,19 +505,12 @@
             transition: transform 0.3s ease-out;
             z-index: 5;
         }
-        .edge-bg {
-            fill: none; stroke: var(--triangle-stroke); stroke-width: 2;
-            
-            
-        }
+        .edge-bg { fill: none; stroke: var(--triangle-stroke); stroke-width: 2; }
         .edge-active {
             fill: none; stroke: var(--gold); stroke-width: 10;
             stroke-linecap: round;
-            
-            
             opacity: 0;
-            -webkit-transition: opacity 0.2s;
-            transition: opacity 0.2s;
+            -webkit-transition: opacity 0.2s; transition: opacity 0.2s;
         }
 
         .timer-box {
@@ -203,11 +526,11 @@
 
         .status-inner {
             font-weight: 800; letter-spacing: 0.4em; text-indent: 0.4em;
-            font-size: 1.1rem; color: var(--gold); text-transform: uppercase;
+            font-size: 1rem; color: var(--gold); text-transform: uppercase;
             text-align: center; display: block; width: 100%;
         }
         .timer-display {
-            font-size: 7rem; font-weight: 100;
+            font-size: 6rem; font-weight: 100;
             font-variant-numeric: tabular-nums; color: var(--text);
             line-height: 0.85; text-align: center;
             display: block; width: 100%;
@@ -218,24 +541,24 @@
 
         .intervals-grid {
             display: -ms-grid; display: grid;
-            grid-template-columns: repeat(4, 1fr); gap: 10px;
-            width: 92%; margin-bottom: 20px;
+            grid-template-columns: repeat(4, 1fr); gap: 8px;
+            width: 92%; margin-bottom: 16px;
             -webkit-transition: opacity 0.6s ease; transition: opacity 0.6s ease;
         }
         .running .intervals-grid { opacity: 0.1; pointer-events: none; }
 
         .interval-box {
-            background: var(--surface); padding: 12px 0; border-radius: 20px;
+            background: var(--surface); padding: 10px 0; border-radius: 18px;
             -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.04); box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
             -webkit-justify-content: center; justify-content: center;
         }
-        .interval-label { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+        .interval-label { font-size: 0.52rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
         .interval-input {
             background: transparent; border: none; font-family: inherit;
-            font-size: 20px; font-weight: 700; width: 100%; text-align: center;
+            font-size: 18px; font-weight: 700; width: 100%; text-align: center;
             color: var(--text); outline: none; padding: 0; margin: 0;
             -moz-appearance: textfield;
             -webkit-appearance: none; appearance: none;
@@ -247,20 +570,20 @@
             display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
-            gap: 15px; width: 100%;
+            gap: 14px; width: 100%;
         }
-        .master-label { font-weight: 700; letter-spacing: 0.2em; font-size: 1.2rem; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+        .master-label { font-weight: 300; letter-spacing: 0.2em; font-size: 1.1rem; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
 
         .secondary-btns {
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
-            gap: 40px; margin-bottom: 5px;
+            gap: 24px; margin-bottom: 4px;
             -webkit-align-items: center; align-items: center;
         }
 
         .icon-btn {
             background: var(--surface); border: none; cursor: pointer; color: var(--text);
-            width: 58px; height: 58px; border-radius: 50%;
+            width: 54px; height: 54px; border-radius: 50%;
             display: -webkit-flex; display: flex;
             -webkit-justify-content: center; justify-content: center;
             -webkit-align-items: center; align-items: center;
@@ -269,71 +592,212 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        #installGuideBtn {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 8px 16px; border-radius: 20px; font-family: inherit; font-size: 0.8rem;
+            cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.1em;
+            text-decoration: none; display: inline-block;
+        }
+        .sandhya-period .s-name { font-weight: 800; color: #fff; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
+        @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
+
+        /* Install Overlay */
+        #installOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 5000;
+            display: none; -webkit-flex-direction: column; flex-direction: column;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        #installOverlay.show { display: -webkit-flex; display: flex; }
+        .install-card {
+            background: var(--surface); padding: 24px; border-radius: 24px;
+            width: 100%; max-width: 400px; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--sandhya-border);
+        }
+        .install-close {
+            position: absolute; top: 16px; right: 16px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--text); cursor: pointer; opacity: 0.6;
+        }
+        .install-title {
+            text-align: center; color: var(--gold); font-size: 1.2rem;
+            font-weight: 800; letter-spacing: 0.1em; margin-bottom: 20px;
+        }
+        .install-tabs {
+            display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 16px;
+        }
+        .install-tab {
+            flex: 1; padding: 10px; text-align: center; background: var(--bg);
+            border-radius: 12px; color: var(--accent); font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .install-tab.active {
+            background: var(--gold); color: #fff;
+        }
+        .install-content { display: none; }
+        .install-content.active { display: block; }
+        .install-step {
+            display: -webkit-flex; display: flex; gap: 12px; margin-bottom: 16px;
+            align-items: flex-start;
+        }
+        .install-step-num {
+            background: var(--gold); color: #fff; width: 28px; height: 28px;
+            border-radius: 50%; display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .install-step-text {
+            color: var(--text); font-size: 0.95rem; line-height: 1.4;
+        }
+        .install-step-text b { color: var(--gold); }
+        .install-accordion-btn {
+            background: var(--bg); border: 1px solid var(--accent); color: var(--accent);
+            padding: 10px; border-radius: 12px; width: 100%; font-family: inherit;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 10px;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s;
+        }
+        .install-accordion-content {
+            display: none; margin-top: 16px; padding-top: 16px;
+            border-top: 1px solid var(--sandhya-border);
+            max-height: 50vh; overflow-y: auto; padding-right: 8px;
+        }
+        .install-accordion-content.show { display: block; }
+        .install-accordion-content img {
+            width: 100%; border-radius: 16px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .install-img-caption {
+            font-size: 0.85rem; color: var(--text); opacity: 0.8;
+            margin-bottom: 8px; font-weight: 600; text-align: center;
+        }
+
+        .main-action-btns {
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            gap: 12px; width: 100%; max-width: 340px;
+        }
         .btn-main {
-            background: var(--gold); border: none; padding: 20px 0; border-radius: 40px;
-            cursor: pointer; font-family: inherit; font-size: 1.3rem; font-weight: 900;
+            background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
+            cursor: pointer; font-family: inherit; font-size: 1rem; font-weight: 900;
             color: #ffffff;
             -webkit-box-shadow: 0 12px 30px var(--glow); box-shadow: 0 12px 30px var(--glow);
-            width: 240px;
+            flex: 1;
             -webkit-transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent; text-transform: uppercase;
         }
+        .btn-alt {
+            background: transparent; color: var(--gold);
+            border: 2px solid var(--gold); box-shadow: none;
+        }
         .btn-main:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
 
         .cycle-progress {
-            margin-top: 12px; display: -webkit-flex; display: flex;
+            margin-top: 10px; display: -webkit-flex; display: flex;
             gap: 6px; -webkit-justify-content: center; justify-content: center;
             -webkit-flex-wrap: wrap; flex-wrap: wrap; width: 85%;
         }
         .cycle-dot {
-            width: 9px; height: 9px; border-radius: 50%; background: var(--circle-bg);
+            width: 8px; height: 8px; border-radius: 50%; background: var(--circle-bg);
             -webkit-transition: 0.4s; transition: 0.4s;
         }
         .cycle-dot.active { background: var(--gold); -webkit-transform: scale(1.3); transform: scale(1.3); }
 
         .stat-container {
-            margin-top: 15px; display: -webkit-flex; display: flex;
+            margin-top: 12px; display: -webkit-flex; display: flex;
             -webkit-flex-direction: column; flex-direction: column;
             -webkit-align-items: center; align-items: center;
             cursor: pointer; -webkit-tap-highlight-color: transparent;
-            min-height: 44px;
-        }
-        .stat-label {
-            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em;
-            color: var(--accent); text-transform: uppercase; margin-bottom: 2px;
-            -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease;
+            min-height: 40px;
         }
         .stat-value {
-            font-size: 1.2rem; font-weight: 700; color: var(--gold);
+            font-size: 1.1rem; font-weight: 700; color: var(--gold);
             font-variant-numeric: tabular-nums;
-            -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
-            transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        .stat-value.fade { opacity: 0; -webkit-transform: translateY(5px); transform: translateY(5px); }
 
         .version-tag {
-            margin-top: 6px; font-size: 0.55rem; letter-spacing: 0.15em;
+            margin-top: 4px; font-size: 0.52rem; letter-spacing: 0.15em;
             color: var(--accent); opacity: 0.4; cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            padding: 8px 20px; 
+            padding: 6px 20px;
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="echoOverlay" onmousedown="startEchoReveal(event)" onmouseup="stopEchoReveal()" ontouchstart="startEchoReveal(event)" ontouchend="stopEchoReveal()">
-    <button id="echoClose" onclick="closeEcho(event)">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-    <canvas id="echoCanvas"></canvas>
-    <div class="echo-content">
-        <div id="echoText"></div>
+<!-- SANDHYA CARD -->
+<div id="sandhyaCard" onclick="hideSandhyaCard()">
+    <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="sandhya-title" style="display: none;"></div>
+        <div class="sandhya-city-label" style="font-size: 0.5rem; font-weight: 300; margin-top: 4px; color: var(--accent); opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">
+            🧭 <span id="cityLabel">Авто</span>
+        </div>
     </div>
-    <div class="echo-hint" id="echoHint">Зажми палец в центре, чтобы притянуть Истину</div>
+    <div class="sandhya-periods" id="sandhyaPeriods">
+        <div class="sandhya-period" id="sp-morning">
+            <div class="s-name">Утро</div>
+            <div class="s-time" id="st-morning">--:--</div>
+            <div class="s-window" id="sw-morning"></div>
+        </div>
+        <div class="sandhya-period" id="sp-midday">
+            <div class="s-name">Полдень</div>
+            <div class="s-time" id="st-midday">--:--</div>
+            <div class="s-window" id="sw-midday"></div>
+        </div>
+        <div class="sandhya-period" id="sp-evening">
+            <div class="s-name">Вечер</div>
+            <div class="s-time" id="st-evening">--:--</div>
+            <div class="s-window" id="sw-evening"></div>
+        </div>
+        <div class="sandhya-period" id="sp-night">
+            <div class="s-name">Полночь</div>
+            <div class="s-time" id="st-night">--:--</div>
+            <div class="s-window" id="sw-night"></div>
+        </div>
+    </div>
+    <div id="sandhyaCountdown">—</div>
 </div>
 
-<div id="welcomeAlert">❤️ МАСТЕР НЕ СПИТ СЕЙЧАС 🙏</div>
+<!-- CITY MODAL (Removed) -->
+
+<!-- NOTIFICATION BANNER -->
+<div id="notifBanner">
+    <span class="notif-emoji">🙏</span>
+    <div class="notif-title" id="notifTitle">Сандхья-кала</div>
+    <div class="notif-sub" id="notifSub">Время практики через 30 минут</div>
+    <button class="notif-close" onclick="closeNotifBanner()">Хорошо</button>
+</div>
+
+<!-- MEDIA PLAYER (after timer) -->
+<div id="mediaPlayer">
+    <div class="media-header">
+        <div class="media-title">🙏 САНДХЬЯ-КАЛА</div>
+    </div>
+    <div class="media-progress-container">
+        <span id="mediaTimeCurrent">0:00</span>
+        <input type="range" id="mediaProgress" class="media-progress" value="0" min="0" max="100" step="0.1" oninput="seekMedia(event)">
+        <span id="mediaTimeTotal">0:00</span>
+    </div>
+    <div class="media-controls">
+        <button class="media-btn" onclick="rewindMedia()" title="Назад 10с"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+        <button class="media-btn play-btn" id="playPauseBtn" onclick="toggleMediaPlay()"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="media-btn" onclick="closeMediaPlayer()" title="Стоп"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
+    </div>
+    <button class="media-timer-btn" onclick="startMantraTimer()">⏱ Таймер мантры 21 минута</button>
+    <button class="media-close-btn" onclick="closeMediaPlayer()">Пропустить</button>
+</div>
+
+<!-- MANTRA TIMER (21 min) -->
+<div id="mantraTimerOverlay">
+    <div class="mantra-label">🙏 Сандхья-кала</div>
+    <div class="mantra-time-display" id="mantraDisplay">21:00</div>
+    <button class="mantra-close" onclick="stopMantraTimer()">Завершить</button>
+</div>
+
 <canvas id="particleCanvas"></canvas>
 
 <div class="container">
@@ -361,26 +825,97 @@
         <div class="master-label">❤️ МАСТЕР 🙏</div>
         <div class="secondary-btns">
             <button id="themeBtn" class="icon-btn" onclick="handleTheme(event)">
-                <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                <svg id="moonIcon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg id="sunIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg id="moonIcon" style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button id="sandhyaInfoBtn" class="icon-btn" onclick="toggleSandhyaCard()" title="Сандхья-кала">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </button>
             <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
             </button>
             <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
         </div>
-        <button id="startBtn" class="btn-main" onclick="handleStart(event)">СТАРТ</button>
+        <button id="installGuideBtn" onclick="openInstallOverlay()">Как установить приложение</button>
+        <div class="main-action-btns">
+            <button id="startBtn" class="btn-main" style="width: 100%; max-width: 260px;" onclick="handleStart(event)">НАЧАТЬ</button>
+            <!-- <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button> -->
+        </div>
     </div>
 
     <div class="cycle-progress" id="cycleDots"></div>
-    
+
     <div class="stat-container" id="statContainer">
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag" >v19.29 (METRONOME)</div></div>
+    <div class="version-tag" id="versionTag">v20.09 (DAY / NIGHT)</div>
+</div>
+
+<div id="installOverlay">
+    <div class="install-card">
+        <button class="install-close" onclick="closeInstallOverlay()">×</button>
+        <div class="install-title">УСТАНОВКА</div>
+        <div class="install-tabs">
+            <div class="install-tab active" id="tabIOS" onclick="switchInstallTab('ios')">Apple (iOS)</div>
+            <div class="install-tab" id="tabAndroid" onclick="switchInstallTab('android')">Android</div>
+        </div>
+        
+        <div class="install-content active" id="contentIOS">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Внизу экрана нажмите на меню <b>«Три точки» (...)</b>, затем выберите <b>«Поделиться»</b>.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">В появившемся меню пролистайте вниз и найдите пункт <b>«На экран "Домой"»</b> (иконка с плюсиком). Если его нет, нажмите <b>«Показать больше»</b>.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">Нажмите кнопку <b>«Добавить»</b> в правом верхнем углу.</div>
+            </div>
+
+            <button class="install-accordion-btn" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+            <div class="install-accordion-content">
+                <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (...) в нижней панели браузера</div>
+                <img src="img/ios-step1.jpeg" alt="Шаг 1" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 2: В открывшемся меню нажмите «Поделиться»</div>
+                <img src="img/ios-step2.jpeg" alt="Шаг 2" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 3: Пролистайте вниз до конца. Если кнопки нет, нажмите «Показать больше»</div>
+                <img src="img/ios-step3.jpeg" alt="Шаг 3" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 4: Выберите пункт «Добавить на экран "Домой"»</div>
+                <img src="img/ios-step4.jpeg" alt="Шаг 4" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 5: Нажмите синюю кнопку «Добавить» сверху</div>
+                <img src="img/ios-step5.jpeg" alt="Шаг 5" loading="lazy">
+            </div>
+        </div>
+
+        <div class="install-content" id="contentAndroid">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Откройте сайт в <b>Google Chrome</b> или другом браузере.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">Нажмите на иконку меню <b>«Три точки»</b> в правом верхнем углу.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">В списке найдите и выберите <b>«Установить приложение»</b> или «Добавить на главный экран».</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">4</div>
+                <div class="install-step-text">Подтвердите установку. Готово! Приложение появится на рабочем столе.</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     trackEvent('app_open');
@@ -394,6 +929,18 @@
         lastTouchEnd = now;
     }, { passive: false });
 
+    var sc = document.getElementById('sandhyaCard');
+    var startY = 0;
+    sc.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, {passive: true});
+    sc.addEventListener('touchmove', function(e) {
+        if (!startY) return;
+        var y = e.touches[0].clientY;
+        if (startY - y > 40) { // swipe up
+            hideSandhyaCard();
+            startY = 0;
+        }
+    }, {passive: true});
+
     var TWO_PI = Math.PI * 2;
 
     var els = {
@@ -401,16 +948,11 @@
         startBtn: document.getElementById('startBtn'),
         statusText: document.getElementById('statusText'),
         cycleDots: document.getElementById('cycleDots'),
-                statValue: document.getElementById('statValue'),
+        statValue: document.getElementById('statValue'),
         edges: [document.getElementById('edge0'), document.getElementById('edge1'), document.getElementById('edge2')],
         inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
         repeats: document.getElementById('repeat-input'),
         canvas: document.getElementById('particleCanvas'),
-        welcome: document.getElementById('welcomeAlert'),
-        echo: document.getElementById('echoOverlay'),
-        echoText: document.getElementById('echoText'),
-        echoCanvas: document.getElementById('echoCanvas'),
-        echoHint: document.getElementById('echoHint'),
         triangleSvg: document.getElementById('triangleSvg')
     };
 
@@ -436,61 +978,396 @@
     var todayStr = new Date().toDateString();
     if (appStats.lastDate !== todayStr) {
         var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-        if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; } 
+        if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; }
         else if (appStats.lastDate !== '') { appStats.streak = 1; }
         appStats.lastDate = todayStr;
         localStorage.setItem('mb_streak', appStats.streak);
         localStorage.setItem('mb_last_date', appStats.lastDate);
     }
 
-
-
     function formatTime(totalSeconds) {
         var rounded = Math.floor(totalSeconds);
         var h = Math.floor(rounded / 3600), m = Math.floor((rounded % 3600) / 60), s = rounded % 60;
         return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
-
-    function renderStatText() {
-        els.statValue.textContent = formatTime(state.totalSec);
+    function formatHHMM(date) {
+        if (!date || isNaN(date.getTime())) return '--:--';
+        return (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes();
     }
+    function renderStatText() { els.statValue.textContent = formatTime(state.totalSec); }
 
     var cachedGold = '#c2a05e';
     function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
 
-    var advaitaQuotes = [
-        "Мир — это лишь игра света в твоем осознавании. Нет никого, кто играет.",
-        "Прекрати искать и увидишь, что Ты — то, что ищет.",
-        "Тишина — это не отсутствие звука. Это присутствие Тебя без мыслей.",
-        "Нет пути к Себе. Есть только осознание, что Ты никогда не уходил.",
-        "Ты — экран, на котором разворачивается кино жизни. Экран всегда чист.",
-        "Все, что появляется и исчезает — не Ты. Свидетель остается всегда.",
-        "Ничего не удерживай. Ничего не отталкивай. Просто будь.",
-        "Твоя истинная природа — безграничное блаженство, скрытое шумом ума.",
-        "Ты не в мире. Мир в Тебе.",
-        "Единственная реальность — это Я ЕСТЬ здесь и сейчас.",
-        "Когда искатель исчезает, остаётся только Истина.",
-        "Ум создаёт разделение. Сердце знает единство.",
-        "Ты — пространство, в котором происходит всё. Пространство не затронуто.",
-        "Отпусти того, кем ты себя считаешь. Останется то, чем Ты являешься.",
-        "Нет ничего, что нужно достичь. Есть только иллюзия, которую нужно отпустить.",
-        "Наблюдай мысли, не следуя за ними. Ты — небо, они — облака.",
-        "Страдание заканчивается там, где заканчивается «я».",
-        "Тот, кто ищет просветления, и есть единственное препятствие к нему.",
-        "В глубокой тишине ум растворяется, и остаётся только Бытие.",
-        "Реальность не нуждается в доказательствах. Она просто есть.",
-        "Между двумя мыслями — бесконечность. Это и есть Ты.",
-        "Всё, что ты ищешь, уже здесь. Просто перестань убегать.",
-        "Присутствие — это не практика. Это твоя природа.",
-        "Каждый вдох — напоминание: Ты жив. Ты есть. Этого достаточно.",
-        "Не спрашивай «кто я?» умом. Почувствуй ответ тишиной.",
-        "Волна не перестаёт быть океан, даже когда забывает об этом.",
-        "Свобода — не в выборе. Свобода — в осознании того, кто выбирает.",
-        "Любовь — это не чувство. Это отсутствие границ между тобой и миром.",
-        "Когда ты по-настоящему тих, вселенная начинает говорить.",
-        "То, что ты есть, невозможно потерять. То, чем ты не являешься, невозможно удержать."
+    /* =====================================================
+       SANDHYA KALA MODULE
+       ===================================================== */
+    var CITIES = [
+        { name: 'Москва',        lat: 55.7558, lng: 37.6173 },
+        { name: 'СПб',           lat: 59.9311, lng: 30.3609 },
+        { name: 'Екатеринбург',  lat: 56.8389, lng: 60.6057 },
+        { name: 'Новосибирск',   lat: 55.0084, lng: 82.9357 },
+        { name: 'Челябинск',     lat: 55.1644, lng: 61.4368 },
+        { name: 'Алматы',        lat: 43.2220, lng: 76.8512 },
+        { name: 'Бали (Убуд)',   lat: -8.5069, lng: 115.2625 }
     ];
 
+    var sandhyaLat = parseFloat(localStorage.getItem('sandhya_lat')) || null;
+    var sandhyaLng = parseFloat(localStorage.getItem('sandhya_lng')) || null;
+    var sandhyaCityName = localStorage.getItem('sandhya_city') || null;
+    var sandhyaTimers = [];
+    var sandhyaData = null;
+
+    var sandhyaHideTimeout;
+    function toggleSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        if (card.classList.contains('visible')) {
+            hideSandhyaCard();
+        } else {
+            showSandhyaCard();
+        }
+    }
+    function showSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        card.classList.add('visible');
+        clearTimeout(sandhyaHideTimeout);
+        sandhyaHideTimeout = setTimeout(hideSandhyaCard, 15000);
+    }
+    function hideSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        if(card) card.classList.remove('visible');
+    }
+
+    function computeSandhya(date, lat, lng) {
+        var times = SunCalc.getTimes(date, lat, lng);
+        var sunrise = times.sunrise;
+        var solarNoon = times.solarNoon;
+        var sunset = times.sunset;
+        var nadir = times.nadir;
+        var morningStart = new Date(sunrise.getTime() - 96 * 60000);
+        var morningEnd   = sunrise;
+        var middayStart  = new Date(solarNoon.getTime() - 24 * 60000);
+        var middayEnd    = new Date(solarNoon.getTime() + 24 * 60000);
+        var eveningStart = sunset;
+        var eveningEnd   = new Date(sunset.getTime() + 48 * 60000);
+        var nightStart   = new Date(nadir.getTime() - 24 * 60000);
+        var nightEnd     = new Date(nadir.getTime() + 24 * 60000);
+        return {
+            morning: { start: morningStart, peak: sunrise, end: morningEnd },
+            midday:  { start: middayStart,  peak: solarNoon, end: middayEnd },
+            evening: { start: eveningStart, peak: sunset, end: eveningEnd },
+            night:   { start: nightStart,   peak: nadir, end: nightEnd }
+        };
+    }
+
+    function renderSandhya() {
+        if (!sandhyaLat || !sandhyaLng) return;
+        var now = new Date();
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+        sandhyaData = computeSandhya(today, sandhyaLat, sandhyaLng);
+
+        var periods = [
+            { key: 'morning', id: 'morning' },
+            { key: 'midday',  id: 'midday'  },
+            { key: 'evening', id: 'evening' },
+            { key: 'night',   id: 'night'   }
+        ];
+
+        var nowMs = now.getTime();
+        var nextPeriod = null;
+        var nextMs = Infinity;
+
+        periods.forEach(function(p) {
+            var d = sandhyaData[p.key];
+            var elPeriod = document.getElementById('sp-' + p.id);
+            var elTime = document.getElementById('st-' + p.id);
+            var elWindow = document.getElementById('sw-' + p.id);
+
+            elTime.textContent = formatHHMM(d.peak);
+            elWindow.textContent = formatHHMM(d.start) + '–' + formatHHMM(d.end);
+
+            elPeriod.classList.remove('current', 'active', 'passed');
+
+            if (nowMs >= d.start.getTime() && nowMs <= d.end.getTime()) {
+                elPeriod.classList.add('current');
+            } else if (nowMs > d.end.getTime()) {
+                elPeriod.classList.add('passed');
+            } else {
+                elPeriod.classList.add('active');
+                if (d.start.getTime() < nextMs) {
+                    nextMs = d.start.getTime();
+                    nextPeriod = { name: getperiodName(p.key), start: d.start, notifyAt: new Date(d.start.getTime() - 30 * 60000) };
+                }
+            }
+        });
+
+        updateCountdown(nextPeriod);
+        scheduleNotification(nextPeriod);
+        document.getElementById('sandhyaCard').classList.add('visible');
+        updateCityLabel();
+        setTimeout(hideSandhyaCard, 15000);
+    }
+
+    function getperiodName(key) {
+        var names = { morning: 'Утренняя Сандхья', midday: 'Полуденная Сандхья', evening: 'Вечерняя Сандхья', night: 'Ночная Сандхья' };
+        return names[key] || 'Сандхья-кала';
+    }
+
+    function updateCountdown(nextPeriod) {
+        var el = document.getElementById('sandhyaCountdown');
+        if (!nextPeriod) { el.textContent = 'Все периоды на сегодня пройдены'; return; }
+        var diff = nextPeriod.start.getTime() - Date.now();
+        if (diff <= 0) { el.textContent = ''; return; }
+        var h = Math.floor(diff / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        var s = Math.floor((diff % 60000) / 1000);
+        var label = nextPeriod.name.split(' ')[0];
+        el.innerHTML = label + ' через <b>' + (h > 0 ? h + 'ч ' : '') + m + 'м ' + s + 'с</b>';
+    }
+
+    var countdownInterval = null;
+    var currentNextPeriod = null;
+    function startCountdownLoop(nextPeriod) {
+        currentNextPeriod = nextPeriod;
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(function() {
+            updateCountdown(currentNextPeriod);
+        }, 1000);
+    }
+
+    /* =====================================================
+       NOTIFICATIONS
+       ===================================================== */
+    var notifTimeouts = [];
+    function clearAllNotifTimeouts() {
+        notifTimeouts.forEach(function(t) { clearTimeout(t); });
+        notifTimeouts = [];
+    }
+
+    function scheduleNotification(nextPeriod) {
+        // Уведомления отключены по просьбе
+    }
+
+    function requestNotificationPermission() {
+        if (window.Notification && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    }
+
+    function showNotificationBanner(title, sub) {
+        document.getElementById('notifTitle').textContent = title;
+        document.getElementById('notifSub').textContent = sub;
+        var banner = document.getElementById('notifBanner');
+        banner.classList.add('show');
+        initAudio();
+        playSingingBowl(0);
+    }
+    function closeNotifBanner() {
+        document.getElementById('notifBanner').classList.remove('show');
+    }
+
+    /* =====================================================
+       CITY MODAL
+       ===================================================== */
+    function openCityModal() {
+        var list = document.getElementById('cityList');
+        list.innerHTML = '';
+        CITIES.forEach(function(city) {
+            var btn = document.createElement('button');
+            btn.className = 'city-btn' + (sandhyaCityName === city.name ? ' selected' : '');
+            btn.textContent = city.name;
+            btn.onclick = function() { selectCity(city); };
+            list.appendChild(btn);
+        });
+        document.getElementById('cityModal').classList.add('open');
+    }
+    function closeCityModal() {
+        document.getElementById('cityModal').classList.remove('open');
+    }
+    function closeCityModalOutside(e) {
+        if (e.target === document.getElementById('cityModal')) closeCityModal();
+    }
+    function selectCity(city) {
+        sandhyaLat = city.lat;
+        sandhyaLng = city.lng;
+        sandhyaCityName = city.name;
+        localStorage.setItem('sandhya_lat', sandhyaLat);
+        localStorage.setItem('sandhya_lng', sandhyaLng);
+        localStorage.setItem('sandhya_city', sandhyaCityName);
+        closeCityModal();
+        renderSandhya();
+        startCountdownLoop(null);
+    }
+    function useGeolocation() {
+        if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            sandhyaLat = pos.coords.latitude;
+            sandhyaLng = pos.coords.longitude;
+            sandhyaCityName = 'Авто';
+            localStorage.setItem('sandhya_lat', sandhyaLat);
+            localStorage.setItem('sandhya_lng', sandhyaLng);
+            localStorage.setItem('sandhya_city', sandhyaCityName);
+            closeCityModal();
+            renderSandhya();
+        }, function() {
+            alert('Не удалось получить геолокацию. Выберите город вручную.');
+        });
+    }
+
+    function updateCityLabel() {
+        var lbl = document.getElementById('cityLabel');
+        if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
+    }
+
+    /* =====================================================
+       MEDIA PLAYER (after timer done)
+       ===================================================== */
+    var mediaAudio = null;
+    var MANTRA_URL = 'https://0f936add0eca213c77e846c2b5587217.bckt.ru/aum-namah-shivaya-sadhg.mp3';
+
+    function openMediaPlayer() {
+        if(state.running && !state.paused) {
+            state.paused = true;
+            els.startBtn.textContent = 'Продолжить';
+            releaseWakeLock();
+        }
+        document.getElementById('mediaPlayer').classList.add('show');
+    }
+    function openInstallOverlay() {
+        document.getElementById('installOverlay').classList.add('show');
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(ua)) switchInstallTab('android');
+        else switchInstallTab('ios');
+    }
+    function closeInstallOverlay() {
+        document.getElementById('installOverlay').classList.remove('show');
+    }
+    function switchInstallTab(platform) {
+        document.getElementById('tabIOS').classList.remove('active');
+        document.getElementById('tabAndroid').classList.remove('active');
+        document.getElementById('contentIOS').classList.remove('active');
+        document.getElementById('contentAndroid').classList.remove('active');
+        
+        if (platform === 'ios') {
+            document.getElementById('tabIOS').classList.add('active');
+            document.getElementById('contentIOS').classList.add('active');
+        } else {
+            document.getElementById('tabAndroid').classList.add('active');
+            document.getElementById('contentAndroid').classList.add('active');
+        }
+    }
+    function toggleInstallAccordion(btn) {
+        var content = btn.nextElementSibling;
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            btn.innerHTML = '📸 Показать инструкцию с фото';
+        } else {
+            content.classList.add('show');
+            btn.innerHTML = 'Скрыть фото';
+        }
+    }
+
+    function closeMediaPlayer() {
+        document.getElementById('mediaPlayer').classList.remove('show');
+        if (mediaAudio) {
+            mediaAudio.pause();
+            mediaAudio = null;
+        }
+        document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        document.getElementById('mediaProgress').value = 0;
+        document.getElementById('mediaTimeCurrent').textContent = "0:00";
+    }
+    function toggleMediaPlay() {
+        if (MANTRA_URL === 'PLACEHOLDER_URL') {
+            closeMediaPlayer();
+            startMantraTimer();
+            return;
+        }
+        if (!mediaAudio) {
+            mediaAudio = new Audio(MANTRA_URL);
+            mediaAudio.preload = 'auto';
+            mediaAudio.onloadedmetadata = function() {
+                document.getElementById('mediaTimeTotal').textContent = formatHHMMSS(mediaAudio.duration);
+            };
+            mediaAudio.ontimeupdate = function() {
+                if(!mediaAudio.duration) return;
+                var progress = (mediaAudio.currentTime / mediaAudio.duration) * 100;
+                document.getElementById('mediaProgress').value = progress;
+                document.getElementById('mediaTimeCurrent').textContent = formatHHMMSS(mediaAudio.currentTime);
+            };
+            mediaAudio.onended = function() {
+                document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                document.getElementById('mediaProgress').value = 0;
+            };
+        }
+        if (mediaAudio.paused) {
+            if (mediaAudio.currentTime > 0) mediaAudio.currentTime = 0;
+            var playPromise = mediaAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    alert('Ошибка загрузки аудио: ' + error.message + '\n\nФайл недоступен или заблокирован сервером.');
+                    document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                });
+            }
+            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        } else {
+            mediaAudio.pause();
+            document.getElementById('playPauseBtn').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        }
+    }
+    function seekMedia(e) {
+        if (mediaAudio && mediaAudio.duration) {
+            var val = e.target.value;
+            mediaAudio.currentTime = (val / 100) * mediaAudio.duration;
+        }
+    }
+    function formatHHMMSS(sec) {
+        if(isNaN(sec)) return "0:00";
+        var m = Math.floor(sec / 60);
+        var s = Math.floor(sec % 60);
+        return m + ":" + (s < 10 ? '0' : '') + s;
+    }
+    function rewindMedia() {
+        if (mediaAudio) { mediaAudio.currentTime = Math.max(0, mediaAudio.currentTime - 10); }
+    }
+
+    /* =====================================================
+       MANTRA TIMER (21 min)
+       ===================================================== */
+    var mantraIntervalId = null;
+    var mantraSecondsLeft = 21 * 60;
+
+    function startMantraTimer() {
+        closeMediaPlayer();
+        mantraSecondsLeft = 21 * 60;
+        document.getElementById('mantraDisplay').textContent = '21:00';
+        document.getElementById('mantraTimerOverlay').classList.add('show');
+        requestWakeLock();
+        if (mantraIntervalId) clearInterval(mantraIntervalId);
+        mantraIntervalId = setInterval(function() {
+            mantraSecondsLeft--;
+            var m = Math.floor(mantraSecondsLeft / 60);
+            var s = mantraSecondsLeft % 60;
+            document.getElementById('mantraDisplay').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+            if (mantraSecondsLeft <= 0) {
+                clearInterval(mantraIntervalId);
+                mantraIntervalId = null;
+                initAudio();
+                playMegaGong();
+                releaseWakeLock();
+                setTimeout(function() { stopMantraTimer(); }, 3000);
+            }
+        }, 1000);
+    }
+    function stopMantraTimer() {
+        if (mantraIntervalId) { clearInterval(mantraIntervalId); mantraIntervalId = null; }
+        document.getElementById('mantraTimerOverlay').classList.remove('show');
+        releaseWakeLock();
+    }
+
+    /* =====================================================
+       AUDIO ENGINE (original, unchanged)
+       ===================================================== */
     var audio = null;
     function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
 
@@ -509,25 +1386,11 @@
     var allInputs = document.querySelectorAll('.interval-input');
     for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
 
-    var echoParticles = [], isEchoHolding = false, echoGain = null, echoDroneOscs = [], revealTimer = null, touchX = 0, touchY = 0;
-    function openEcho() { trackEvent('echo_open'); initAudio(); els.echo.classList.add('active'); var idx = Math.floor(Math.random() * advaitaQuotes.length); els.echoText.textContent = advaitaQuotes[idx]; els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; initEchoCanvas(); }
-    function closeEcho(e) { if(e) { e.preventDefault(); e.stopPropagation(); } els.echo.classList.remove('active'); stopEchoReveal(); }
-    function initEchoCanvas() {
-        var c = els.echoCanvas; var ctxE = c.getContext('2d'); c.width = window.innerWidth; c.height = window.innerHeight;
-        echoParticles = []; for(var i=0; i<200; i++) { echoParticles.push({ x: Math.random()*c.width, y: Math.random()*c.height, s: Math.random()*2+0.5, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, a: Math.random()*0.4+0.1 }); }
-        function drawE() { if(!els.echo.classList.contains('active')) return; ctxE.clearRect(0,0,c.width,c.height); var color = cachedGold; for(var j=0; j<echoParticles.length; j++) { var p = echoParticles[j]; if(isEchoHolding) { var dx = touchX-p.x, dy = touchY-p.y; var dist = Math.sqrt(dx*dx+dy*dy); if(dist>5){ p.vx += (dx/dist)*0.6; p.vy += (dy/dist)*0.6; } p.vx *= 0.94; p.vy *= 0.94; } else { p.vx += (Math.random()-0.5)*0.05; p.vy += (Math.random()-0.5)*0.05; p.vx *= 0.98; p.vy *= 0.98; } p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>c.width) p.vx *= -1; if(p.y<0||p.y>c.height) p.vy *= -1; ctxE.globalAlpha = isEchoHolding ? 0.8 : p.a; ctxE.fillStyle = color; ctxE.beginPath(); ctxE.arc(p.x,p.y,p.s,0,TWO_PI); ctxE.fill(); } requestAnimationFrame(drawE); }
-        drawE();
-    }
-    function startEchoReveal(e) { if(e.target.closest('#echoClose')) return; e.preventDefault(); isEchoHolding = true; touchX = e.clientX || (e.touches && e.touches[0].clientX); touchY = e.clientY || (e.touches && e.touches[0].clientY); clearTimeout(revealTimer); revealTimer = setTimeout(function() { if(isEchoHolding) { els.echoText.classList.add('reveal'); els.echoHint.style.opacity = "0"; } }, 3000 + Math.random() * 4000); startEchoSound(); }
-    function stopEchoReveal() { isEchoHolding = false; clearTimeout(revealTimer); els.echoText.classList.remove('reveal'); els.echoHint.style.opacity = "0.5"; stopEchoSound(); }
-    function startEchoSound() { var now = audio.currentTime; if (echoDroneOscs.length === 0) { echoGain = audio.createGain(); echoGain.gain.setValueAtTime(0, now); echoGain.connect(audio.destination); var tones = [{f:73.42,v:0.1,t:'sine'},{f:73.7,v:0.06,t:'sine'},{f:146.83,v:0.04,t:'sine'},{f:220,v:0.02,t:'sine'},{f:110,v:0.03,t:'triangle'}]; for (var i=0; i<tones.length; i++) { var t = tones[i]; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = t.t; osc.frequency.setValueAtTime(t.f, now); g.gain.value = t.v; var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 0.15 + Math.random()*0.3; lfoG.gain.value = 0.4; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(echoGain); osc.start(now); echoDroneOscs.push({ osc:osc, lfo:lfo, g:g }); } } echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(1, now + 2); }
-    function stopEchoSound() { if (echoGain) { var now = audio.currentTime; echoGain.gain.cancelScheduledValues(now); echoGain.gain.linearRampToValueAtTime(0, now + 1.5); setTimeout(function() { if (!isEchoHolding && echoDroneOscs.length > 0) { for(var i=0;i<echoDroneOscs.length;i++){ try{echoDroneOscs[i].osc.stop();echoDroneOscs[i].lfo.stop();}catch(e){} } echoDroneOscs = []; } }, 1600); } }
-
     var reverbNode = null;
     function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; } } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
     var strikeNoiseBuffer = null;
     function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; if (!strikeNoiseBuffer) { strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate); var data = strikeNoiseBuffer.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); } var noise = audio.createBufferSource(); noise.buffer = strikeNoiseBuffer; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; /* Reduced from 7 to 3 for max performance on Android */ for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
     function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
@@ -539,8 +1402,6 @@
         else if (state.idx === 2) scale = BREATH_MAX - (BREATH_MAX-BREATH_MIN)*progress;
         else scale = BREATH_MIN;
         els.triangleSvg.style.transform = 'scale('+scale+')';
-        
-
     }
 
     for(var ei=0; ei<els.edges.length; ei++) { els.edges[ei].style.strokeDasharray = edgeLengths[ei]; els.edges[ei].style.strokeDashoffset = edgeLengths[ei]; }
@@ -549,7 +1410,8 @@
         state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
         var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = parseFloat(saved[si]) || state.ints[si]; }
         state.reps = parseInt(localStorage.getItem('mb_repeats')) || 10;
-        state.night = localStorage.getItem('mb_night') === 'true';
+        var mbNight = localStorage.getItem('mb_night');
+        state.night = mbNight === null ? true : (mbNight === 'true');
         for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
         els.repeats.value = state.reps; if (state.night) applyTheme();
     } catch(e){}
@@ -559,6 +1421,7 @@
     function handleStart(e) {
         if(e) { e.preventDefault(); e.stopPropagation(); }
         trackEvent('practice_start'); initAudio(); resetZoom();
+        requestNotificationPermission();
         if(!state.running){
             state.ints = [];
             for(var i=0;i<els.inputs.length;i++) {
@@ -568,12 +1431,12 @@
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
             state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
-            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); renderDots(); runIdx(0);
-        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'ПРОДОЛЖИТЬ'; releaseWakeLock(); } 
-        else { state.paused = false; els.startBtn.textContent = 'ПАУЗА'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
+            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'Пауза'; requestWakeLock(); renderDots(); runIdx(0);
+        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'Продолжить'; releaseWakeLock(); }
+        else { state.paused = false; els.startBtn.textContent = 'Пауза'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
     }
 
-    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'СТАРТ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'НАЧАТЬ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
 
     function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
     function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
@@ -595,8 +1458,8 @@
         if(!state.running||state.paused) return;
         var delta = now - state.lastTick; state.lastTick = now;
         state.timeLeft -= delta;
-        if (state.idx === 1) { 
-            var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000; 
+        if (state.idx === 1) {
+            var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000;
             if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
         }
         var sec = Math.ceil(state.timeLeft/1000);
@@ -606,10 +1469,18 @@
     }
 
     function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
-    function done() { trackEvent('practice_finish'); playMegaGong(); handleReset(); }
+
+    function done() {
+        trackEvent('practice_finish');
+        playMegaGong();
+        handleReset();
+        setTimeout(function() { openMediaPlayer(); }, 2000);
+    }
+
     function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
     function updJournal() { if (state.totalSec % 10 === 0) localStorage.setItem('mb_total', state.totalSec); renderStatText(); }
 
+    /* PARTICLE CANVAS */
     var ctx = els.canvas.getContext('2d'); var parts = [];
     function resize() { els.canvas.width = window.innerWidth; els.canvas.height = window.innerHeight; }
     window.onresize = resize; resize();
@@ -621,11 +1492,95 @@
     function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
     anim();
 
-    setInterval(function() { if(state.running&&!state.paused&&state.idx!==3) { state.totalSec++; updJournal(); } }, 1000);
+    setInterval(function() { 
+        var isBreathing = state.running && !state.paused && state.idx !== 3;
+        var isAudioPlaying = mediaAudio && !mediaAudio.paused;
+        var isMantraTimerRunning = mantraIntervalId !== null;
+        if (isBreathing || isAudioPlaying || isMantraTimerRunning) { 
+            state.totalSec++; 
+            updJournal(); 
+        } 
+    }, 1000);
     renderStatText(); renderDots();
 
-    var lastSeenW = localStorage.getItem('mb_v19_welcome');
-    if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) { setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000); localStorage.setItem('mb_v19_welcome', Date.now().toString()); }
+    /* WELCOME */
+    var lastSeenW = localStorage.getItem('mb_v20_welcome');
+    // Hide install guide button if standalone via JS as well for iOS
+    if (window.navigator.standalone === true) {
+        var installBtn = document.getElementById('installGuideBtn');
+        if(installBtn) installBtn.style.display = 'none';
+    }
+    if (!lastSeenW || (Date.now() - parseInt(lastSeenW) > 86400000)) {
+        setTimeout(function() { els.welcome.classList.add('show'); setTimeout(function(){ els.welcome.classList.remove('show'); }, 4000); }, 1000);
+        localStorage.setItem('mb_v20_welcome', Date.now().toString());
+    }
+
+    /* INIT SANDHYA */
+    if (sandhyaLat && sandhyaLng) {
+        renderSandhya();
+        var nextPeriodForLoop = null;
+        if (sandhyaData) {
+            var nowMs = Date.now();
+            ['morning','midday','evening','night'].forEach(function(key) {
+                var d = sandhyaData[key];
+                if (d && d.start.getTime() > nowMs) {
+                    if (!nextPeriodForLoop || d.start.getTime() < nextPeriodForLoop.start.getTime()) {
+                        nextPeriodForLoop = { name: getperiodName(key), start: d.start, notifyAt: new Date(d.start.getTime() - 30*60000) };
+                    }
+                }
+            });
+        }
+        startCountdownLoop(nextPeriodForLoop);
+    } else {
+        // Auto-request geo on first load
+        setTimeout(function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    sandhyaLat = pos.coords.latitude;
+                    sandhyaLng = pos.coords.longitude;
+                    
+                    // Reverse geocoding
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng, {
+                        headers: { 'User-Agent': 'MasterAppPWA/20.06' }
+                    })
+                    .then(function(r){ return r.json(); })
+                    .then(function(data) {
+                        var city = data.address.city || data.address.town || data.address.village || 'Авто';
+                        sandhyaCityName = city;
+                        document.getElementById('cityLabel').textContent = sandhyaCityName;
+                        localStorage.setItem('sandhya_city', sandhyaCityName);
+                    }).catch(function(e) {
+                        sandhyaCityName = 'Авто';
+                        document.getElementById('cityLabel').textContent = sandhyaCityName;
+                        localStorage.setItem('sandhya_city', sandhyaCityName);
+                    });
+                    
+                    localStorage.setItem('sandhya_lat', sandhyaLat);
+                    localStorage.setItem('sandhya_lng', sandhyaLng);
+                    renderSandhya();
+                    var nextP = null;
+                    if (sandhyaData) {
+                        var nm = Date.now();
+                        ['morning','midday','evening','night'].forEach(function(key) {
+                            var d = sandhyaData[key];
+                            if (d && d.start.getTime() > nm) {
+                                if (!nextP || d.start.getTime() < nextP.start.getTime()) {
+                                    nextP = { name: getperiodName(key), start: d.start, notifyAt: new Date(d.start.getTime() - 30*60000) };
+                                }
+                            }
+                        });
+                    }
+                    startCountdownLoop(nextP);
+                }, function() {
+                    // Fallback: show card with Moscow
+                    sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
+                    renderSandhya();
+                });
+            }
+        }, 800);
+    }
+
+    /* SERVICE WORKER */
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(function(){}); }
 </script>
 </body>
