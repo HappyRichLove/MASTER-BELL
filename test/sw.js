@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.11 */
-var CACHE_NAME = 'master-v20.11';
+/* Service Worker — MASTER v20.12 */
+var CACHE_NAME = 'master-v20.12';
 var ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,12 @@ var ASSETS = [
   './icon-512.png',
   './manifest.json',
   './metronome.html',
-  './suncalc.min.js'
+  './suncalc.min.js',
+  './img/ios-step1.jpeg',
+  './img/ios-step2.jpeg',
+  './img/ios-step3.jpeg',
+  './img/ios-step4.jpeg',
+  './img/ios-step5.jpeg'
 ];
 
 self.addEventListener('install', function(e) {
