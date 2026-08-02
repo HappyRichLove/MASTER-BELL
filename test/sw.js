@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.13 */
-var CACHE_NAME = 'master-v20.13';
+/* Service Worker — MASTER v20.14 */
+var CACHE_NAME = 'master-v20.14';
 var ASSETS = [
   './',
   './index.html',
@@ -15,7 +15,11 @@ var ASSETS = [
   './img/ios-step2.jpeg',
   './img/ios-step3.jpeg',
   './img/ios-step4.jpeg',
-  './img/ios-step5.jpeg'
+  './img/ios-step5.jpeg',
+  './img/android-step1.jpeg',
+  './img/android-step2.jpeg',
+  './img/android-step3.jpeg',
+  './img/android-step4.jpeg'
 ];
 
 self.addEventListener('install', function(e) {
