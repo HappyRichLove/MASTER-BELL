@@ -444,8 +444,7 @@
             cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.1em;
             text-decoration: none; display: inline-block;
         }
-        .sandhya-period .s-name { font-weight: 800; color: var(--accent); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
-        .night-theme .sandhya-period .s-name { color: #fff; }
+        .sandhya-period .s-name { font-weight: 800; color: #fff; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
         @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
 
         /* Install Overlay */
@@ -514,9 +513,8 @@
         }
         .install-accordion-content.show { display: block; }
         .install-accordion-content img {
-            width: 78%; max-width: 250px; margin: 0 auto 16px auto; display: block;
-            border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            border: 1px solid rgba(0,0,0,0.08);
+            width: 100%; border-radius: 16px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .install-img-caption {
             font-size: 0.85rem; color: var(--text); opacity: 0.8;
@@ -581,8 +579,8 @@
 <div id="sandhyaCard" onclick="hideSandhyaCard()">
     <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div class="sandhya-title" style="display: none;"></div>
-        <div class="sandhya-city-label" style="font-size: 0.55rem; font-weight: 500; margin-top: 4px; color: var(--accent); opacity: 0.85; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; padding: 2px 8px; border-radius: 6px;" onclick="event.stopPropagation(); useGeolocation(true);" title="Нажмите для обновления геопозиции">
-            🧭 <span id="cityLabel"></span>
+        <div class="sandhya-city-label" style="font-size: 0.5rem; font-weight: 300; margin-top: 4px; color: var(--accent); opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">
+            🧭 <span id="cityLabel">Авто</span>
         </div>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
@@ -675,7 +673,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.13 (DAY / NIGHT)</div>
+    <div class="version-tag" id="versionTag">v20.10 (DAY / NIGHT)</div>
 </div>
 
 <div id="installOverlay">
@@ -799,9 +797,15 @@
         lastDate: localStorage.getItem('mb_last_date') || ''
     };
 
-    // Streak is updated ONLY after completing a practice session (see done())
-    // We just restore the current date to avoid drift
     var todayStr = new Date().toDateString();
+    if (appStats.lastDate !== todayStr) {
+        var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; }
+        else if (appStats.lastDate !== '') { appStats.streak = 1; }
+        appStats.lastDate = todayStr;
+        localStorage.setItem('mb_streak', appStats.streak);
+        localStorage.setItem('mb_last_date', appStats.lastDate);
+    }
 
     function formatTime(totalSeconds) {
         var rounded = Math.floor(totalSeconds);
@@ -830,13 +834,9 @@
         { name: 'Бали (Убуд)',   lat: -8.5069, lng: 115.2625 }
     ];
 
-    var sandhyaLat = (localStorage.getItem('sandhya_lat') !== null) ? parseFloat(localStorage.getItem('sandhya_lat')) : null;
-    var sandhyaLng = (localStorage.getItem('sandhya_lng') !== null) ? parseFloat(localStorage.getItem('sandhya_lng')) : null;
+    var sandhyaLat = parseFloat(localStorage.getItem('sandhya_lat')) || null;
+    var sandhyaLng = parseFloat(localStorage.getItem('sandhya_lng')) || null;
     var sandhyaCityName = localStorage.getItem('sandhya_city') || null;
-    if (sandhyaCityName === 'Авто' || sandhyaCityName === 'Гео' || sandhyaCityName === 'АВТО') {
-        sandhyaCityName = null;
-        localStorage.removeItem('sandhya_city');
-    }
     var sandhyaTimers = [];
     var sandhyaData = null;
 
@@ -927,8 +927,7 @@
         scheduleNotification(nextPeriod);
         document.getElementById('sandhyaCard').classList.add('visible');
         updateCityLabel();
-        clearTimeout(sandhyaHideTimeout);
-        sandhyaHideTimeout = setTimeout(hideSandhyaCard, 15000);
+        setTimeout(hideSandhyaCard, 15000);
     }
 
     function getperiodName(key) {
@@ -990,60 +989,56 @@
     }
 
     /* =====================================================
-       CITY GEOLOCATION
+       CITY MODAL
        ===================================================== */
-    function useGeolocation(showFeedback) {
-        if (!navigator.geolocation) {
-            if (showFeedback) alert('Геолокация не поддерживается браузером');
-            return;
-        }
-        var geoOptions = { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 };
+    function openCityModal() {
+        var list = document.getElementById('cityList');
+        list.innerHTML = '';
+        CITIES.forEach(function(city) {
+            var btn = document.createElement('button');
+            btn.className = 'city-btn' + (sandhyaCityName === city.name ? ' selected' : '');
+            btn.textContent = city.name;
+            btn.onclick = function() { selectCity(city); };
+            list.appendChild(btn);
+        });
+        document.getElementById('cityModal').classList.add('open');
+    }
+    function closeCityModal() {
+        document.getElementById('cityModal').classList.remove('open');
+    }
+    function closeCityModalOutside(e) {
+        if (e.target === document.getElementById('cityModal')) closeCityModal();
+    }
+    function selectCity(city) {
+        sandhyaLat = city.lat;
+        sandhyaLng = city.lng;
+        sandhyaCityName = city.name;
+        localStorage.setItem('sandhya_lat', sandhyaLat);
+        localStorage.setItem('sandhya_lng', sandhyaLng);
+        localStorage.setItem('sandhya_city', sandhyaCityName);
+        closeCityModal();
+        renderSandhya();
+        startCountdownLoop(null);
+    }
+    function useGeolocation() {
+        if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
         navigator.geolocation.getCurrentPosition(function(pos) {
             sandhyaLat = pos.coords.latitude;
             sandhyaLng = pos.coords.longitude;
+            sandhyaCityName = 'Авто';
             localStorage.setItem('sandhya_lat', sandhyaLat);
             localStorage.setItem('sandhya_lng', sandhyaLng);
-
-            // Мгновенно отображаем координаты
-            sandhyaCityName = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
             localStorage.setItem('sandhya_city', sandhyaCityName);
+            closeCityModal();
             renderSandhya();
-
-            // Фоновое определение города
-            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
-                if (city) {
-                    sandhyaCityName = city;
-                    localStorage.setItem('sandhya_city', sandhyaCityName);
-                    updateCityLabel();
-                }
-            }).catch(function(){});
-        }, function(err) {
-            if (showFeedback) {
-                alert('Не удалось получить геопозицию. Разрешите доступ к геопозиции в настройках браузера.');
-            }
-            if (!sandhyaLat || !sandhyaLng) {
-                sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
-                localStorage.setItem('sandhya_lat', sandhyaLat);
-                localStorage.setItem('sandhya_lng', sandhyaLng);
-                localStorage.setItem('sandhya_city', sandhyaCityName);
-                renderSandhya();
-            }
-        }, geoOptions);
+        }, function() {
+            alert('Не удалось получить геолокацию. Выберите город вручную.');
+        });
     }
 
     function updateCityLabel() {
         var lbl = document.getElementById('cityLabel');
-        if (!lbl) return;
-        if (sandhyaCityName && sandhyaCityName !== 'Авто' && sandhyaCityName !== 'Гео' && sandhyaCityName !== 'АВТО') {
-            lbl.textContent = sandhyaCityName;
-        } else if (sandhyaLat && sandhyaLng) {
-            lbl.textContent = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
-        } else {
-            lbl.textContent = 'Москва';
-        }
+        if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
     }
 
 
@@ -1084,32 +1079,10 @@
 
 
     /* =====================================================
-       AUDIO ENGINE (Limiter Compressor + Optimized Reverb)
+       AUDIO ENGINE (original, unchanged)
        ===================================================== */
     var audio = null;
-    var masterGain = null;
-    var masterCompressor = null;
-    var reverbNode = null;
-
-    function initAudio() {
-        if (!audio) {
-            audio = new (window.AudioContext || window.webkitAudioContext)();
-            masterGain = audio.createGain();
-            masterGain.gain.value = 0.85;
-
-            // Master Limiter preventing hard digital clipping/crackling on weak devices
-            masterCompressor = audio.createDynamicsCompressor();
-            masterCompressor.threshold.setValueAtTime(-6, audio.currentTime);
-            masterCompressor.knee.setValueAtTime(12, audio.currentTime);
-            masterCompressor.ratio.setValueAtTime(12, audio.currentTime);
-            masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
-            masterCompressor.release.setValueAtTime(0.25, audio.currentTime);
-
-            masterGain.connect(masterCompressor);
-            masterCompressor.connect(audio.destination);
-        }
-        if (audio.state === 'suspended') audio.resume();
-    }
+    function initAudio() { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); }
 
     var wakeLock = null;
     function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
@@ -1126,96 +1099,11 @@
     var allInputs = document.querySelectorAll('.interval-input');
     for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
 
-    function ensureReverb() {
-        if (reverbNode || !audio) return;
-        var len = Math.floor(audio.sampleRate * 1.0);
-        var buf = audio.createBuffer(2, len, audio.sampleRate);
-        for (var ch = 0; ch < 2; ch++) {
-            var data = buf.getChannelData(ch);
-            for (var i = 0; i < len; i++) {
-                var p = 1 - i / len;
-                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.5);
-            }
-        }
-        reverbNode = audio.createConvolver();
-        reverbNode.buffer = buf;
-        reverbNode.connect(masterGain);
-    }
-
+    var reverbNode = null;
+    function ensureReverb() { if (reverbNode) return; var len = audio.sampleRate * 2.5; var buf = audio.createBuffer(2, len, audio.sampleRate); for (var ch = 0; ch < 2; ch++) { var data = buf.getChannelData(ch); for (var i = 0; i < len; i++) { var p = 1 - i/len; data[i] = (Math.random()*2-1) * p * p; } } reverbNode = audio.createConvolver(); reverbNode.buffer = buf; reverbNode.connect(audio.destination); }
     var strikeNoiseBuffer = null;
-    function playStrikeNoise(dest, volume, duration) {
-        var now = audio.currentTime;
-        var bufLen = Math.floor(audio.sampleRate * duration);
-        if (bufLen < 1) return;
-        if (!strikeNoiseBuffer) {
-            strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate);
-            var data = strikeNoiseBuffer.getChannelData(0);
-            for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audio.sampleRate * 0.008));
-        }
-        var noise = audio.createBufferSource();
-        noise.buffer = strikeNoiseBuffer;
-        var bp = audio.createBiquadFilter();
-        bp.type = 'bandpass';
-        bp.frequency.value = 2500;
-        bp.Q.value = 0.8;
-        var g = audio.createGain();
-        g.gain.setValueAtTime(volume, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-        noise.connect(bp);
-        bp.connect(g);
-        g.connect(dest);
-        noise.start(now);
-        noise.stop(now + duration);
-    }
-
-    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
-        if (!audio) return;
-        var vol = volumeMult || 1;
-        var now = audio.currentTime;
-        ensureReverb();
-
-        var dry = audio.createGain();
-        var wet = audio.createGain();
-        dry.gain.value = dryVal;
-        wet.gain.value = wetVal;
-        dry.connect(masterGain);
-        wet.connect(reverbNode || masterGain);
-
-        var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
-        for (var i = 0; i < harmonics.length; i++) {
-            var h = harmonics[i];
-            var decay = h[2] + decayExtra;
-            var hVol = h[1] * vol;
-
-            var osc = audio.createOscillator();
-            var g = audio.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now);
-
-            g.gain.setValueAtTime(0.0001, now);
-            g.gain.linearRampToValueAtTime(hVol, now + 0.015);
-            g.gain.exponentialRampToValueAtTime(Math.max(0.0001, hVol * 0.4), now + decay * 0.3);
-            g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
-
-            var lfo = audio.createOscillator();
-            var lfoG = audio.createGain();
-            lfo.frequency.value = 3 + Math.random() * 2;
-            lfoG.gain.value = h[0] > 3 ? 1.2 : 0.4;
-            lfo.connect(lfoG);
-            lfoG.connect(osc.frequency);
-            lfo.start(now);
-
-            osc.connect(g);
-            g.connect(dry);
-            g.connect(wet);
-
-            osc.start(now);
-            osc.stop(now + decay + 0.2);
-            lfo.stop(now + decay + 0.2);
-        }
-        playStrikeNoise(dry, strikeVol, 0.05);
-    }
-
+    function playStrikeNoise(dest, volume, duration) { var now = audio.currentTime; var bufLen = Math.floor(audio.sampleRate * duration); if (bufLen < 1) return; if (!strikeNoiseBuffer) { strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate); var data = strikeNoiseBuffer.getChannelData(0); for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(audio.sampleRate*0.008)); } var noise = audio.createBufferSource(); noise.buffer = strikeNoiseBuffer; var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 0.8; var g = audio.createGain(); g.gain.setValueAtTime(volume, now); g.gain.exponentialRampToValueAtTime(0.0001, now + duration); noise.connect(bp); bp.connect(g); g.connect(dest); noise.start(now); noise.stop(now + duration); }
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) { var vol = volumeMult || 1; var now = audio.currentTime; ensureReverb(); var dry = audio.createGain(); var wet = audio.createGain(); dry.gain.value = dryVal; wet.gain.value = wetVal; dry.connect(audio.destination); wet.connect(reverbNode); var harmonics = [[1,0.12,5,0],[2.71,0.06,3.5,0.5],[5.43,0.02,2,1]]; for (var i = 0; i < harmonics.length; i++) { var h = harmonics[i]; var decay = h[2] + decayExtra; var hVol = h[1] * vol; var osc = audio.createOscillator(); var g = audio.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(hVol, now + 0.015); g.gain.exponentialRampToValueAtTime(hVol * 0.4, now + decay * 0.3); g.gain.exponentialRampToValueAtTime(0.0001, now + decay); var lfo = audio.createOscillator(); var lfoG = audio.createGain(); lfo.frequency.value = 3 + Math.random() * 2; lfoG.gain.value = h[0] > 3 ? 1.5 : 0.5; lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start(now); osc.connect(g); g.connect(dry); g.connect(wet); osc.start(now); osc.stop(now + decay + 0.5); lfo.stop(now + decay + 0.5); } playStrikeNoise(dry, strikeVol, 0.06); }
     function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
     function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
 
@@ -1233,8 +1121,8 @@
 
     try {
         state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
-        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = Math.max(0.1, parseFloat(saved[si]) || state.ints[si]); }
-        state.reps = Math.max(1, parseInt(localStorage.getItem('mb_repeats')) || 10);
+        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = parseFloat(saved[si]) || state.ints[si]; }
+        state.reps = parseInt(localStorage.getItem('mb_repeats')) || 10;
         var mbNight = localStorage.getItem('mb_night');
         state.night = mbNight === null ? true : (mbNight === 'true');
         for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
@@ -1250,19 +1138,12 @@
         if(!state.running){
             state.ints = [];
             for(var i=0;i<els.inputs.length;i++) {
-                var raw = parseFloat(els.inputs[i].value);
-                var val = (isNaN(raw) || raw <= 0) ? 1 : raw;
-                els.inputs[i].value = val;
-                state.ints.push(val);
+                var val = parseFloat(els.inputs[i].value)||1; state.ints.push(val);
                 if(i===0 && val > appStats.maxVdoh) { appStats.maxVdoh = val; localStorage.setItem('mb_max_vdoh', val); }
                 if(i===1 && val > appStats.maxHold) { appStats.maxHold = val; localStorage.setItem('mb_max_hold', val); }
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
-            var rawReps = parseInt(els.repeats.value);
-            state.reps = (isNaN(rawReps) || rawReps <= 0) ? 1 : rawReps;
-            els.repeats.value = state.reps;
-            localStorage.setItem('mb_ints', JSON.stringify(state.ints));
-            localStorage.setItem('mb_repeats', state.reps);
+            state.reps = parseInt(els.repeats.value) || 1; localStorage.setItem('mb_ints', JSON.stringify(state.ints)); localStorage.setItem('mb_repeats', state.reps);
             state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'Пауза'; requestWakeLock(); renderDots(); runIdx(0);
         } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'Продолжить'; releaseWakeLock(); }
         else { state.paused = false; els.startBtn.textContent = 'Пауза'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
@@ -1294,16 +1175,6 @@
             var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000;
             if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
         }
-        // Precision timestamp tracking for totalSec without setInterval drift
-        if (state.idx !== 3) {
-            state.totalSecAcc = (state.totalSecAcc || 0) + delta / 1000;
-            if (state.totalSecAcc >= 1.0) {
-                var addSec = Math.floor(state.totalSecAcc);
-                state.totalSecAcc -= addSec;
-                state.totalSec += addSec;
-                updJournal();
-            }
-        }
         var sec = Math.ceil(state.timeLeft/1000);
         if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
         updateEdges((state.timeLeft/state.dur)*100); updateBreathAnimation(1 - (state.timeLeft/state.dur));
@@ -1314,17 +1185,6 @@
 
     function done() {
         trackEvent('practice_finish');
-        // Streak update: only after actual practice completion
-        var finishDate = new Date().toDateString();
-        if (appStats.lastDate !== finishDate) {
-            var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; }
-            else if (appStats.lastDate !== '') { appStats.streak = 1; }
-            appStats.lastDate = finishDate;
-            localStorage.setItem('mb_streak', appStats.streak);
-            localStorage.setItem('mb_last_date', appStats.lastDate);
-            renderStatText();
-        }
         playMegaGong();
         handleReset();
     }
@@ -1335,7 +1195,7 @@
     /* PARTICLE CANVAS */
     var ctx = els.canvas.getContext('2d'); var parts = [];
     function resize() { els.canvas.width = window.innerWidth; els.canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize); resize();
+    window.onresize = resize; resize();
     function Particle() { this.reset(); }
     Particle.prototype.reset = function() { this.x = Math.random()*els.canvas.width; this.y = Math.random()*els.canvas.height; this.s = Math.random()*2+0.5; this.vX = (Math.random()-0.5)*0.2; this.vY = (Math.random()-0.5)*0.2; this.a = 0; this.f = Math.random()*0.01+0.005; this.m = Math.random()*0.4+0.1; this.growing = true; };
     Particle.prototype.update = function() { this.x += this.vX; this.y += this.vY; if(this.growing){ this.a += this.f; if(this.a>=this.m) this.growing=false; } else { this.a -= this.f; if(this.a<=0) this.reset(); } };
@@ -1344,6 +1204,13 @@
     function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
     anim();
 
+    setInterval(function() { 
+        var isBreathing = state.running && !state.paused && state.idx !== 3;
+        if (isBreathing) { 
+            state.totalSec++; 
+            updJournal(); 
+        } 
+    }, 1000);
     renderStatText(); renderDots();
 
     // Hide install guide button if standalone via JS as well for iOS
@@ -1368,25 +1235,53 @@
             });
         }
         startCountdownLoop(nextPeriodForLoop);
-
-        // Если город еще не был определен (были только координаты), уточняем его фоном
-        if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {
-            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
-                if (city) {
-                    sandhyaCityName = city;
-                    localStorage.setItem('sandhya_city', sandhyaCityName);
-                    updateCityLabel();
-                }
-            }).catch(function(){});
-        }
     } else {
-        // Первый запуск — запрашиваем геопозицию
+        // Auto-request geo on first load
         setTimeout(function() {
-            useGeolocation(false);
-        }, 500);
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    sandhyaLat = pos.coords.latitude;
+                    sandhyaLng = pos.coords.longitude;
+                    
+                    // Reverse geocoding
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng, {
+                        headers: { 'User-Agent': 'MasterAppPWA/20.06' }
+                    })
+                    .then(function(r){ return r.json(); })
+                    .then(function(data) {
+                        var city = data.address.city || data.address.town || data.address.village || 'Авто';
+                        sandhyaCityName = city;
+                        document.getElementById('cityLabel').textContent = sandhyaCityName;
+                        localStorage.setItem('sandhya_city', sandhyaCityName);
+                    }).catch(function(e) {
+                        sandhyaCityName = 'Авто';
+                        document.getElementById('cityLabel').textContent = sandhyaCityName;
+                        localStorage.setItem('sandhya_city', sandhyaCityName);
+                    });
+                    
+                    localStorage.setItem('sandhya_lat', sandhyaLat);
+                    localStorage.setItem('sandhya_lng', sandhyaLng);
+                    renderSandhya();
+                    var nextP = null;
+                    if (sandhyaData) {
+                        var nm = Date.now();
+                        ['morning','midday','evening','night'].forEach(function(key) {
+                            var d = sandhyaData[key];
+                            if (d && d.start.getTime() > nm) {
+                                if (!nextP || d.start.getTime() < nextP.start.getTime()) {
+                                    nextP = { name: getperiodName(key), start: d.start, notifyAt: new Date(d.start.getTime() - 30*60000) };
+                                }
+                            }
+                        });
+                    }
+                    startCountdownLoop(nextP);
+                }, function() {
+                    // Fallback: show card with Moscow
+                    sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
+                    renderSandhya();
+                });
+            }
+        }, 800);
     }
 
     /* SERVICE WORKER */

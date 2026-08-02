@@ -1,21 +1,12 @@
-/* Service Worker — MASTER v20.13 */
-var CACHE_NAME = 'master-v20.13';
+/* Service Worker — MASTER v20.09 */
+var CACHE_NAME = 'master-v20.10';
 var ASSETS = [
   './',
   './index.html',
   './favicon.svg',
-  './favicon.ico',
-  './apple-touch-icon.png',
-  './icon-192.png',
-  './icon-512.png',
   './manifest.json',
   './metronome.html',
-  './suncalc.min.js',
-  './img/ios-step1.jpeg',
-  './img/ios-step2.jpeg',
-  './img/ios-step3.jpeg',
-  './img/ios-step4.jpeg',
-  './img/ios-step5.jpeg'
+  './suncalc.min.js'
 ];
 
 self.addEventListener('install', function(e) {
