@@ -514,8 +514,9 @@
         }
         .install-accordion-content.show { display: block; }
         .install-accordion-content img {
-            width: 100%; border-radius: 16px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
+            width: 78%; max-width: 250px; margin: 0 auto 16px auto; display: block;
+            border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border: 1px solid rgba(0,0,0,0.08);
         }
         .install-img-caption {
             font-size: 0.85rem; color: var(--text); opacity: 0.8;
@@ -580,8 +581,8 @@
 <div id="sandhyaCard" onclick="hideSandhyaCard()">
     <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div class="sandhya-title" style="display: none;"></div>
-        <div class="sandhya-city-label" style="font-size: 0.5rem; font-weight: 300; margin-top: 4px; color: var(--accent); opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">
-            🧭 <span id="cityLabel">Авто</span>
+        <div class="sandhya-city-label" style="font-size: 0.55rem; font-weight: 500; margin-top: 4px; color: var(--accent); opacity: 0.85; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; padding: 2px 8px; border-radius: 6px;" onclick="event.stopPropagation(); useGeolocation(true);" title="Нажмите для обновления геопозиции">
+            🧭 <span id="cityLabel"></span>
         </div>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
@@ -674,7 +675,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.12 (DAY / NIGHT)</div>
+    <div class="version-tag" id="versionTag">v20.13 (DAY / NIGHT)</div>
 </div>
 
 <div id="installOverlay">
@@ -703,19 +704,19 @@
             <button class="install-accordion-btn" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
             <div class="install-accordion-content">
                 <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (...) в нижней панели браузера</div>
-                <img src="img/ios-step1.jpeg" alt="Шаг 1" loading="lazy" style="width:100%;border-radius:12px;margin-bottom:16px;">
+                <img src="img/ios-step1.jpeg" alt="Шаг 1" loading="lazy">
                 
                 <div class="install-img-caption">Шаг 2: В открывшемся меню нажмите «Поделиться»</div>
-                <img src="img/ios-step2.jpeg" alt="Шаг 2" loading="lazy" style="width:100%;border-radius:12px;margin-bottom:16px;">
+                <img src="img/ios-step2.jpeg" alt="Шаг 2" loading="lazy">
                 
                 <div class="install-img-caption">Шаг 3: Пролистайте вниз до конца. Если кнопки нет, нажмите «Показать больше»</div>
-                <img src="img/ios-step3.jpeg" alt="Шаг 3" loading="lazy" style="width:100%;border-radius:12px;margin-bottom:16px;">
+                <img src="img/ios-step3.jpeg" alt="Шаг 3" loading="lazy">
                 
                 <div class="install-img-caption">Шаг 4: Выберите пункт «Добавить на экран "Домой"»</div>
-                <img src="img/ios-step4.jpeg" alt="Шаг 4" loading="lazy" style="width:100%;border-radius:12px;margin-bottom:16px;">
+                <img src="img/ios-step4.jpeg" alt="Шаг 4" loading="lazy">
                 
                 <div class="install-img-caption">Шаг 5: Нажмите синюю кнопку «Добавить» сверху</div>
-                <img src="img/ios-step5.jpeg" alt="Шаг 5" loading="lazy" style="width:100%;border-radius:12px;margin-bottom:16px;">
+                <img src="img/ios-step5.jpeg" alt="Шаг 5" loading="lazy">
             </div>
         </div>
 
@@ -832,6 +833,10 @@
     var sandhyaLat = (localStorage.getItem('sandhya_lat') !== null) ? parseFloat(localStorage.getItem('sandhya_lat')) : null;
     var sandhyaLng = (localStorage.getItem('sandhya_lng') !== null) ? parseFloat(localStorage.getItem('sandhya_lng')) : null;
     var sandhyaCityName = localStorage.getItem('sandhya_city') || null;
+    if (sandhyaCityName === 'Авто' || sandhyaCityName === 'Гео' || sandhyaCityName === 'АВТО') {
+        sandhyaCityName = null;
+        localStorage.removeItem('sandhya_city');
+    }
     var sandhyaTimers = [];
     var sandhyaData = null;
 
@@ -987,24 +992,58 @@
     /* =====================================================
        CITY GEOLOCATION
        ===================================================== */
-    function useGeolocation() {
-        if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
+    function useGeolocation(showFeedback) {
+        if (!navigator.geolocation) {
+            if (showFeedback) alert('Геолокация не поддерживается браузером');
+            return;
+        }
+        var geoOptions = { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 };
         navigator.geolocation.getCurrentPosition(function(pos) {
             sandhyaLat = pos.coords.latitude;
             sandhyaLng = pos.coords.longitude;
-            sandhyaCityName = 'Авто';
             localStorage.setItem('sandhya_lat', sandhyaLat);
             localStorage.setItem('sandhya_lng', sandhyaLng);
+
+            // Мгновенно отображаем координаты
+            sandhyaCityName = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
             localStorage.setItem('sandhya_city', sandhyaCityName);
             renderSandhya();
-        }, function() {
-            alert('Не удалось получить геолокацию.');
-        });
+
+            // Фоновое определение города
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
+                if (city) {
+                    sandhyaCityName = city;
+                    localStorage.setItem('sandhya_city', sandhyaCityName);
+                    updateCityLabel();
+                }
+            }).catch(function(){});
+        }, function(err) {
+            if (showFeedback) {
+                alert('Не удалось получить геопозицию. Разрешите доступ к геопозиции в настройках браузера.');
+            }
+            if (!sandhyaLat || !sandhyaLng) {
+                sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
+                localStorage.setItem('sandhya_lat', sandhyaLat);
+                localStorage.setItem('sandhya_lng', sandhyaLng);
+                localStorage.setItem('sandhya_city', sandhyaCityName);
+                renderSandhya();
+            }
+        }, geoOptions);
     }
 
     function updateCityLabel() {
         var lbl = document.getElementById('cityLabel');
-        if (lbl) lbl.textContent = sandhyaCityName || 'Гео';
+        if (!lbl) return;
+        if (sandhyaCityName && sandhyaCityName !== 'Авто' && sandhyaCityName !== 'Гео' && sandhyaCityName !== 'АВТО') {
+            lbl.textContent = sandhyaCityName;
+        } else if (sandhyaLat && sandhyaLng) {
+            lbl.textContent = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
+        } else {
+            lbl.textContent = 'Москва';
+        }
     }
 
 
@@ -1329,74 +1368,25 @@
             });
         }
         startCountdownLoop(nextPeriodForLoop);
+
+        // Если город еще не был определен (были только координаты), уточняем его фоном
+        if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
+                if (city) {
+                    sandhyaCityName = city;
+                    localStorage.setItem('sandhya_city', sandhyaCityName);
+                    updateCityLabel();
+                }
+            }).catch(function(){});
+        }
     } else {
-        // Auto-request geo on first load
+        // Первый запуск — запрашиваем геопозицию
         setTimeout(function() {
-            if (navigator.geolocation) {
-                var geoOptions = {
-                    enableHighAccuracy: false,   // false = быстрее, использует Wi-Fi/сотовый
-                    timeout: 8000,               // 8 секунд максимум
-                    maximumAge: 300000           // принять кешированные данные не старше 5 минут
-                };
-                navigator.geolocation.getCurrentPosition(function(pos) {
-                    sandhyaLat = pos.coords.latitude;
-                    sandhyaLng = pos.coords.longitude;
-
-                    // Сначала сохраняем и показываем карту — не ждём геокодинг
-                    localStorage.setItem('sandhya_lat', sandhyaLat);
-                    localStorage.setItem('sandhya_lng', sandhyaLng);
-
-                    // Показываем координаты пока идёт запрос названия города
-                    var coordLabel = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
-                    sandhyaCityName = coordLabel;
-                    localStorage.setItem('sandhya_city', sandhyaCityName);
-                    renderSandhya();
-
-                    var nextP = null;
-                    if (sandhyaData) {
-                        var nm = Date.now();
-                        ['morning','midday','evening','night'].forEach(function(key) {
-                            var d = sandhyaData[key];
-                            if (d && d.start.getTime() > nm) {
-                                if (!nextP || d.start.getTime() < nextP.start.getTime()) {
-                                    nextP = { name: getperiodName(key), start: d.start, notifyAt: new Date(d.start.getTime() - 30*60000) };
-                                }
-                            }
-                        });
-                    }
-                    startCountdownLoop(nextP);
-
-                    // Reverse geocoding (фоном — без User-Agent, браузеры его блокируют)
-                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
-                    .then(function(r){ return r.json(); })
-                    .then(function(data) {
-                        var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county)) || null;
-                        if (city) {
-                            sandhyaCityName = city;
-                            var lbl = document.getElementById('cityLabel');
-                            if (lbl) lbl.textContent = sandhyaCityName;
-                            localStorage.setItem('sandhya_city', sandhyaCityName);
-                        }
-                    }).catch(function() {
-                        // Оставляем координаты — они уже отображены и понятны
-                    });
-                }, function(err) {
-                    // Geo denied / timeout — fallback Москва
-                    sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
-                    localStorage.setItem('sandhya_lat', sandhyaLat);
-                    localStorage.setItem('sandhya_lng', sandhyaLng);
-                    localStorage.setItem('sandhya_city', sandhyaCityName);
-                    renderSandhya();
-                }, geoOptions);
-            } else {
-                // Браузер не поддерживает геолокацию — используем Москву
-                sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
-                localStorage.setItem('sandhya_lat', sandhyaLat);
-                localStorage.setItem('sandhya_lng', sandhyaLng);
-                localStorage.setItem('sandhya_city', sandhyaCityName);
-                renderSandhya();
-            }
-        }, 800);
+            useGeolocation(false);
+        }, 500);
     }
 
     /* SERVICE WORKER */
