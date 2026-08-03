@@ -675,7 +675,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.17 (DAY / NIGHT)</div>
+    <div class="version-tag" id="versionTag">v20.18 (DAY / NIGHT)</div>
 </div>
 
 <div id="installOverlay">
@@ -891,9 +891,9 @@
         var tTomorrow = SunCalc.getTimes(tomorrowNoon, lat, lng);
         var tYesterday = SunCalc.getTimes(yesterdayNoon, lat, lng);
 
-        // 1. Утренняя Сандхья (Брахма-мухурта / Рассвет): от (sunrise - 96 мин) до sunrise. Пик: sunrise.
-        var morningStart = new Date(tToday.sunrise.getTime() - 96 * 60000);
-        var morningEnd   = tToday.sunrise;
+        // 1. Утренняя Сандхья (Пратах / Рассвет): ±24 мин от sunrise (1 мухурта). Пик: sunrise.
+        var morningStart = new Date(tToday.sunrise.getTime() - 24 * 60000);
+        var morningEnd   = new Date(tToday.sunrise.getTime() + 24 * 60000);
 
         // 2. Полуденная Сандхья (Мадхьянха / Полдень): ±24 мин от solarNoon. Пик: solarNoon.
         var middayStart  = new Date(tToday.solarNoon.getTime() - 24 * 60000);
@@ -904,7 +904,7 @@
         var eveningEnd   = new Date(tToday.sunset.getTime() + 24 * 60000);
 
         // 4. Ночная Сандхья (Нишита / Полночь):
-        // Если сейчас время до восхода солнца (00:00 - sunrise) и надир сегодняшней ночи еще не прошел или идет прямо сейчас:
+        // Если сейчас время до завершения утренней Сандхьи (00:00 - morningEnd) и надир сегодняшней ночи еще не прошел или идет прямо сейчас:
         var nightNadir = (now.getTime() < morningEnd.getTime() && now.getTime() <= tToday.nadir.getTime() + 24 * 60000) 
                          ? tToday.nadir 
                          : tTomorrow.nadir;
@@ -917,7 +917,7 @@
             midday:  { start: middayStart,  peak: tToday.solarNoon, end: middayEnd },
             evening: { start: eveningStart, peak: tToday.sunset, end: eveningEnd },
             night:   { start: nightStart,   peak: nightNadir, end: nightEnd },
-            nextMorning: { start: new Date(tTomorrow.sunrise.getTime() - 96 * 60000), peak: tTomorrow.sunrise, end: tTomorrow.sunrise }
+            nextMorning: { start: new Date(tTomorrow.sunrise.getTime() - 24 * 60000), peak: tTomorrow.sunrise, end: new Date(tTomorrow.sunrise.getTime() + 24 * 60000) }
         };
     }
 
