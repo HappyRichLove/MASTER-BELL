@@ -165,7 +165,7 @@
                 localStorage.setItem('mb_total', state.totalGlobalSec);
                 updateTotalMins();
             }
-            state.nextTick = now + 1000;
+            state.nextTick += 1000;
         }
         requestAnimationFrame(engine);
     }

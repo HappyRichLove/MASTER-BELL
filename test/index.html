@@ -675,7 +675,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.15 (DAY / NIGHT)</div>
+    <div class="version-tag" id="versionTag">v20.17 (DAY / NIGHT)</div>
 </div>
 
 <div id="installOverlay">
@@ -856,6 +856,9 @@
         sandhyaCityName = null;
         localStorage.removeItem('sandhya_city');
     }
+    function hasCoords(lat, lng) {
+        return lat !== null && !isNaN(lat) && lng !== null && !isNaN(lng);
+    }
     var sandhyaTimers = [];
     var sandhyaData = null;
 
@@ -879,33 +882,49 @@
         if(card) card.classList.remove('visible');
     }
 
-    function computeSandhya(date, lat, lng) {
-        var times = SunCalc.getTimes(date, lat, lng);
-        var sunrise = times.sunrise;
-        var solarNoon = times.solarNoon;
-        var sunset = times.sunset;
-        var nadir = times.nadir;
-        var morningStart = new Date(sunrise.getTime() - 96 * 60000);
-        var morningEnd   = sunrise;
-        var middayStart  = new Date(solarNoon.getTime() - 24 * 60000);
-        var middayEnd    = new Date(solarNoon.getTime() + 24 * 60000);
-        var eveningStart = sunset;
-        var eveningEnd   = new Date(sunset.getTime() + 48 * 60000);
-        var nightStart   = new Date(nadir.getTime() - 24 * 60000);
-        var nightEnd     = new Date(nadir.getTime() + 24 * 60000);
+    function computeSandhya(now, lat, lng) {
+        var todayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+        var tomorrowNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12, 0, 0);
+        var yesterdayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 12, 0, 0);
+
+        var tToday = SunCalc.getTimes(todayNoon, lat, lng);
+        var tTomorrow = SunCalc.getTimes(tomorrowNoon, lat, lng);
+        var tYesterday = SunCalc.getTimes(yesterdayNoon, lat, lng);
+
+        // 1. Утренняя Сандхья (Брахма-мухурта / Рассвет): от (sunrise - 96 мин) до sunrise. Пик: sunrise.
+        var morningStart = new Date(tToday.sunrise.getTime() - 96 * 60000);
+        var morningEnd   = tToday.sunrise;
+
+        // 2. Полуденная Сандхья (Мадхьянха / Полдень): ±24 мин от solarNoon. Пик: solarNoon.
+        var middayStart  = new Date(tToday.solarNoon.getTime() - 24 * 60000);
+        var middayEnd    = new Date(tToday.solarNoon.getTime() + 24 * 60000);
+
+        // 3. Вечерняя Сандхья (Саям / Закат): ±24 мин от sunset. Пик: sunset.
+        var eveningStart = new Date(tToday.sunset.getTime() - 24 * 60000);
+        var eveningEnd   = new Date(tToday.sunset.getTime() + 24 * 60000);
+
+        // 4. Ночная Сандхья (Нишита / Полночь):
+        // Если сейчас время до восхода солнца (00:00 - sunrise) и надир сегодняшней ночи еще не прошел или идет прямо сейчас:
+        var nightNadir = (now.getTime() < morningEnd.getTime() && now.getTime() <= tToday.nadir.getTime() + 24 * 60000) 
+                         ? tToday.nadir 
+                         : tTomorrow.nadir;
+
+        var nightStart = new Date(nightNadir.getTime() - 24 * 60000);
+        var nightEnd   = new Date(nightNadir.getTime() + 24 * 60000);
+
         return {
-            morning: { start: morningStart, peak: sunrise, end: morningEnd },
-            midday:  { start: middayStart,  peak: solarNoon, end: middayEnd },
-            evening: { start: eveningStart, peak: sunset, end: eveningEnd },
-            night:   { start: nightStart,   peak: nadir, end: nightEnd }
+            morning: { start: morningStart, peak: tToday.sunrise, end: morningEnd },
+            midday:  { start: middayStart,  peak: tToday.solarNoon, end: middayEnd },
+            evening: { start: eveningStart, peak: tToday.sunset, end: eveningEnd },
+            night:   { start: nightStart,   peak: nightNadir, end: nightEnd },
+            nextMorning: { start: new Date(tTomorrow.sunrise.getTime() - 96 * 60000), peak: tTomorrow.sunrise, end: tTomorrow.sunrise }
         };
     }
 
     function renderSandhya() {
-        if (!sandhyaLat || !sandhyaLng) return;
+        if (!hasCoords(sandhyaLat, sandhyaLng)) return;
         var now = new Date();
-        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
-        sandhyaData = computeSandhya(today, sandhyaLat, sandhyaLng);
+        sandhyaData = computeSandhya(now, sandhyaLat, sandhyaLng);
 
         var periods = [
             { key: 'morning', id: 'morning' },
@@ -937,13 +956,18 @@
                 elPeriod.classList.add('active');
                 if (d.start.getTime() < nextMs) {
                     nextMs = d.start.getTime();
-                    nextPeriod = { name: getperiodName(p.key), start: d.start, notifyAt: new Date(d.start.getTime() - 30 * 60000) };
+                    nextPeriod = { name: getperiodName(p.key), start: d.start };
                 }
             }
         });
 
+        // Если все периоды текущего дня уже завершились (глубокая ночь после надира), следующий — рассвет завтра
+        if (!nextPeriod && sandhyaData.nextMorning && sandhyaData.nextMorning.start.getTime() > nowMs) {
+            nextPeriod = { name: getperiodName('morning'), start: sandhyaData.nextMorning.start };
+        }
+
         updateCountdown(nextPeriod);
-        scheduleNotification(nextPeriod);
+        startCountdownLoop(nextPeriod);
         document.getElementById('sandhyaCard').classList.add('visible');
         updateCityLabel();
         clearTimeout(sandhyaHideTimeout);
@@ -957,9 +981,14 @@
 
     function updateCountdown(nextPeriod) {
         var el = document.getElementById('sandhyaCountdown');
-        if (!nextPeriod) { el.textContent = 'Все периоды на сегодня пройдены'; return; }
+        if (!el) return;
+        if (!nextPeriod) { el.textContent = ''; return; }
         var diff = nextPeriod.start.getTime() - Date.now();
-        if (diff <= 0) { el.textContent = ''; return; }
+        if (diff <= 0) { 
+            el.textContent = ''; 
+            if (hasCoords(sandhyaLat, sandhyaLng)) renderSandhya();
+            return; 
+        }
         var h = Math.floor(diff / 3600000);
         var m = Math.floor((diff % 3600000) / 60000);
         var s = Math.floor((diff % 60000) / 1000);
@@ -972,6 +1001,7 @@
     function startCountdownLoop(nextPeriod) {
         currentNextPeriod = nextPeriod;
         if (countdownInterval) clearInterval(countdownInterval);
+        if (!currentNextPeriod) return;
         countdownInterval = setInterval(function() {
             updateCountdown(currentNextPeriod);
         }, 1000);
@@ -1043,7 +1073,7 @@
             if (showFeedback) {
                 alert('Не удалось получить геопозицию. Разрешите доступ к геопозиции в настройках браузера.');
             }
-            if (!sandhyaLat || !sandhyaLng) {
+            if (!hasCoords(sandhyaLat, sandhyaLng)) {
                 sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
                 localStorage.setItem('sandhya_lat', sandhyaLat);
                 localStorage.setItem('sandhya_lng', sandhyaLng);
@@ -1058,7 +1088,7 @@
         if (!lbl) return;
         if (sandhyaCityName && sandhyaCityName !== 'Авто' && sandhyaCityName !== 'Гео' && sandhyaCityName !== 'АВТО') {
             lbl.textContent = sandhyaCityName;
-        } else if (sandhyaLat && sandhyaLng) {
+        } else if (hasCoords(sandhyaLat, sandhyaLng)) {
             lbl.textContent = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
         } else {
             lbl.textContent = 'Москва';
@@ -1270,7 +1300,7 @@
             state.ints = [];
             for(var i=0;i<els.inputs.length;i++) {
                 var raw = parseFloat(els.inputs[i].value);
-                var val = (isNaN(raw) || raw <= 0) ? 1 : raw;
+                var val = (isNaN(raw) || !isFinite(raw) || raw <= 0) ? 1 : Math.min(Math.max(0.1, raw), 3600);
                 els.inputs[i].value = val;
                 state.ints.push(val);
                 if(i===0 && val > appStats.maxVdoh) { appStats.maxVdoh = val; localStorage.setItem('mb_max_vdoh', val); }
@@ -1278,7 +1308,7 @@
                 if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
             }
             var rawReps = parseInt(els.repeats.value);
-            state.reps = (isNaN(rawReps) || rawReps <= 0) ? 1 : rawReps;
+            state.reps = (isNaN(rawReps) || !isFinite(rawReps) || rawReps <= 0) ? 1 : Math.min(rawReps, 1000);
             els.repeats.value = state.reps;
             localStorage.setItem('mb_ints', JSON.stringify(state.ints));
             localStorage.setItem('mb_repeats', state.reps);
@@ -1372,21 +1402,8 @@
     }
 
     /* INIT SANDHYA */
-    if (sandhyaLat && sandhyaLng) {
+    if (hasCoords(sandhyaLat, sandhyaLng)) {
         renderSandhya();
-        var nextPeriodForLoop = null;
-        if (sandhyaData) {
-            var nowMs = Date.now();
-            ['morning','midday','evening','night'].forEach(function(key) {
-                var d = sandhyaData[key];
-                if (d && d.start.getTime() > nowMs) {
-                    if (!nextPeriodForLoop || d.start.getTime() < nextPeriodForLoop.start.getTime()) {
-                        nextPeriodForLoop = { name: getperiodName(key), start: d.start, notifyAt: new Date(d.start.getTime() - 30*60000) };
-                    }
-                }
-            });
-        }
-        startCountdownLoop(nextPeriodForLoop);
 
         // Если город еще не был определен (были только координаты), уточняем его фоном
         if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {

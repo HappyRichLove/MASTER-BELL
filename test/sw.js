@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.15 */
-var CACHE_NAME = 'master-v20.15';
+/* Service Worker — MASTER v20.17 */
+var CACHE_NAME = 'master-v20.17';
 var ASSETS = [
   './',
   './index.html',
@@ -91,7 +91,12 @@ self.addEventListener('fetch', function(e) {
 /* Push notifications (Web Push — готово к подключению бэкенда) */
 self.addEventListener('push', function(e) {
   if (!e.data) return;
-  var data = e.data.json();
+  var data = {};
+  try {
+    data = e.data.json();
+  } catch(err) {
+    data = { body: e.data.text() };
+  }
   e.waitUntil(
     self.registration.showNotification(data.title || '🙏 MASTER', {
       body: data.body || 'Время практики',
