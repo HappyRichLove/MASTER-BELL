@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.19 */
-var CACHE_NAME = 'master-v20.19';
+/* Service Worker — MASTER v20.18 */
+var CACHE_NAME = 'master-v20.18';
 var ASSETS = [
   './',
   './index.html',
@@ -67,7 +67,7 @@ self.addEventListener('fetch', function(e) {
     return;
   }
   /* HTML: network-first (to pick up updates), fallback to cache */
-  if (e.request.url.includes('index.html') || e.request.mode === 'navigate' || e.request.url.endsWith('/')) {
+  if (e.request.url.includes('index.html') || e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request).then(function(resp) {
         return caches.open(CACHE_NAME).then(function(cache) {
@@ -75,9 +75,7 @@ self.addEventListener('fetch', function(e) {
           return resp;
         });
       }).catch(function() {
-        return caches.match(e.request).then(function(cached) {
-            return cached || caches.match('./index.html') || caches.match('./');
-        });
+        return caches.match(e.request);
       })
     );
     return;
