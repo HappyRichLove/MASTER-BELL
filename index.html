@@ -182,14 +182,18 @@
             color: var(--text);
             font-variant-numeric: tabular-nums;
         }
+        .sandhya-period.tomorrow {
+            opacity: 0.5;
+            border-style: dashed;
+        }
         .sandhya-period.current .s-time {
             color: var(--gold);
         }
         .sandhya-period .s-window {
-            font-size: 0.48rem;
-            color: var(--accent);
-            opacity: 0.7;
+            font-size: 0.52rem;
+            color: var(--text);
             margin-top: 1px;
+            font-weight: 600;
         }
 
         /* Обратный отсчёт до ближайшей */
@@ -582,12 +586,12 @@
     <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div class="sandhya-title" style="display: none;"></div>
         <div class="sandhya-city-label" style="font-size: 0.55rem; font-weight: 500; margin-top: 4px; color: var(--accent); opacity: 0.85; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; padding: 2px 8px; border-radius: 6px;" onclick="event.stopPropagation(); useGeolocation(true);" title="Нажмите для обновления геопозиции">
-            🧭 <span id="cityLabel"></span>
+            🧭 <span id="cityLabel"></span> <span id="northArrow" style="display:inline-block; transition: transform 0.2s ease-out; margin-left: 4px; color: var(--accent);">↑</span>
         </div>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
         <div class="sandhya-period" id="sp-morning">
-            <div class="s-name">Утро</div>
+            <div class="s-name" id="sn-morning">Утро</div>
             <div class="s-time" id="st-morning">--:--</div>
             <div class="s-window" id="sw-morning"></div>
         </div>
@@ -946,14 +950,28 @@
             elTime.textContent = formatHHMM(d.peak);
             elWindow.textContent = formatHHMM(d.start) + '–' + formatHHMM(d.end);
 
-            elPeriod.classList.remove('current', 'active', 'passed');
+            elPeriod.classList.remove('current', 'active', 'passed', 'tomorrow');
+
+            var nameEl = document.getElementById('sn-' + p.id);
+            if (nameEl) nameEl.textContent = getperiodNameUI(p.key);
+
+            if (p.key === 'morning' && nowMs > d.end.getTime()) {
+                d = sandhyaData.nextMorning;
+                elTime.textContent = formatHHMM(d.peak);
+                elWindow.textContent = formatHHMM(d.start) + '–' + formatHHMM(d.end);
+                elPeriod.classList.add('tomorrow');
+                if (nameEl) nameEl.textContent = 'Утро (Завтра)';
+                // Для tomorrow утро не делаем его nextPeriod, если только мы не прошли midnight
+            }
 
             if (nowMs >= d.start.getTime() && nowMs <= d.end.getTime()) {
                 elPeriod.classList.add('current');
             } else if (nowMs > d.end.getTime()) {
                 elPeriod.classList.add('passed');
             } else {
-                elPeriod.classList.add('active');
+                if (p.key !== 'morning' || !elPeriod.classList.contains('tomorrow')) {
+                    elPeriod.classList.add('active');
+                }
                 if (d.start.getTime() < nextMs) {
                     nextMs = d.start.getTime();
                     nextPeriod = { name: getperiodName(p.key), start: d.start };
@@ -977,6 +995,11 @@
     function getperiodName(key) {
         var names = { morning: 'Утренняя Сандхья', midday: 'Полуденная Сандхья', evening: 'Вечерняя Сандхья', night: 'Ночная Сандхья' };
         return names[key] || 'Сандхья-кала';
+    }
+
+    function getperiodNameUI(key) {
+        var names = { morning: 'Утро', midday: 'Полдень', evening: 'Вечер', night: 'Ночь' };
+        return names[key] || '';
     }
 
     function updateCountdown(nextPeriod) {
@@ -1042,6 +1065,9 @@
        CITY GEOLOCATION
        ===================================================== */
     function useGeolocation(showFeedback) {
+        if (showFeedback && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission().catch(function(e) { console.log(e); });
+        }
         if (!navigator.geolocation) {
             if (showFeedback) alert('Геолокация не поддерживается браузером');
             return;
@@ -1404,6 +1430,28 @@
     /* INIT SANDHYA */
     if (hasCoords(sandhyaLat, sandhyaLng)) {
         renderSandhya();
+
+    /* INIT COMPASS */
+    function initCompass() {
+        var arrow = document.getElementById('northArrow');
+        if (!arrow) return;
+        function handleOrientation(e) {
+            var heading = null;
+            if (e.webkitCompassHeading != null) {
+                heading = e.webkitCompassHeading;
+            } else if (e.alpha != null) {
+                heading = 360 - e.alpha;
+            }
+            if (heading != null) {
+                arrow.style.transform = 'rotate(' + (-heading) + 'deg)';
+            }
+        }
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+            window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+    }
+    initCompass();
 
         // Если город еще не был определен (были только координаты), уточняем его фоном
         if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {
