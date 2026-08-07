@@ -585,7 +585,7 @@
     <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div class="sandhya-title" style="display: none;"></div>
         <div class="sandhya-city-label" style="font-size: 0.55rem; font-weight: 500; margin-top: 4px; color: var(--accent); opacity: 0.85; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; padding: 2px 8px; border-radius: 6px;" onclick="event.stopPropagation(); useGeolocation(true);" title="Нажмите для обновления геопозиции">
-            🧭 <span id="cityLabel"></span> <span id="northArrow" style="display:inline-block; transition: transform 0.2s ease-out; margin-left: 4px; color: var(--accent);">↑</span>
+            <span id="cityLabel"></span>
         </div>
     </div>
     <div class="sandhya-periods" id="sandhyaPeriods">
@@ -678,7 +678,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.19 (DAY / NIGHT) ЕУУУЫЕ </div>
+    <div class="version-tag" id="versionTag">v20.20 (Offline Enabled)</div>
 </div>
 
 <div id="installOverlay">
@@ -1064,9 +1064,6 @@
        CITY GEOLOCATION
        ===================================================== */
     function useGeolocation(showFeedback) {
-        if (showFeedback && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission().catch(function(e) { console.log(e); });
-        }
         if (!navigator.geolocation) {
             if (showFeedback) alert('Геолокация не поддерживается браузером');
             return;
@@ -1429,28 +1426,6 @@
     /* INIT SANDHYA */
     if (hasCoords(sandhyaLat, sandhyaLng)) {
         renderSandhya();
-
-    /* INIT COMPASS */
-    function initCompass() {
-        var arrow = document.getElementById('northArrow');
-        if (!arrow) return;
-        function handleOrientation(e) {
-            var heading = null;
-            if (e.webkitCompassHeading != null) {
-                heading = e.webkitCompassHeading;
-            } else if (e.alpha != null) {
-                heading = 360 - e.alpha;
-            }
-            if (heading != null) {
-                arrow.style.transform = 'rotate(' + (-heading) + 'deg)';
-            }
-        }
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-            window.addEventListener('deviceorientation', handleOrientation, true);
-        }
-    }
-    initCompass();
 
         // Если город еще не был определен (были только координаты), уточняем его фоном
         if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {
