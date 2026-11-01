@@ -43,25 +43,40 @@
             -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
 
+        /* STICKY TOP TIMER */
+        .top-sticky-wrapper {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding-bottom: 8px;
+        }
+
         /* HEADER */
         .header {
+            position: relative;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 20px 8px; position: sticky; top: 0; z-index: 100;
-            background: var(--bg);
+            padding: 10px 16px 4px;
+            background: transparent;
         }
         .back-btn {
             color: var(--accent); opacity: 0.7; cursor: pointer;
-            -webkit-tap-highlight-color: transparent; padding: 8px;
+            -webkit-tap-highlight-color: transparent; padding: 6px;
+            z-index: 2;
         }
         .back-btn:active { opacity: 0.3; }
         .header-title {
-            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.25em;
-            text-transform: uppercase; color: var(--gold); opacity: 0.8;
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem; font-weight: 800; letter-spacing: 0.25em;
+            text-transform: uppercase; color: var(--gold); opacity: 0.9;
+            pointer-events: none; white-space: nowrap;
         }
-        .header-right { display: flex; gap: 8px; }
+        .header-right { display: flex; gap: 8px; z-index: 2; }
         .header-icon-btn {
             background: var(--surface); border: none; cursor: pointer; color: var(--text);
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             -webkit-tap-highlight-color: transparent; transition: 0.2s;
         }
@@ -70,40 +85,29 @@
         /* MAIN TIMER AREA */
         .timer-area {
             display: flex; flex-direction: column; align-items: center;
-            padding: 20px 16px 10px; min-height: 200px;
+            padding: 4px 16px 2px;
             justify-content: center;
         }
         .practice-label {
-            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.2em;
-            text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+            font-size: 0.58rem; font-weight: 800; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--accent); margin-bottom: 2px;
         }
         .practice-name {
-            font-size: 1.3rem; font-weight: 700; color: var(--gold);
+            font-size: 1.25rem; font-weight: 700; color: var(--gold);
             margin-bottom: 2px; text-align: center;
         }
         .practice-info {
-            font-size: 0.7rem; color: var(--accent); margin-bottom: 12px;
-            font-variant-numeric: tabular-nums;
+            font-size: 0.68rem; color: var(--accent); margin-bottom: 4px;
+            font-variant-numeric: tabular-nums; min-height: 14px;
         }
         .timer-display {
-            font-size: 5.5rem; font-weight: 100; font-variant-numeric: tabular-nums;
-            color: var(--text); line-height: 1; margin-bottom: 8px;
+            font-size: 4.6rem; font-weight: 100; font-variant-numeric: tabular-nums;
+            color: var(--text); line-height: 0.95; margin-bottom: 6px;
             transition: opacity 0.15s, transform 0.15s;
         }
         .timer-display.pulse {
             opacity: 0.5; transform: scale(0.95);
         }
-        .metronome-indicator {
-            font-size: 0.6rem; color: var(--accent); letter-spacing: 0.15em;
-            font-weight: 600; text-transform: uppercase;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .metro-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--gold); opacity: 0.3;
-            transition: opacity 0.1s;
-        }
-        .metro-dot.on { opacity: 1; }
 
         /* PROGRESS BAR */
         .progress-bar-container {
@@ -242,39 +246,35 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="back-btn" onclick="window.location.href='index.html'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    <!-- TOP STICKY HEADER & TIMER -->
+    <div class="top-sticky-wrapper">
+        <div class="header">
+            <div class="back-btn" onclick="window.location.href='index.html'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <div class="header-title">Пранаяма</div>
+            <div class="header-right">
+                <button class="header-icon-btn" id="headerResetBtn" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+                <button class="header-icon-btn" id="themeBtn" onclick="toggleTheme()">
+                    <svg id="sunIcon" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
         </div>
-        <div class="header-title">Пранаяма</div>
-        <div class="header-right">
-            <button class="header-icon-btn" id="headerResetBtn" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            </button>
-            <button class="header-icon-btn" id="themeBtn" onclick="toggleTheme()">
-                <svg id="sunIcon" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
-        </div>
-    </div>
 
-    <!-- TIMER AREA -->
-    <div class="timer-area">
-        <div class="practice-label" id="practiceLabel">ПОДГОТОВКА</div>
-        <div class="practice-name" id="practiceName">Настройте практику</div>
-        <div class="practice-info" id="practiceInfo">Установите параметры ниже</div>
-        <div class="timer-display" id="timerDisplay">00:00</div>
-        <div class="metronome-indicator">
-            <div class="metro-dot" id="metroDot"></div>
-            <span id="metroLabel">метроном</span>
+        <div class="timer-area">
+            <div class="practice-label" id="practiceLabel">ПОДГОТОВКА</div>
+            <div class="practice-name" id="practiceName">Настройте практику</div>
+            <div class="practice-info" id="practiceInfo">Установите параметры ниже</div>
+            <div class="timer-display" id="timerDisplay">00:00</div>
         </div>
-    </div>
 
-    <!-- PROGRESS BAR -->
-    <div class="progress-bar-container">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
         </div>
     </div>
 
@@ -743,7 +743,6 @@
         document.getElementById('practiceLabel').textContent = 'ПОДГОТОВКА';
         document.getElementById('practiceName').textContent = 'Настройте практику';
         document.getElementById('practiceInfo').textContent = 'Установите параметры ниже';
-        document.getElementById('metroDot').classList.remove('on');
         setInputsEnabled(true);
         updateStepCards();
         releaseWakeLock();
@@ -812,7 +811,7 @@
         var elId = cur.type === 'practice' ? 'step-' + cur.practice : (cur.afterPractice === 0 ? 'rest-0' : null);
         if (elId) {
             var el = document.getElementById(elId);
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
@@ -828,11 +827,9 @@
 
         var cur = sequence[currentStep];
 
-        // METRONOME (always ticking during practices)
+        // METRONOME (always ticking calmly during practices)
         if (cur.type === 'practice' && now >= metronomeNextMs) {
             playMetronomeTick();
-            document.getElementById('metroDot').classList.add('on');
-            setTimeout(function() { document.getElementById('metroDot').classList.remove('on'); }, 80);
             metronomeNextMs = now + (60000 / bpm);
         }
 

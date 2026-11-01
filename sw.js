@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.21.2 (Prana Alfa) */
-var CACHE_NAME = 'master-v20.21.2';
+/* Service Worker — MASTER v20.21.3 (Prana Alfa) */
+var CACHE_NAME = 'master-v20.21.3';
 var ASSETS = [
   './',
   './index.html',

@@ -601,19 +601,21 @@
         /* PIN MODAL */
         #pinModal {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 9999; background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 999999; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             display: none; align-items: center; justify-content: center;
+            padding: 20px;
         }
         #pinModal.open { display: flex; }
         .pin-card {
             background: var(--surface); border-radius: 24px;
-            padding: 28px 24px; width: 280px; text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            padding: 28px 24px; width: 100%; max-width: 300px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid var(--sandhya-border);
             animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .pin-title {
-            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+            font-size: 0.8rem; font-weight: 800; letter-spacing: 0.2em;
             text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
         }
         .pin-input {
@@ -630,12 +632,21 @@
             75% { transform: translateX(8px); }
         }
         .pin-hint {
-            margin-top: 12px; font-size: 0.65rem; color: var(--accent);
+            margin-top: 12px; font-size: 0.68rem; color: var(--accent);
         }
+        .pin-submit-btn {
+            margin-top: 16px; width: 100%; padding: 14px;
+            background: var(--gold); color: #fff; border: none;
+            border-radius: 16px; font-family: inherit; font-size: 0.9rem;
+            font-weight: 800; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pin-submit-btn:active { transform: scale(0.96); }
         .pin-close {
-            margin-top: 12px; background: transparent; border: none;
+            margin-top: 10px; background: transparent; border: none;
             color: var(--accent); font-family: inherit; font-size: 0.75rem;
-            cursor: pointer; padding: 8px 16px;
+            cursor: pointer; padding: 8px 16px; width: 100%;
             -webkit-tap-highlight-color: transparent;
         }
     </style>
@@ -755,8 +766,9 @@
 <div id="pinModal">
     <div class="pin-card">
         <div class="pin-title">🔒 Введите пинкод</div>
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" class="pin-input" id="pinInput" placeholder="•••" autocomplete="off">
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="3" class="pin-input" id="pinInput" placeholder="•••" autocomplete="off">
         <div class="pin-hint" id="pinHint">Доступ для разработчиков</div>
+        <button class="pin-submit-btn" onclick="handlePinSubmit()">Войти</button>
         <button class="pin-close" onclick="closePinModal()">Отмена</button>
     </div>
 </div>
@@ -1549,12 +1561,22 @@
         if (e && e.cancelable) e.preventDefault();
         if (e) e.stopPropagation();
 
+        pranaTapCount++;
+        clearTimeout(pranaTapTimer);
+        pranaTapTimer = setTimeout(function() {
+            pranaTapCount = 0;
+            var vt = document.getElementById('versionTag');
+            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
+        }, 3500);
+
         // Immediate tactile/visual response on tap
         var vt = document.getElementById('versionTag');
         if (vt) {
             vt.style.opacity = '1';
             vt.style.transform = 'scale(1.25)';
             vt.style.color = 'var(--gold)';
+            var dots = ' •'.repeat(Math.min(pranaTapCount, 5));
+            vt.textContent = 'v20.21 (Prana Alfa)' + dots;
             setTimeout(function() {
                 vt.style.opacity = '';
                 vt.style.transform = '';
@@ -1562,19 +1584,16 @@
             }, 150);
         }
 
-        if (localStorage.getItem('prana_unlocked') === 'true') {
-            // Already unlocked: gently pulse the Pranayama button so user sees it!
-            var pb = document.getElementById('pranaBtn');
-            if (pb) {
-                pb.classList.add('pulse-highlight');
-                setTimeout(function() { pb.classList.remove('pulse-highlight'); }, 800);
-            }
-            return;
-        }
-
         if (pranaTapCount >= 5) {
             pranaTapCount = 0;
-            openPinModal();
+            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
+
+            if (localStorage.getItem('prana_unlocked') === 'true') {
+                // If already unlocked -> straight to pranayama!
+                window.location.href = 'pranayama.html';
+            } else {
+                openPinModal();
+            }
         }
     }
 
@@ -1603,34 +1622,44 @@
         input.focus();
     }
 
+    function verifyPin(val) {
+        var input = document.getElementById('pinInput');
+        if (val === PRANA_PIN) {
+            // SUCCESS
+            localStorage.setItem('prana_unlocked', 'true');
+            var pb = document.getElementById('pranaBtn');
+            if (pb) pb.classList.add('unlocked');
+            closePinModal();
+            if (navigator.vibrate) navigator.vibrate(100);
+            setTimeout(function() {
+                window.location.href = 'pranayama.html';
+            }, 300);
+        } else {
+            // WRONG
+            input.classList.add('error');
+            document.getElementById('pinHint').textContent = 'Неверный пинкод';
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            setTimeout(function() {
+                input.value = '';
+                input.classList.remove('error');
+                document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
+            }, 800);
+        }
+    }
+
     function handlePinInput() {
         var input = document.getElementById('pinInput');
         var val = input.value.replace(/\D/g, '');
         input.value = val;
-
         if (val.length === 3) {
-            if (val === PRANA_PIN) {
-                // SUCCESS
-                localStorage.setItem('prana_unlocked', 'true');
-                var pb = document.getElementById('pranaBtn');
-                if (pb) pb.classList.add('unlocked');
-                closePinModal();
-                if (navigator.vibrate) navigator.vibrate(100);
-                setTimeout(function() {
-                    window.location.href = 'pranayama.html';
-                }, 300);
-            } else {
-                // WRONG
-                input.classList.add('error');
-                document.getElementById('pinHint').textContent = 'Неверный пинкод';
-                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                setTimeout(function() {
-                    input.value = '';
-                    input.classList.remove('error');
-                    document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
-                }, 800);
-            }
+            verifyPin(val);
         }
+    }
+
+    function handlePinSubmit() {
+        var input = document.getElementById('pinInput');
+        var val = input.value.replace(/\D/g, '');
+        verifyPin(val);
     }
 
     function closePinModal() {
