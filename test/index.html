@@ -574,7 +574,11 @@
             margin-top: 4px; font-size: 0.52rem; letter-spacing: 0.15em;
             color: var(--accent); opacity: 0.4; cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            padding: 6px 20px;
+            padding: 14px 28px;
+            touch-action: manipulation;
+            transition: transform 0.12s ease, opacity 0.12s ease;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         /* HIDDEN PRANAYAMA BUTTON */
@@ -1514,6 +1518,7 @@
        ===================================================== */
     var pranaTapCount = 0;
     var pranaTapTimer = null;
+    var lastTapTime = 0;
     var PRANA_PIN = '888';
 
     // Check if already unlocked
@@ -1522,20 +1527,54 @@
         if (pb) pb.classList.add('unlocked');
     }
 
-    document.getElementById('versionTag').addEventListener('click', function(e) {
-        e.preventDefault(); e.stopPropagation();
-        // Already unlocked — no need to tap
-        if (localStorage.getItem('prana_unlocked') === 'true') return;
+    function handleVersionTap(e) {
+        var now = Date.now();
+        if (now - lastTapTime < 80) return;
+        lastTapTime = now;
+
+        if (e && e.cancelable) e.preventDefault();
+        if (e) e.stopPropagation();
+
+        if (localStorage.getItem('prana_unlocked') === 'true') {
+            window.location.href = 'pranayama.html';
+            return;
+        }
 
         pranaTapCount++;
         clearTimeout(pranaTapTimer);
-        pranaTapTimer = setTimeout(function() { pranaTapCount = 0; }, 2000);
+        pranaTapTimer = setTimeout(function() { pranaTapCount = 0; }, 3000);
+
+        // Immediate tactile/visual response on tap
+        var vt = document.getElementById('versionTag');
+        if (vt) {
+            vt.style.opacity = '1';
+            vt.style.transform = 'scale(1.2)';
+            setTimeout(function() {
+                vt.style.opacity = '';
+                vt.style.transform = '';
+            }, 120);
+        }
 
         if (pranaTapCount >= 5) {
             pranaTapCount = 0;
             openPinModal();
         }
-    });
+    }
+
+    var vtEl = document.getElementById('versionTag');
+    if (vtEl) {
+        if (window.PointerEvent) {
+            vtEl.addEventListener('pointerdown', handleVersionTap, { passive: false });
+        } else {
+            vtEl.addEventListener('touchstart', handleVersionTap, { passive: false });
+            vtEl.addEventListener('click', handleVersionTap);
+        }
+    }
+
+    var pinInputEl = document.getElementById('pinInput');
+    if (pinInputEl) {
+        pinInputEl.addEventListener('input', handlePinInput);
+    }
 
     function openPinModal() {
         var modal = document.getElementById('pinModal');
@@ -1544,9 +1583,7 @@
         input.value = '';
         input.classList.remove('error');
         document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
-        setTimeout(function() { input.focus(); }, 100);
-
-        input.addEventListener('input', handlePinInput);
+        input.focus();
     }
 
     function handlePinInput() {
@@ -1554,16 +1591,18 @@
         var val = input.value.replace(/\D/g, '');
         input.value = val;
 
-        if (val.length >= 3) {
+        if (val.length === 3) {
             if (val === PRANA_PIN) {
                 // SUCCESS
                 localStorage.setItem('prana_unlocked', 'true');
                 var pb = document.getElementById('pranaBtn');
                 if (pb) pb.classList.add('unlocked');
                 closePinModal();
-                // Subtle feedback
                 if (navigator.vibrate) navigator.vibrate(100);
-            } else if (val.length >= 4) {
+                setTimeout(function() {
+                    window.location.href = 'pranayama.html';
+                }, 300);
+            } else {
                 // WRONG
                 input.classList.add('error');
                 document.getElementById('pinHint').textContent = 'Неверный пинкод';
@@ -1581,7 +1620,6 @@
         var modal = document.getElementById('pinModal');
         var input = document.getElementById('pinInput');
         modal.classList.remove('open');
-        input.removeEventListener('input', handlePinInput);
         input.blur();
     }
 
