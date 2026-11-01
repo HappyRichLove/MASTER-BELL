@@ -576,6 +576,55 @@
             -webkit-tap-highlight-color: transparent;
             padding: 6px 20px;
         }
+
+        /* HIDDEN PRANAYAMA BUTTON */
+        #pranaBtn {
+            display: none;
+        }
+        #pranaBtn.unlocked {
+            display: flex;
+        }
+
+        /* PIN MODAL */
+        #pinModal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center;
+        }
+        #pinModal.open { display: flex; }
+        .pin-card {
+            background: var(--surface); border-radius: 24px;
+            padding: 28px 24px; width: 280px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .pin-title {
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+        }
+        .pin-input {
+            background: var(--bg); border: 2px solid var(--gold); border-radius: 16px;
+            padding: 14px; width: 100%; font-family: inherit;
+            font-size: 1.8rem; font-weight: 700; text-align: center;
+            color: var(--text); outline: none; letter-spacing: 0.5em;
+            -webkit-appearance: none;
+        }
+        .pin-input.error { border-color: #ff453a; animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .pin-hint {
+            margin-top: 12px; font-size: 0.65rem; color: var(--accent);
+        }
+        .pin-close {
+            margin-top: 12px; background: transparent; border: none;
+            color: var(--accent); font-family: inherit; font-size: 0.75rem;
+            cursor: pointer; padding: 8px 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -661,6 +710,9 @@
             <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
             </button>
+            <button id="pranaBtn" class="icon-btn" onclick="window.location.href='pranayama.html'" title="Пранаяма">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+            </button>
             <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
@@ -678,7 +730,17 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.20 (Offline Enabled)</div>
+    <div class="version-tag" id="versionTag">v20.21 (Prana Alfa)</div>
+</div>
+
+<!-- PIN MODAL -->
+<div id="pinModal">
+    <div class="pin-card">
+        <div class="pin-title">🔒 Введите пинкод</div>
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" class="pin-input" id="pinInput" placeholder="•••" autocomplete="off">
+        <div class="pin-hint" id="pinHint">Доступ для разработчиков</div>
+        <button class="pin-close" onclick="closePinModal()">Отмена</button>
+    </div>
 </div>
 
 <div id="installOverlay">
@@ -1446,6 +1508,87 @@
             useGeolocation(false);
         }, 500);
     }
+
+    /* =====================================================
+       PRANAYAMA SECRET ACCESS (5 taps + PIN)
+       ===================================================== */
+    var pranaTapCount = 0;
+    var pranaTapTimer = null;
+    var PRANA_PIN = '888';
+
+    // Check if already unlocked
+    if (localStorage.getItem('prana_unlocked') === 'true') {
+        var pb = document.getElementById('pranaBtn');
+        if (pb) pb.classList.add('unlocked');
+    }
+
+    document.getElementById('versionTag').addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        // Already unlocked — no need to tap
+        if (localStorage.getItem('prana_unlocked') === 'true') return;
+
+        pranaTapCount++;
+        clearTimeout(pranaTapTimer);
+        pranaTapTimer = setTimeout(function() { pranaTapCount = 0; }, 2000);
+
+        if (pranaTapCount >= 5) {
+            pranaTapCount = 0;
+            openPinModal();
+        }
+    });
+
+    function openPinModal() {
+        var modal = document.getElementById('pinModal');
+        var input = document.getElementById('pinInput');
+        modal.classList.add('open');
+        input.value = '';
+        input.classList.remove('error');
+        document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
+        setTimeout(function() { input.focus(); }, 100);
+
+        input.addEventListener('input', handlePinInput);
+    }
+
+    function handlePinInput() {
+        var input = document.getElementById('pinInput');
+        var val = input.value.replace(/\D/g, '');
+        input.value = val;
+
+        if (val.length >= 3) {
+            if (val === PRANA_PIN) {
+                // SUCCESS
+                localStorage.setItem('prana_unlocked', 'true');
+                var pb = document.getElementById('pranaBtn');
+                if (pb) pb.classList.add('unlocked');
+                closePinModal();
+                // Subtle feedback
+                if (navigator.vibrate) navigator.vibrate(100);
+            } else if (val.length >= 4) {
+                // WRONG
+                input.classList.add('error');
+                document.getElementById('pinHint').textContent = 'Неверный пинкод';
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+                setTimeout(function() {
+                    input.value = '';
+                    input.classList.remove('error');
+                    document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
+                }, 800);
+            }
+        }
+    }
+
+    function closePinModal() {
+        var modal = document.getElementById('pinModal');
+        var input = document.getElementById('pinInput');
+        modal.classList.remove('open');
+        input.removeEventListener('input', handlePinInput);
+        input.blur();
+    }
+
+    // Close pin modal on backdrop click
+    document.getElementById('pinModal').addEventListener('click', function(e) {
+        if (e.target === this) closePinModal();
+    });
 
     /* SERVICE WORKER */
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(function(){}); }

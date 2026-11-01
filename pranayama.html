@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#000000">
+    <title>🧘 MASTER PRANA</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --bg: #000000; --surface: #1c1c1e; --text: #ffffff;
+            --accent: #8e8e93; --gold: #d4af37;
+            --glow: rgba(212, 175, 55, 0.5);
+            --surface-hover: #2c2c2e;
+            --red: #ff453a;
+            --green: #30d158;
+        }
+        .light-theme {
+            --bg: #f4f1ea; --surface: #ffffff; --text: #000000;
+            --accent: #8e806a; --gold: #c2a05e;
+            --glow: rgba(194, 160, 94, 0.4);
+            --surface-hover: #f0ede6;
+            --red: #ff3b30;
+            --green: #34c759;
+        }
+        html { background-color: var(--bg); }
+        body {
+            margin: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg); color: var(--text);
+            min-height: 100vh; min-height: 100dvh;
+            width: 100vw; overflow-x: hidden;
+            transition: background-color 0.8s ease;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px 8px; position: sticky; top: 0; z-index: 100;
+            background: var(--bg);
+        }
+        .back-btn {
+            color: var(--accent); opacity: 0.7; cursor: pointer;
+            -webkit-tap-highlight-color: transparent; padding: 8px;
+        }
+        .back-btn:active { opacity: 0.3; }
+        .header-title {
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.25em;
+            text-transform: uppercase; color: var(--gold); opacity: 0.8;
+        }
+        .header-right { display: flex; gap: 8px; }
+        .header-icon-btn {
+            background: var(--surface); border: none; cursor: pointer; color: var(--text);
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            -webkit-tap-highlight-color: transparent; transition: 0.2s;
+        }
+        .header-icon-btn:active { transform: scale(0.9); }
+
+        /* MAIN TIMER AREA */
+        .timer-area {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 16px 10px; min-height: 200px;
+            justify-content: center;
+        }
+        .practice-label {
+            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+        }
+        .practice-name {
+            font-size: 1.3rem; font-weight: 700; color: var(--gold);
+            margin-bottom: 2px; text-align: center;
+        }
+        .practice-info {
+            font-size: 0.7rem; color: var(--accent); margin-bottom: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-display {
+            font-size: 5.5rem; font-weight: 100; font-variant-numeric: tabular-nums;
+            color: var(--text); line-height: 1; margin-bottom: 8px;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+        .timer-display.pulse {
+            opacity: 0.5; transform: scale(0.95);
+        }
+        .metronome-indicator {
+            font-size: 0.6rem; color: var(--accent); letter-spacing: 0.15em;
+            font-weight: 600; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .metro-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--gold); opacity: 0.3;
+            transition: opacity 0.1s;
+        }
+        .metro-dot.on { opacity: 1; }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            width: 100%; max-width: 400px; margin: 0 auto;
+            padding: 0 20px;
+        }
+        .progress-bar {
+            height: 3px; background: var(--surface); border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: var(--gold); border-radius: 2px;
+            transition: width 0.3s linear; width: 0%;
+        }
+
+        /* STEPS (practice list / settings) */
+        .steps-container {
+            padding: 16px 16px 120px; max-width: 440px; margin: 0 auto;
+        }
+        .step-card {
+            background: var(--surface); border-radius: 16px;
+            padding: 14px 16px; margin-bottom: 8px;
+            transition: all 0.3s;
+            border: 1.5px solid transparent;
+        }
+        .step-card.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212,175,55,0.15);
+        }
+        .step-card.done { opacity: 0.35; }
+        .step-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px;
+        }
+        .step-num {
+            font-size: 0.55rem; font-weight: 800; color: var(--gold);
+            letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        .step-status {
+            font-size: 0.55rem; font-weight: 700; color: var(--accent);
+            letter-spacing: 0.1em;
+        }
+        .step-status.running { color: var(--green); }
+        .step-title {
+            font-size: 1rem; font-weight: 700; color: var(--text);
+            margin-bottom: 8px;
+        }
+        .step-settings {
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .setting-item {
+            display: flex; flex-direction: column; align-items: center;
+            background: var(--bg); border-radius: 12px; padding: 8px 12px;
+            min-width: 70px;
+        }
+        .setting-label {
+            font-size: 0.5rem; font-weight: 700; color: var(--accent);
+            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+        }
+        .setting-input {
+            background: transparent; border: none; font-family: inherit;
+            font-size: 1.1rem; font-weight: 700; width: 60px; text-align: center;
+            color: var(--text); outline: none; padding: 0;
+            -moz-appearance: textfield; -webkit-appearance: none;
+        }
+        .setting-input::-webkit-outer-spin-button,
+        .setting-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .setting-unit {
+            font-size: 0.5rem; color: var(--accent); margin-top: 2px;
+        }
+
+        /* REST card (between practices) */
+        .rest-card {
+            background: transparent; border: 1px dashed var(--accent);
+            border-radius: 12px; padding: 10px 16px; margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            opacity: 0.5;
+        }
+        .rest-card.active { opacity: 1; border-color: var(--gold); border-style: solid; }
+        .rest-card.done { opacity: 0.2; }
+        .rest-label {
+            font-size: 0.7rem; font-weight: 600; color: var(--accent);
+        }
+        .rest-setting {
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        /* BOTTOM CONTROLS */
+        .bottom-controls {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+            background: linear-gradient(transparent, var(--bg) 30%);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            z-index: 200;
+        }
+        .btn-main {
+            background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
+            cursor: pointer; font-family: inherit; font-size: 1.1rem; font-weight: 900;
+            color: #ffffff; box-shadow: 0 8px 25px var(--glow);
+            width: 100%; max-width: 300px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent; text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .btn-main:active { transform: scale(0.95); }
+        .btn-main.stop { background: var(--red); box-shadow: 0 8px 25px rgba(255,69,58,0.3); }
+        .btn-secondary {
+            background: transparent; border: none; color: var(--accent);
+            font-family: inherit; font-size: 0.75rem; font-weight: 600;
+            cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase;
+            -webkit-tap-highlight-color: transparent; padding: 8px 16px;
+        }
+
+        /* BPM CONTROL */
+        .bpm-control {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 4px;
+        }
+        .bpm-btn {
+            background: var(--surface); border: none; color: var(--text);
+            width: 36px; height: 36px; border-radius: 50%;
+            font-size: 1.2rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bpm-btn:active { transform: scale(0.9); }
+        .bpm-value {
+            font-size: 0.9rem; font-weight: 700; color: var(--gold);
+            font-variant-numeric: tabular-nums; min-width: 80px; text-align: center;
+        }
+
+        /* VERSION */
+        .version-tag {
+            text-align: center; font-size: 0.5rem; letter-spacing: 0.15em;
+            color: var(--accent); opacity: 0.3; padding: 4px 0 8px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 0; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="back-btn" onclick="window.location.href='index.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </div>
+        <div class="header-title">Пранаяма</div>
+        <div class="header-right">
+            <button class="header-icon-btn" id="themeBtn" onclick="toggleTheme()">
+                <svg id="sunIcon" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- TIMER AREA -->
+    <div class="timer-area">
+        <div class="practice-label" id="practiceLabel">ПОДГОТОВКА</div>
+        <div class="practice-name" id="practiceName">Настройте практику</div>
+        <div class="practice-info" id="practiceInfo">Установите параметры ниже</div>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <div class="metronome-indicator">
+            <div class="metro-dot" id="metroDot"></div>
+            <span id="metroLabel">метроном</span>
+        </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- BPM CONTROL -->
+    <div style="display:flex; justify-content:center; padding: 12px 0 4px;">
+        <div class="bpm-control">
+            <button class="bpm-btn" onclick="changeBPM(-5)">−</button>
+            <div class="bpm-value" id="bpmValue">60 BPM</div>
+            <button class="bpm-btn" onclick="changeBPM(5)">+</button>
+        </div>
+    </div>
+
+    <!-- PRACTICE STEPS -->
+    <div class="steps-container" id="stepsContainer">
+
+        <!-- 1. Бхастрика -->
+        <div class="step-card" id="step-0">
+            <div class="step-header">
+                <div class="step-num">Практика 1</div>
+                <div class="step-status" id="status-0">ожидание</div>
+            </div>
+            <div class="step-title">Бхастрика</div>
+            <div class="step-settings">
+                <div class="setting-item">
+                    <div class="setting-label">Время</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-0-time" value="3">
+                    <div class="setting-unit">мин</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Отдых 1 -->
+        <div class="rest-card" id="rest-0">
+            <div class="rest-label">☕ Отдых</div>
+            <div class="rest-setting">
+                <input type="text" inputmode="numeric" class="setting-input" id="r-0-time" value="2" style="width:40px; font-size:0.9rem;">
+                <div class="setting-unit">мин</div>
+            </div>
+        </div>
+
+        <!-- 2. Капалабхати -->
+        <div class="step-card" id="step-1">
+            <div class="step-header">
+                <div class="step-num">Практика 2</div>
+                <div class="step-status" id="status-1">ожидание</div>
+            </div>
+            <div class="step-title">Капалабхати</div>
+            <div class="step-settings">
+                <div class="setting-item">
+                    <div class="setting-label">Циклы</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-cycles" value="3">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">Время</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-time" value="3">
+                    <div class="setting-unit">мин/цикл</div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">Отдых</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-rest" value="1">
+                    <div class="setting-unit">мин</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Отдых 2 (между 2 и 3) — необязательный -->
+
+        <!-- 3. Замки (Бандхи) -->
+        <div class="step-card" id="step-2">
+            <div class="step-header">
+                <div class="step-num">Практика 3</div>
+                <div class="step-status" id="status-2">ожидание</div>
+            </div>
+            <div class="step-title">Замки (Бандхи)</div>
+            <div class="step-settings">
+                <div class="setting-item">
+                    <div class="setting-label">Повторы</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-2-reps" value="7">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">Время</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-2-time" value="45">
+                    <div class="setting-unit">сек</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Уджайи -->
+        <div class="step-card" id="step-3">
+            <div class="step-header">
+                <div class="step-num">Практика 4</div>
+                <div class="step-status" id="status-3">ожидание</div>
+            </div>
+            <div class="step-title">Уджайи</div>
+            <div class="step-settings">
+                <div class="setting-item">
+                    <div class="setting-label">Повторы</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-3-reps" value="5">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">Задержка</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-3-time" value="30">
+                    <div class="setting-unit">сек</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Анулом Вилом -->
+        <div class="step-card" id="step-4">
+            <div class="step-header">
+                <div class="step-num">Практика 5</div>
+                <div class="step-status" id="status-4">ожидание</div>
+            </div>
+            <div class="step-title">Анулом Вилом</div>
+            <div class="step-settings">
+                <div class="setting-item">
+                    <div class="setting-label">Время</div>
+                    <input type="text" inputmode="numeric" class="setting-input" id="s-4-time" value="10">
+                    <div class="setting-unit">мин</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="version-tag">v20.21 (Prana Alfa)</div>
+    </div>
+
+    <!-- BOTTOM CONTROLS -->
+    <div class="bottom-controls">
+        <button id="mainBtn" class="btn-main" onclick="handleMain()">НАЧАТЬ ПРАКТИКУ</button>
+        <button id="skipBtn" class="btn-secondary" onclick="skipCurrent()" style="display:none;">Пропустить →</button>
+    </div>
+
+<script>
+    /* =====================================================
+       ANTI-ZOOM / GESTURE PREVENTION
+       ===================================================== */
+    document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    var lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) { var now = Date.now(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, { passive: false });
+
+    /* =====================================================
+       AUDIO ENGINE
+       ===================================================== */
+    var audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playMetronomeTick() {
+        if (!audioCtx) return;
+        var t = audioCtx.currentTime;
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, t);
+        osc.frequency.exponentialRampToValueAtTime(400, t + 0.03);
+        gain.gain.setValueAtTime(0.12, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + 0.06);
+    }
+
+    function playBellDing() {
+        if (!audioCtx) return;
+        var t = audioCtx.currentTime;
+        // Звук колокольчика «дзинь»
+        var harmonics = [
+            { freq: 880, vol: 0.08, decay: 1.5 },
+            { freq: 1760, vol: 0.04, decay: 1.0 },
+            { freq: 2640, vol: 0.02, decay: 0.6 }
+        ];
+        harmonics.forEach(function(h) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = h.freq;
+            gain.gain.setValueAtTime(h.vol, t);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + h.decay);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + h.decay + 0.1);
+        });
+    }
+
+    function playFinishGong() {
+        if (!audioCtx) return;
+        var t = audioCtx.currentTime;
+        var freqs = [196, 293.66, 392];
+        freqs.forEach(function(f) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = f;
+            gain.gain.setValueAtTime(0.1, t);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + 5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 5.1);
+        });
+    }
+
+    function playTransitionBowl() {
+        if (!audioCtx) return;
+        var t = audioCtx.currentTime;
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 440;
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + 2.6);
+    }
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+    var bpm = 60;
+    var night = true;
+    var running = false;
+    var paused = false;
+    var currentStep = -1;        // index into sequence[]
+    var sequence = [];           // [{type, practice, cycle, totalCycles, durationSec}]
+    var timeLeftMs = 0;
+    var totalDurMs = 0;
+    var lastTick = 0;
+    var metronomeNextMs = 0;
+    var wakeLock = null;
+
+    /* =====================================================
+       THEME
+       ===================================================== */
+    function toggleTheme() {
+        night = !night; applyTheme();
+        localStorage.setItem('pranayama_night', night);
+    }
+    function applyTheme() {
+        document.body.classList.toggle('light-theme', !night);
+        document.getElementById('sunIcon').style.display = night ? 'none' : 'block';
+        document.getElementById('moonIcon').style.display = night ? 'block' : 'none';
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', night ? '#000000' : '#f4f1ea');
+    }
+
+    /* =====================================================
+       BPM
+       ===================================================== */
+    function changeBPM(delta) {
+        bpm = Math.max(30, Math.min(180, bpm + delta));
+        document.getElementById('bpmValue').textContent = bpm + ' BPM';
+        localStorage.setItem('pranayama_bpm', bpm);
+    }
+
+    /* =====================================================
+       SETTINGS PERSISTENCE
+       ===================================================== */
+    var settingIds = [
+        's-0-time', 'r-0-time',
+        's-1-cycles', 's-1-time', 's-1-rest',
+        's-2-reps', 's-2-time',
+        's-3-reps', 's-3-time',
+        's-4-time'
+    ];
+
+    function saveSettings() {
+        var data = {};
+        settingIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data.bpm = bpm;
+        localStorage.setItem('pranayama_settings', JSON.stringify(data));
+    }
+
+    function loadSettings() {
+        try {
+            var data = JSON.parse(localStorage.getItem('pranayama_settings'));
+            if (!data) return;
+            settingIds.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && data[id] !== undefined) el.value = data[id];
+            });
+            if (data.bpm) { bpm = data.bpm; document.getElementById('bpmValue').textContent = bpm + ' BPM'; }
+        } catch(e) {}
+    }
+
+    /* =====================================================
+       BUILD SEQUENCE
+       ===================================================== */
+    function getVal(id, fallback) {
+        var v = parseFloat(document.getElementById(id).value);
+        return (isNaN(v) || v <= 0) ? fallback : v;
+    }
+
+    function buildSequence() {
+        sequence = [];
+
+        // 1. Бхастрика (1 цикл)
+        sequence.push({ type: 'practice', practice: 0, label: 'Бхастрика', cycle: 1, totalCycles: 1, durationSec: getVal('s-0-time', 3) * 60, sound: 'metronome' });
+
+        // Отдых после бхастрики
+        var rest0 = getVal('r-0-time', 2) * 60;
+        if (rest0 > 0) sequence.push({ type: 'rest', afterPractice: 0, label: 'Отдых', durationSec: rest0, sound: 'none' });
+
+        // 2. Капалабхати (N циклов)
+        var kapCycles = Math.max(1, Math.round(getVal('s-1-cycles', 3)));
+        var kapTime = getVal('s-1-time', 3) * 60;
+        var kapRest = getVal('s-1-rest', 1) * 60;
+        for (var i = 0; i < kapCycles; i++) {
+            sequence.push({ type: 'practice', practice: 1, label: 'Капалабхати', cycle: i+1, totalCycles: kapCycles, durationSec: kapTime, sound: 'metronome' });
+            if (i < kapCycles - 1 && kapRest > 0) {
+                sequence.push({ type: 'rest', afterPractice: 1, label: 'Отдых (между циклами)', durationSec: kapRest, sound: 'none' });
+            }
+        }
+
+        // 3. Замки (N повторов)
+        var zamkiReps = Math.max(1, Math.round(getVal('s-2-reps', 7)));
+        var zamkiTime = getVal('s-2-time', 45);
+        for (var j = 0; j < zamkiReps; j++) {
+            sequence.push({ type: 'practice', practice: 2, label: 'Замки', cycle: j+1, totalCycles: zamkiReps, durationSec: zamkiTime, sound: 'bell' });
+        }
+
+        // 4. Уджайи (N повторов)
+        var ujReps = Math.max(1, Math.round(getVal('s-3-reps', 5)));
+        var ujTime = getVal('s-3-time', 30);
+        for (var k = 0; k < ujReps; k++) {
+            sequence.push({ type: 'practice', practice: 3, label: 'Уджайи', cycle: k+1, totalCycles: ujReps, durationSec: ujTime, sound: 'metronome' });
+        }
+
+        // 5. Анулом Вилом
+        sequence.push({ type: 'practice', practice: 4, label: 'Анулом Вилом', cycle: 1, totalCycles: 1, durationSec: getVal('s-4-time', 10) * 60, sound: 'metronome' });
+    }
+
+    /* =====================================================
+       UI UPDATES
+       ===================================================== */
+    function formatMMSS(totalSec) {
+        var s = Math.max(0, Math.ceil(totalSec));
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function updateStepCards() {
+        for (var i = 0; i < 5; i++) {
+            var card = document.getElementById('step-' + i);
+            var status = document.getElementById('status-' + i);
+            if (!card || !status) continue;
+            card.classList.remove('active', 'done');
+            status.textContent = 'ожидание';
+            status.classList.remove('running');
+        }
+        // rest cards
+        var rest0El = document.getElementById('rest-0');
+        if (rest0El) { rest0El.classList.remove('active', 'done'); }
+
+        if (!running || currentStep < 0) return;
+
+        var cur = sequence[currentStep];
+        // Mark done practices
+        var donePractices = {};
+        for (var d = 0; d < currentStep; d++) {
+            if (sequence[d].type === 'practice') donePractices[sequence[d].practice] = true;
+            if (sequence[d].type === 'rest' && sequence[d].afterPractice === 0) {
+                var r0 = document.getElementById('rest-0');
+                if (r0) r0.classList.add('done');
+            }
+        }
+        for (var p in donePractices) {
+            // Only mark done if ALL cycles of this practice are done
+            var allDone = true;
+            for (var q = currentStep; q < sequence.length; q++) {
+                if (sequence[q].type === 'practice' && sequence[q].practice == p) { allDone = false; break; }
+            }
+            if (allDone) {
+                var c = document.getElementById('step-' + p);
+                var st = document.getElementById('status-' + p);
+                if (c) c.classList.add('done');
+                if (st) { st.textContent = '✓'; st.classList.remove('running'); }
+            }
+        }
+
+        // Current
+        if (cur.type === 'practice') {
+            var card2 = document.getElementById('step-' + cur.practice);
+            var status2 = document.getElementById('status-' + cur.practice);
+            if (card2) card2.classList.add('active');
+            if (status2) {
+                if (cur.totalCycles > 1) status2.textContent = 'цикл ' + cur.cycle + '/' + cur.totalCycles;
+                else status2.textContent = 'выполняется';
+                status2.classList.add('running');
+            }
+        } else if (cur.type === 'rest' && cur.afterPractice === 0) {
+            var r0a = document.getElementById('rest-0');
+            if (r0a) r0a.classList.add('active');
+        }
+    }
+
+    function updateTimerUI() {
+        if (!running || currentStep < 0) return;
+        var cur = sequence[currentStep];
+        var lbl = document.getElementById('practiceLabel');
+        var name = document.getElementById('practiceName');
+        var info = document.getElementById('practiceInfo');
+
+        if (cur.type === 'practice') {
+            lbl.textContent = 'Практика ' + (cur.practice + 1);
+            name.textContent = cur.label;
+            if (cur.totalCycles > 1) info.textContent = 'Цикл ' + cur.cycle + ' из ' + cur.totalCycles;
+            else info.textContent = '';
+        } else {
+            lbl.textContent = 'ПАУЗА';
+            name.textContent = cur.label;
+            info.textContent = '';
+        }
+    }
+
+    function setInputsEnabled(enabled) {
+        var inputs = document.querySelectorAll('.setting-input');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].disabled = !enabled;
+            inputs[i].style.opacity = enabled ? '1' : '0.4';
+        }
+    }
+
+    /* =====================================================
+       WAKE LOCK
+       ===================================================== */
+    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
+    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
+
+    /* =====================================================
+       MAIN CONTROL
+       ===================================================== */
+    function handleMain() {
+        initAudio();
+        if (!running) {
+            // START
+            saveSettings();
+            buildSequence();
+            if (sequence.length === 0) return;
+            running = true; paused = false;
+            currentStep = 0;
+            startCurrentStep();
+            document.getElementById('mainBtn').textContent = 'ПАУЗА';
+            document.getElementById('mainBtn').classList.remove('stop');
+            document.getElementById('skipBtn').style.display = '';
+            setInputsEnabled(false);
+            requestWakeLock();
+        } else if (!paused) {
+            // PAUSE
+            paused = true;
+            document.getElementById('mainBtn').textContent = 'ПРОДОЛЖИТЬ';
+            releaseWakeLock();
+        } else {
+            // RESUME
+            paused = false;
+            lastTick = performance.now();
+            metronomeNextMs = performance.now();
+            document.getElementById('mainBtn').textContent = 'ПАУЗА';
+            requestWakeLock();
+            requestAnimationFrame(engineLoop);
+        }
+    }
+
+    function stopAll() {
+        running = false; paused = false; currentStep = -1;
+        document.getElementById('mainBtn').textContent = 'НАЧАТЬ ПРАКТИКУ';
+        document.getElementById('mainBtn').classList.remove('stop');
+        document.getElementById('skipBtn').style.display = 'none';
+        document.getElementById('timerDisplay').textContent = '00:00';
+        document.getElementById('progressFill').style.width = '0%';
+        document.getElementById('practiceLabel').textContent = 'ПОДГОТОВКА';
+        document.getElementById('practiceName').textContent = 'Настройте практику';
+        document.getElementById('practiceInfo').textContent = 'Установите параметры ниже';
+        document.getElementById('metroDot').classList.remove('on');
+        setInputsEnabled(true);
+        updateStepCards();
+        releaseWakeLock();
+    }
+
+    function skipCurrent() {
+        if (!running || currentStep < 0) return;
+        advanceStep();
+    }
+
+    function startCurrentStep() {
+        if (currentStep >= sequence.length) {
+            finishAll();
+            return;
+        }
+        var cur = sequence[currentStep];
+        timeLeftMs = cur.durationSec * 1000;
+        totalDurMs = timeLeftMs;
+        lastTick = performance.now();
+        metronomeNextMs = performance.now(); // tick immediately
+
+        updateTimerUI();
+        updateStepCards();
+        scrollToActiveCard();
+
+        // Play transition sound
+        if (cur.type === 'practice') playTransitionBowl();
+
+        requestAnimationFrame(engineLoop);
+    }
+
+    function advanceStep() {
+        currentStep++;
+        if (currentStep >= sequence.length) {
+            finishAll();
+        } else {
+            startCurrentStep();
+        }
+    }
+
+    function finishAll() {
+        playFinishGong();
+        document.getElementById('practiceLabel').textContent = '🙏';
+        document.getElementById('practiceName').textContent = 'Практика завершена';
+        document.getElementById('practiceInfo').textContent = '';
+        document.getElementById('timerDisplay').textContent = '✓';
+        document.getElementById('progressFill').style.width = '100%';
+
+        // Mark all done
+        for (var i = 0; i < 5; i++) {
+            var c = document.getElementById('step-' + i);
+            var s = document.getElementById('status-' + i);
+            if (c) { c.classList.remove('active'); c.classList.add('done'); }
+            if (s) { s.textContent = '✓'; s.classList.remove('running'); }
+        }
+        var r0 = document.getElementById('rest-0');
+        if (r0) { r0.classList.remove('active'); r0.classList.add('done'); }
+
+        setTimeout(function() { stopAll(); }, 6000);
+    }
+
+    function scrollToActiveCard() {
+        if (currentStep < 0 || currentStep >= sequence.length) return;
+        var cur = sequence[currentStep];
+        var elId = cur.type === 'practice' ? 'step-' + cur.practice : (cur.afterPractice === 0 ? 'rest-0' : null);
+        if (elId) {
+            var el = document.getElementById(elId);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    /* =====================================================
+       ENGINE LOOP
+       ===================================================== */
+    function engineLoop(now) {
+        if (!running || paused) return;
+
+        var delta = now - lastTick;
+        lastTick = now;
+        timeLeftMs -= delta;
+
+        var cur = sequence[currentStep];
+
+        // METRONOME (always ticking during practices)
+        if (cur.type === 'practice' && now >= metronomeNextMs) {
+            playMetronomeTick();
+            document.getElementById('metroDot').classList.add('on');
+            setTimeout(function() { document.getElementById('metroDot').classList.remove('on'); }, 80);
+            metronomeNextMs = now + (60000 / bpm);
+        }
+
+        // BELL for Замки (practice 2) — ding at start of each rep
+        // (already handled by transition sound at startCurrentStep)
+
+        // Timer display
+        var secLeft = Math.max(0, timeLeftMs / 1000);
+        var displayEl = document.getElementById('timerDisplay');
+        var newText = formatMMSS(secLeft);
+        if (displayEl.textContent !== newText) {
+            displayEl.textContent = newText;
+            displayEl.classList.add('pulse');
+            setTimeout(function() { displayEl.classList.remove('pulse'); }, 120);
+        }
+
+        // Progress
+        var pct = totalDurMs > 0 ? ((1 - timeLeftMs / totalDurMs) * 100) : 0;
+        document.getElementById('progressFill').style.width = Math.min(100, Math.max(0, pct)) + '%';
+
+        // Step end?
+        if (timeLeftMs <= 0) {
+            // Bell ding at end of each Замки rep
+            if (cur.type === 'practice' && cur.practice === 2) playBellDing();
+            advanceStep();
+            return;
+        }
+
+        requestAnimationFrame(engineLoop);
+    }
+
+    /* =====================================================
+       INIT
+       ===================================================== */
+    try {
+        var mbNight = localStorage.getItem('pranayama_night');
+        night = mbNight === null ? true : (mbNight === 'true');
+        applyTheme();
+        loadSettings();
+    } catch(e) {}
+
+</script>
+</body>
+</html>
