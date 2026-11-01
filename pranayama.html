@@ -199,40 +199,35 @@
             display: flex; flex-direction: column; align-items: center; gap: 10px;
             z-index: 200;
         }
+        .action-btn-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; width: 100%; max-width: 340px;
+        }
         .btn-main {
             background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
             cursor: pointer; font-family: inherit; font-size: 1.1rem; font-weight: 900;
             color: #ffffff; box-shadow: 0 8px 25px var(--glow);
-            width: 100%; max-width: 300px;
+            flex: 1; max-width: 300px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent; text-transform: uppercase;
             letter-spacing: 0.1em;
         }
         .btn-main:active { transform: scale(0.95); }
         .btn-main.stop { background: var(--red); box-shadow: 0 8px 25px rgba(255,69,58,0.3); }
+        .btn-reset-bottom {
+            background: var(--surface); border: 1.5px solid var(--gold);
+            color: var(--gold); width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+            flex-shrink: 0;
+        }
+        .btn-reset-bottom:active { transform: scale(0.9); opacity: 0.7; }
         .btn-secondary {
             background: transparent; border: none; color: var(--accent);
             font-family: inherit; font-size: 0.75rem; font-weight: 600;
             cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase;
             -webkit-tap-highlight-color: transparent; padding: 8px 16px;
-        }
-
-        /* BPM CONTROL */
-        .bpm-control {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 4px;
-        }
-        .bpm-btn {
-            background: var(--surface); border: none; color: var(--text);
-            width: 36px; height: 36px; border-radius: 50%;
-            font-size: 1.2rem; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .bpm-btn:active { transform: scale(0.9); }
-        .bpm-value {
-            font-size: 0.9rem; font-weight: 700; color: var(--gold);
-            font-variant-numeric: tabular-nums; min-width: 80px; text-align: center;
         }
 
         /* VERSION */
@@ -254,6 +249,9 @@
         </div>
         <div class="header-title">Пранаяма</div>
         <div class="header-right">
+            <button class="header-icon-btn" id="headerResetBtn" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
             <button class="header-icon-btn" id="themeBtn" onclick="toggleTheme()">
                 <svg id="sunIcon" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -277,15 +275,6 @@
     <div class="progress-bar-container">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
-        </div>
-    </div>
-
-    <!-- BPM CONTROL -->
-    <div style="display:flex; justify-content:center; padding: 12px 0 4px;">
-        <div class="bpm-control">
-            <button class="bpm-btn" onclick="changeBPM(-5)">−</button>
-            <div class="bpm-value" id="bpmValue">60 BPM</div>
-            <button class="bpm-btn" onclick="changeBPM(5)">+</button>
         </div>
     </div>
 
@@ -405,8 +394,13 @@
 
     <!-- BOTTOM CONTROLS -->
     <div class="bottom-controls">
-        <button id="mainBtn" class="btn-main" onclick="handleMain()">НАЧАТЬ ПРАКТИКУ</button>
-        <button id="skipBtn" class="btn-secondary" onclick="skipCurrent()" style="display:none;">Пропустить →</button>
+        <div class="action-btn-row">
+            <button id="mainBtn" class="btn-main" onclick="handleMain()">НАЧАТЬ ПРАКТИКУ</button>
+            <button id="resetBtn" class="btn-reset-bottom" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+        </div>
+        <button id="skipBtn" class="btn-secondary" onclick="skipCurrent()" style="display:none;">Пропустить этап →</button>
     </div>
 
 <script>
@@ -522,15 +516,6 @@
     }
 
     /* =====================================================
-       BPM
-       ===================================================== */
-    function changeBPM(delta) {
-        bpm = Math.max(30, Math.min(180, bpm + delta));
-        document.getElementById('bpmValue').textContent = bpm + ' BPM';
-        localStorage.setItem('pranayama_bpm', bpm);
-    }
-
-    /* =====================================================
        SETTINGS PERSISTENCE
        ===================================================== */
     var settingIds = [
@@ -547,7 +532,6 @@
             var el = document.getElementById(id);
             if (el) data[id] = el.value;
         });
-        data.bpm = bpm;
         localStorage.setItem('pranayama_settings', JSON.stringify(data));
     }
 
@@ -559,7 +543,6 @@
                 var el = document.getElementById(id);
                 if (el && data[id] !== undefined) el.value = data[id];
             });
-            if (data.bpm) { bpm = data.bpm; document.getElementById('bpmValue').textContent = bpm + ' BPM'; }
         } catch(e) {}
     }
 
@@ -724,6 +707,10 @@
             document.getElementById('mainBtn').textContent = 'ПАУЗА';
             document.getElementById('mainBtn').classList.remove('stop');
             document.getElementById('skipBtn').style.display = '';
+            var rb = document.getElementById('resetBtn');
+            if (rb) rb.style.display = 'flex';
+            var hr = document.getElementById('headerResetBtn');
+            if (hr) hr.style.display = 'flex';
             setInputsEnabled(false);
             requestWakeLock();
         } else if (!paused) {
@@ -747,6 +734,10 @@
         document.getElementById('mainBtn').textContent = 'НАЧАТЬ ПРАКТИКУ';
         document.getElementById('mainBtn').classList.remove('stop');
         document.getElementById('skipBtn').style.display = 'none';
+        var rb = document.getElementById('resetBtn');
+        if (rb) rb.style.display = 'none';
+        var hr = document.getElementById('headerResetBtn');
+        if (hr) hr.style.display = 'none';
         document.getElementById('timerDisplay').textContent = '00:00';
         document.getElementById('progressFill').style.width = '0%';
         document.getElementById('practiceLabel').textContent = 'ПОДГОТОВКА';
@@ -756,6 +747,7 @@
         setInputsEnabled(true);
         updateStepCards();
         releaseWakeLock();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function skipCurrent() {

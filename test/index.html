@@ -588,6 +588,15 @@
         #pranaBtn.unlocked {
             display: flex;
         }
+        @keyframes pulseGold {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,175,55,0.7); }
+            50% { transform: scale(1.15); box-shadow: 0 0 20px 6px rgba(212,175,55,0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+        }
+        #pranaBtn.pulse-highlight {
+            animation: pulseGold 0.8s ease-in-out;
+            border: 2px solid var(--gold);
+        }
 
         /* PIN MODAL */
         #pinModal {
@@ -715,7 +724,12 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
             </button>
             <button id="pranaBtn" class="icon-btn" onclick="window.location.href='pranayama.html'" title="Пранаяма">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 4c-1.8 3.5-1.8 8.5 0 12c1.8-3.5 1.8-8.5 0-12z"/>
+                    <path d="M11 16c-2.5-.8-6.5-3.5-7.5-7.5c3.5 0 6.5 3.5 7.5 7.5z"/>
+                    <path d="M13 16c2.5-.8 6.5-3.5 7.5-7.5c-3.5 0-6.5 3.5-7.5 7.5z"/>
+                    <path d="M6 19.5c3.5 1.5 8.5 1.5 12 0"/>
+                </svg>
             </button>
             <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -1535,24 +1549,27 @@
         if (e && e.cancelable) e.preventDefault();
         if (e) e.stopPropagation();
 
-        if (localStorage.getItem('prana_unlocked') === 'true') {
-            window.location.href = 'pranayama.html';
-            return;
-        }
-
-        pranaTapCount++;
-        clearTimeout(pranaTapTimer);
-        pranaTapTimer = setTimeout(function() { pranaTapCount = 0; }, 3000);
-
         // Immediate tactile/visual response on tap
         var vt = document.getElementById('versionTag');
         if (vt) {
             vt.style.opacity = '1';
-            vt.style.transform = 'scale(1.2)';
+            vt.style.transform = 'scale(1.25)';
+            vt.style.color = 'var(--gold)';
             setTimeout(function() {
                 vt.style.opacity = '';
                 vt.style.transform = '';
-            }, 120);
+                vt.style.color = '';
+            }, 150);
+        }
+
+        if (localStorage.getItem('prana_unlocked') === 'true') {
+            // Already unlocked: gently pulse the Pranayama button so user sees it!
+            var pb = document.getElementById('pranaBtn');
+            if (pb) {
+                pb.classList.add('pulse-highlight');
+                setTimeout(function() { pb.classList.remove('pulse-highlight'); }, 800);
+            }
+            return;
         }
 
         if (pranaTapCount >= 5) {
