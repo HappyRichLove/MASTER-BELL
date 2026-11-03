@@ -734,12 +734,14 @@
             <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
             </button>
-            <button id="pranaBtn" class="icon-btn" onclick="window.location.href='pranayama.html'" title="Пранаяма">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 4c-1.8 3.5-1.8 8.5 0 12c1.8-3.5 1.8-8.5 0-12z"/>
-                    <path d="M11 16c-2.5-.8-6.5-3.5-7.5-7.5c3.5 0 6.5 3.5 7.5 7.5z"/>
-                    <path d="M13 16c2.5-.8 6.5-3.5 7.5-7.5c-3.5 0-6.5 3.5-7.5 7.5z"/>
-                    <path d="M6 19.5c3.5 1.5 8.5 1.5 12 0"/>
+            <button id="pranaBtn" class="icon-btn" onclick="handlePranaBtnClick(event)" title="Пранаяма">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="5" r="2.2"/>
+                    <path d="M12 7.5v5.5"/>
+                    <path d="M8 11l4-1 4 1"/>
+                    <path d="M5.5 19c1.5-2 3.5-3 6.5-3s5 1 6.5 3"/>
+                    <path d="M4 16.5l3.5-2.5"/>
+                    <path d="M20 16.5l-3.5-2.5"/>
                 </svg>
             </button>
             <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
@@ -759,7 +761,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.21 (Prana Alfa)</div>
+    <div class="version-tag" id="versionTag">v20.22 (Prana Beta)</div>
 </div>
 
 <!-- PIN MODAL -->
@@ -1544,52 +1546,69 @@
        ===================================================== */
     var pranaTapCount = 0;
     var pranaTapTimer = null;
-    var lastTapTime = 0;
     var PRANA_PIN = '888';
 
-    // Check if already unlocked
+    // Check if already unlocked on boot
     if (localStorage.getItem('prana_unlocked') === 'true') {
         var pb = document.getElementById('pranaBtn');
         if (pb) pb.classList.add('unlocked');
     }
 
-    function handleVersionTap(e) {
-        var now = Date.now();
-        if (now - lastTapTime < 80) return;
-        lastTapTime = now;
-
-        if (e && e.cancelable) e.preventDefault();
+    function handlePranaBtnClick(e) {
         if (e) e.stopPropagation();
+        if (localStorage.getItem('prana_unlocked') === 'true') {
+            window.location.href = 'pranayama.html';
+        } else {
+            openPinModal();
+        }
+    }
+
+    function handleVersionTap(e) {
+        if (e && e.stopPropagation) e.stopPropagation();
 
         pranaTapCount++;
         clearTimeout(pranaTapTimer);
         pranaTapTimer = setTimeout(function() {
             pranaTapCount = 0;
             var vt = document.getElementById('versionTag');
-            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
-        }, 3500);
+            if (vt) vt.textContent = 'v20.22 (Prana Beta)';
+        }, 5000);
 
         // Immediate tactile/visual response on tap
         var vt = document.getElementById('versionTag');
         if (vt) {
             vt.style.opacity = '1';
-            vt.style.transform = 'scale(1.25)';
+            vt.style.transform = 'scale(1.2)';
             vt.style.color = 'var(--gold)';
             var dots = ' •'.repeat(Math.min(pranaTapCount, 5));
-            vt.textContent = 'v20.21 (Prana Alfa)' + dots;
+            vt.textContent = 'v20.22 (Prana Beta)' + dots;
             setTimeout(function() {
-                vt.style.opacity = '';
-                vt.style.transform = '';
-                vt.style.color = '';
-            }, 150);
+                if (vt) {
+                    vt.style.opacity = '';
+                    vt.style.transform = '';
+                    vt.style.color = '';
+                }
+            }, 180);
+        }
+
+        if (navigator.vibrate) {
+            navigator.vibrate(30);
         }
 
         if (pranaTapCount >= 5) {
             pranaTapCount = 0;
-            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
+            if (vt) vt.textContent = 'v20.22 (Prana Beta)';
 
+            // 1. Reveal the button with pulsing animation
+            var pb = document.getElementById('pranaBtn');
+            if (pb) {
+                pb.classList.add('unlocked');
+                pb.classList.add('pulse-highlight');
+                setTimeout(function() { pb.classList.remove('pulse-highlight'); }, 1500);
+            }
+
+            // 2. Open PIN modal or direct navigate if already unlocked
             if (localStorage.getItem('prana_unlocked') === 'true') {
-                // If already unlocked -> straight to pranayama!
                 window.location.href = 'pranayama.html';
             } else {
                 openPinModal();
@@ -1599,12 +1618,7 @@
 
     var vtEl = document.getElementById('versionTag');
     if (vtEl) {
-        if (window.PointerEvent) {
-            vtEl.addEventListener('pointerdown', handleVersionTap, { passive: false });
-        } else {
-            vtEl.addEventListener('touchstart', handleVersionTap, { passive: false });
-            vtEl.addEventListener('click', handleVersionTap);
-        }
+        vtEl.addEventListener('click', handleVersionTap);
     }
 
     var pinInputEl = document.getElementById('pinInput');

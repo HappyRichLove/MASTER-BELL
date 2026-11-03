@@ -7,870 +7,1044 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#000000">
-    <title>🧘 MASTER PRANA</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="theme-color" content="#f4f1ea">
+    <title>❤️ MASTER PRANA 🙏</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+       var METRICA_ID = 108490319;
+       ym(METRICA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+       function trackEvent(eventName) { if (typeof ym === 'function') { ym(METRICA_ID, 'reachGoal', eventName); } }
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/108490319" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         :root {
+            --bg: #f4f1ea; --surface: #ffffff; --text: #000000;
+            --accent: #8e806a; --gold: #c2a05e;
+            --glow: rgba(194, 160, 94, 0.4);
+            --surface-hover: #ebe7de;
+            --border: rgba(142, 128, 106, 0.2);
+        }
+        .night-theme {
             --bg: #000000; --surface: #1c1c1e; --text: #ffffff;
             --accent: #8e8e93; --gold: #d4af37;
             --glow: rgba(212, 175, 55, 0.5);
             --surface-hover: #2c2c2e;
-            --red: #ff453a;
-            --green: #30d158;
-        }
-        .light-theme {
-            --bg: #f4f1ea; --surface: #ffffff; --text: #000000;
-            --accent: #8e806a; --gold: #c2a05e;
-            --glow: rgba(194, 160, 94, 0.4);
-            --surface-hover: #f0ede6;
-            --red: #ff3b30;
-            --green: #34c759;
+            --border: rgba(212, 175, 55, 0.2);
         }
         html { background-color: var(--bg); }
         body {
-            margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg); color: var(--text);
-            min-height: 100vh; min-height: 100dvh;
-            width: 100vw; overflow-x: hidden;
-            transition: background-color 0.8s ease;
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
-        }
-
-        /* STICKY TOP TIMER */
-        .top-sticky-wrapper {
-            position: sticky; top: 0; z-index: 100;
-            background: var(--bg);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            padding-bottom: 8px;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+            height: 100vh; height: 100dvh; width: 100vw; overflow: hidden;
+            transition: background-color 0.8s ease; touch-action: manipulation; user-select: none;
+            -webkit-user-select: none;
         }
 
         /* HEADER */
-        .header {
-            position: relative;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 16px 4px;
-            background: transparent;
+        .top-nav {
+            width: 100%; max-width: 500px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 24px 8px; z-index: 10;
         }
-        .back-btn {
-            color: var(--accent); opacity: 0.7; cursor: pointer;
-            -webkit-tap-highlight-color: transparent; padding: 6px;
-            z-index: 2;
+        .nav-btn {
+            background: transparent; border: none; cursor: pointer;
+            color: var(--accent); opacity: 0.7; padding: 6px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: opacity 0.2s, transform 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .back-btn:active { opacity: 0.3; }
-        .header-title {
-            position: absolute; left: 50%; top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 0.25em;
-            text-transform: uppercase; color: var(--gold); opacity: 0.9;
-            pointer-events: none; white-space: nowrap;
-        }
-        .header-right { display: flex; gap: 8px; z-index: 2; }
-        .header-icon-btn {
-            background: var(--surface); border: none; cursor: pointer; color: var(--text);
-            width: 36px; height: 36px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            -webkit-tap-highlight-color: transparent; transition: 0.2s;
-        }
-        .header-icon-btn:active { transform: scale(0.9); }
+        .nav-btn:active { opacity: 1; transform: scale(0.9); }
+        .nav-right { display: flex; gap: 8px; }
 
-        /* MAIN TIMER AREA */
-        .timer-area {
-            display: flex; flex-direction: column; align-items: center;
-            padding: 4px 16px 2px;
-            justify-content: center;
+        /* CENTER CONTENT */
+        .main-stage {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            width: 100%; max-width: 440px; padding: 0 20px;
+            text-align: center; margin-top: -2vh;
         }
-        .practice-label {
-            font-size: 0.58rem; font-weight: 800; letter-spacing: 0.2em;
-            text-transform: uppercase; color: var(--accent); margin-bottom: 2px;
+
+        .master-title {
+            font-size: clamp(1rem, 5vw, 1.8rem); font-weight: 100;
+            letter-spacing: 0.35em; text-indent: 0.35em;
+            color: var(--text); opacity: 0.6; margin: 0 0 10px 0;
+            text-transform: uppercase; white-space: nowrap;
         }
-        .practice-name {
-            font-size: 1.25rem; font-weight: 700; color: var(--gold);
-            margin-bottom: 2px; text-align: center;
+
+        .practice-title {
+            font-size: clamp(1.2rem, 5.5vw, 1.6rem); font-weight: 700;
+            letter-spacing: 0.08em; color: var(--gold);
+            margin: 0 0 4px 0; text-transform: uppercase;
+            transition: color 0.3s;
         }
-        .practice-info {
-            font-size: 0.68rem; color: var(--accent); margin-bottom: 4px;
-            font-variant-numeric: tabular-nums; min-height: 14px;
+        .practice-subtitle {
+            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+            color: var(--accent); text-transform: uppercase;
+            min-height: 18px; margin-bottom: 12px;
         }
+
+        /* TIMER DISPLAY */
         .timer-display {
-            font-size: 4.6rem; font-weight: 100; font-variant-numeric: tabular-nums;
-            color: var(--text); line-height: 0.95; margin-bottom: 6px;
-            transition: opacity 0.15s, transform 0.15s;
+            font-size: clamp(4.8rem, 21vw, 6.8rem); font-weight: 100;
+            font-variant-numeric: tabular-nums; color: var(--gold);
+            letter-spacing: -0.02em; line-height: 1;
+            text-shadow: 0 0 12px transparent;
+            transition: transform 0.18s ease, text-shadow 0.18s ease;
+            cursor: pointer; -webkit-tap-highlight-color: transparent;
+            margin-bottom: 16px;
         }
         .timer-display.pulse {
-            opacity: 0.5; transform: scale(0.95);
+            transform: scale(1.04); text-shadow: 0 0 24px var(--glow);
         }
 
         /* PROGRESS BAR */
-        .progress-bar-container {
-            width: 100%; max-width: 400px; margin: 0 auto;
-            padding: 0 20px;
+        .progress-wrapper {
+            width: 100%; max-width: 320px; height: 3px;
+            background: rgba(142, 128, 106, 0.18); border-radius: 3px;
+            overflow: hidden; margin-bottom: 24px;
         }
         .progress-bar {
-            height: 3px; background: var(--surface); border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%; background: var(--gold); border-radius: 2px;
-            transition: width 0.3s linear; width: 0%;
+            height: 100%; width: 0%; background: var(--gold);
+            border-radius: 3px; transition: width 0.3s linear;
         }
 
-        /* STEPS (practice list / settings) */
-        .steps-container {
-            padding: 16px 16px 120px; max-width: 440px; margin: 0 auto;
-        }
-        .step-card {
-            background: var(--surface); border-radius: 16px;
-            padding: 14px 16px; margin-bottom: 8px;
-            transition: all 0.3s;
-            border: 1.5px solid transparent;
-        }
-        .step-card.active {
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,0.15);
-        }
-        .step-card.done { opacity: 0.35; }
-        .step-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 6px;
-        }
-        .step-num {
-            font-size: 0.55rem; font-weight: 800; color: var(--gold);
-            letter-spacing: 0.15em; text-transform: uppercase;
-        }
-        .step-status {
-            font-size: 0.55rem; font-weight: 700; color: var(--accent);
-            letter-spacing: 0.1em;
-        }
-        .step-status.running { color: var(--green); }
-        .step-title {
-            font-size: 1rem; font-weight: 700; color: var(--text);
-            margin-bottom: 8px;
-        }
-        .step-settings {
-            display: flex; flex-wrap: wrap; gap: 8px;
-        }
-        .setting-item {
+        /* CONTROLS */
+        .controls-area {
             display: flex; flex-direction: column; align-items: center;
-            background: var(--bg); border-radius: 12px; padding: 8px 12px;
-            min-width: 70px;
+            gap: 16px; width: 100%; max-width: 380px;
         }
-        .setting-label {
-            font-size: 0.5rem; font-weight: 700; color: var(--accent);
-            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+        .secondary-btns {
+            display: flex; justify-content: center; align-items: center;
+            gap: 24px;
         }
-        .setting-input {
-            background: transparent; border: none; font-family: inherit;
-            font-size: 1.1rem; font-weight: 700; width: 60px; text-align: center;
-            color: var(--text); outline: none; padding: 0;
-            -moz-appearance: textfield; -webkit-appearance: none;
-        }
-        .setting-input::-webkit-outer-spin-button,
-        .setting-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .setting-unit {
-            font-size: 0.5rem; color: var(--accent); margin-top: 2px;
-        }
-
-        /* REST card (between practices) */
-        .rest-card {
-            background: transparent; border: 1px dashed var(--accent);
-            border-radius: 12px; padding: 10px 16px; margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: space-between;
-            opacity: 0.5;
-        }
-        .rest-card.active { opacity: 1; border-color: var(--gold); border-style: solid; }
-        .rest-card.done { opacity: 0.2; }
-        .rest-label {
-            font-size: 0.7rem; font-weight: 600; color: var(--accent);
-        }
-        .rest-setting {
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        /* BOTTOM CONTROLS */
-        .bottom-controls {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
-            background: linear-gradient(transparent, var(--bg) 30%);
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            z-index: 200;
-        }
-        .action-btn-row {
-            display: flex; align-items: center; justify-content: center;
-            gap: 12px; width: 100%; max-width: 340px;
-        }
-        .btn-main {
-            background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
-            cursor: pointer; font-family: inherit; font-size: 1.1rem; font-weight: 900;
-            color: #ffffff; box-shadow: 0 8px 25px var(--glow);
-            flex: 1; max-width: 300px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            -webkit-tap-highlight-color: transparent; text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        .btn-main:active { transform: scale(0.95); }
-        .btn-main.stop { background: var(--red); box-shadow: 0 8px 25px rgba(255,69,58,0.3); }
-        .btn-reset-bottom {
-            background: var(--surface); border: 1.5px solid var(--gold);
-            color: var(--gold); width: 56px; height: 56px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        .icon-btn {
+            background: var(--surface); border: 1px solid var(--border);
+            cursor: pointer; color: var(--text); width: 52px; height: 52px;
+            border-radius: 50%; display: flex; justify-content: center;
+            align-items: center; box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-            flex-shrink: 0;
         }
-        .btn-reset-bottom:active { transform: scale(0.9); opacity: 0.7; }
-        .btn-secondary {
+        .icon-btn:active { transform: scale(0.9); }
+
+        .btn-main {
+            background: var(--gold); border: none; padding: 18px 0;
+            border-radius: 40px; cursor: pointer; font-family: inherit;
+            font-size: 1.15rem; font-weight: 900; color: #ffffff;
+            box-shadow: 0 8px 24px var(--glow); width: 230px;
+            transition: all 0.25s; text-transform: uppercase;
+            letter-spacing: 0.1em; -webkit-tap-highlight-color: transparent;
+        }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-main.paused {
+            background: var(--surface); color: var(--gold);
+            border: 2px solid var(--gold); box-shadow: none;
+        }
+
+        /* BOTTOM STAGES INDICATOR */
+        .bottom-indicator {
+            padding-bottom: clamp(14px, 3vh, 28px);
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; z-index: 10;
+        }
+        .dots-row {
+            display: flex; gap: 8px; align-items: center;
+        }
+        .stage-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--accent); opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+        .stage-dot.active {
+            background: var(--gold); opacity: 1; transform: scale(1.35);
+            box-shadow: 0 0 8px var(--glow);
+        }
+        .stage-dot.completed {
+            background: var(--gold); opacity: 0.6;
+        }
+        .bottom-time-label {
+            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em;
+            color: var(--accent); text-transform: uppercase; opacity: 0.8;
+        }
+
+        /* SETTINGS SLIDE-UP MODAL / SPOILER */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 9999; display: none; align-items: flex-end;
+            justify-content: center; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .modal-overlay.open {
+            display: flex; opacity: 1;
+        }
+        .modal-sheet {
+            background: var(--surface); width: 100%; max-width: 480px;
+            max-height: 85vh; border-top-left-radius: 28px;
+            border-top-right-radius: 28px; padding: 20px 22px env(safe-area-inset-bottom);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-top: 1px solid var(--border);
+        }
+        .modal-overlay.open .modal-sheet {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 14px; border-bottom: 1px solid var(--border);
+        }
+        .modal-title {
+            font-size: 0.85rem; font-weight: 800; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--gold);
+        }
+        .modal-close-btn {
             background: transparent; border: none; color: var(--accent);
-            font-family: inherit; font-size: 0.75rem; font-weight: 600;
-            cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase;
-            -webkit-tap-highlight-color: transparent; padding: 8px 16px;
+            font-size: 0.85rem; font-weight: 700; cursor: pointer;
+            padding: 6px 12px; -webkit-tap-highlight-color: transparent;
+        }
+        .modal-scroll {
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 14px 2px 24px; display: flex; flex-direction: column; gap: 14px;
         }
 
-        /* VERSION */
-        .version-tag {
-            text-align: center; font-size: 0.5rem; letter-spacing: 0.15em;
-            color: var(--accent); opacity: 0.3; padding: 4px 0 8px;
+        /* SETTING CARD & STEPPERS */
+        .setting-card {
+            background: var(--bg); border-radius: 18px; padding: 14px 16px;
+            border: 1px solid var(--border);
+        }
+        .setting-card-title {
+            font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .stepper-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 8px; padding: 4px 0;
+        }
+        .stepper-label {
+            font-size: 0.78rem; font-weight: 600; color: var(--text);
+            opacity: 0.9;
+        }
+        .stepper-ctrls {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .step-btn {
+            background: var(--surface); border: 1px solid var(--border);
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.25rem; font-weight: 600; color: var(--gold);
+            cursor: pointer; transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .step-btn:active {
+            transform: scale(0.9); background: var(--surface-hover);
+        }
+        .step-value {
+            min-width: 68px; text-align: center; font-size: 0.95rem;
+            font-weight: 700; font-variant-numeric: tabular-nums;
+            color: var(--text);
         }
 
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 0; }
+        /* TOAST */
+        .toast {
+            position: fixed; top: calc(env(safe-area-inset-top) + 20px);
+            left: 50%; transform: translateX(-50%) translateY(-30px);
+            background: var(--surface); border: 1px solid var(--gold);
+            color: var(--gold); padding: 10px 20px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; opacity: 0; pointer-events: none;
+            transition: all 0.3s ease; z-index: 10000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .toast.show {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- TOP STICKY HEADER & TIMER -->
-    <div class="top-sticky-wrapper">
-        <div class="header">
-            <div class="back-btn" onclick="window.location.href='index.html'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </div>
-            <div class="header-title">Пранаяма</div>
-            <div class="header-right">
-                <button class="header-icon-btn" id="headerResetBtn" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                </button>
-                <button class="header-icon-btn" id="themeBtn" onclick="toggleTheme()">
-                    <svg id="sunIcon" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                    <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
-            </div>
-        </div>
+    <!-- Silent audio element for iOS silent mode audio bypass -->
+    <audio id="silentAudio" loop playsinline webkit-playsinline preload="auto">
+        <source src="data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA==" type="audio/wav">
+    </audio>
 
-        <div class="timer-area">
-            <div class="practice-label" id="practiceLabel">ПОДГОТОВКА</div>
-            <div class="practice-name" id="practiceName">Настройте практику</div>
-            <div class="practice-info" id="practiceInfo">Установите параметры ниже</div>
-            <div class="timer-display" id="timerDisplay">00:00</div>
-        </div>
+    <!-- TOP HEADER -->
+    <div class="top-nav">
+        <button class="nav-btn" onclick="window.location.href='index.html'" title="Назад">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </button>
 
-        <div class="progress-bar-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PRACTICE STEPS -->
-    <div class="steps-container" id="stepsContainer">
-
-        <!-- 1. Бхастрика -->
-        <div class="step-card" id="step-0">
-            <div class="step-header">
-                <div class="step-num">Практика 1</div>
-                <div class="step-status" id="status-0">ожидание</div>
-            </div>
-            <div class="step-title">Бхастрика</div>
-            <div class="step-settings">
-                <div class="setting-item">
-                    <div class="setting-label">Время</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-0-time" value="3">
-                    <div class="setting-unit">мин</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Отдых 1 -->
-        <div class="rest-card" id="rest-0">
-            <div class="rest-label">☕ Отдых</div>
-            <div class="rest-setting">
-                <input type="text" inputmode="numeric" class="setting-input" id="r-0-time" value="2" style="width:40px; font-size:0.9rem;">
-                <div class="setting-unit">мин</div>
-            </div>
-        </div>
-
-        <!-- 2. Капалабхати -->
-        <div class="step-card" id="step-1">
-            <div class="step-header">
-                <div class="step-num">Практика 2</div>
-                <div class="step-status" id="status-1">ожидание</div>
-            </div>
-            <div class="step-title">Капалабхати</div>
-            <div class="step-settings">
-                <div class="setting-item">
-                    <div class="setting-label">Циклы</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-cycles" value="3">
-                </div>
-                <div class="setting-item">
-                    <div class="setting-label">Время</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-time" value="3">
-                    <div class="setting-unit">мин/цикл</div>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-label">Отдых</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-1-rest" value="1">
-                    <div class="setting-unit">мин</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Отдых 2 (между 2 и 3) — необязательный -->
-
-        <!-- 3. Замки (Бандхи) -->
-        <div class="step-card" id="step-2">
-            <div class="step-header">
-                <div class="step-num">Практика 3</div>
-                <div class="step-status" id="status-2">ожидание</div>
-            </div>
-            <div class="step-title">Замки (Бандхи)</div>
-            <div class="step-settings">
-                <div class="setting-item">
-                    <div class="setting-label">Повторы</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-2-reps" value="7">
-                </div>
-                <div class="setting-item">
-                    <div class="setting-label">Время</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-2-time" value="45">
-                    <div class="setting-unit">сек</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Уджайи -->
-        <div class="step-card" id="step-3">
-            <div class="step-header">
-                <div class="step-num">Практика 4</div>
-                <div class="step-status" id="status-3">ожидание</div>
-            </div>
-            <div class="step-title">Уджайи</div>
-            <div class="step-settings">
-                <div class="setting-item">
-                    <div class="setting-label">Повторы</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-3-reps" value="5">
-                </div>
-                <div class="setting-item">
-                    <div class="setting-label">Задержка</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-3-time" value="30">
-                    <div class="setting-unit">сек</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. Анулом Вилом -->
-        <div class="step-card" id="step-4">
-            <div class="step-header">
-                <div class="step-num">Практика 5</div>
-                <div class="step-status" id="status-4">ожидание</div>
-            </div>
-            <div class="step-title">Анулом Вилом</div>
-            <div class="step-settings">
-                <div class="setting-item">
-                    <div class="setting-label">Время</div>
-                    <input type="text" inputmode="numeric" class="setting-input" id="s-4-time" value="10">
-                    <div class="setting-unit">мин</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="version-tag">v20.21 (Prana Alfa)</div>
-    </div>
-
-    <!-- BOTTOM CONTROLS -->
-    <div class="bottom-controls">
-        <div class="action-btn-row">
-            <button id="mainBtn" class="btn-main" onclick="handleMain()">НАЧАТЬ ПРАКТИКУ</button>
-            <button id="resetBtn" class="btn-reset-bottom" onclick="stopAll()" title="Сбросить и начать заново" style="display:none;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        <div class="nav-right">
+            <button id="settingsBtn" class="nav-btn" onclick="openSettingsModal()" title="Настройки">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <button id="themeBtn" class="nav-btn" onclick="toggleTheme()" title="Тема">
+                <svg id="sunIcon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+                <svg id="moonIcon" style="display:none" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
             </button>
         </div>
-        <button id="skipBtn" class="btn-secondary" onclick="skipCurrent()" style="display:none;">Пропустить этап →</button>
     </div>
+
+    <!-- MAIN MINIMALIST STAGE (METRONOME STYLE) -->
+    <div class="main-stage">
+        <div class="master-title">МАСТЕР</div>
+        <div class="practice-title" id="practiceTitle">1. БХАСТРИКА</div>
+        <div class="practice-subtitle" id="practiceSubtitle">ДЫХАНИЕ</div>
+
+        <div class="timer-display" id="display" onclick="togglePlay()">03:00</div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="controls-area">
+            <div class="secondary-btns">
+                <button class="icon-btn" onclick="resetCurrentStage()" title="Сбросить текущий этап">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn" onclick="skipStage()" title="Пропустить этап">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                        <line x1="19" y1="5" x2="19" y2="19"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <button id="startBtn" class="btn-main" onclick="togglePlay()">СТАРТ</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM PROGRESS & STATS -->
+    <div class="bottom-indicator">
+        <div class="dots-row">
+            <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
+            <div class="stage-dot" id="dot1" title="Капалабхати"></div>
+            <div class="stage-dot" id="dot2" title="Замки (Бандхи)"></div>
+            <div class="stage-dot" id="dot3" title="Уджайи"></div>
+            <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
+        </div>
+        <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
+    </div>
+
+    <!-- SETTINGS SLIDE-UP MODAL (HIDDEN BY DEFAULT) -->
+    <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ НАСТРОЙКИ ПРАКТИК</div>
+                <button class="modal-close-btn" onclick="closeSettingsModal()">ГОТОВО</button>
+            </div>
+
+            <div class="modal-scroll">
+                <!-- 1. БХАСТРИКА -->
+                <div class="setting-card">
+                    <div class="setting-card-title">1. БХАСТРИКА</div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Время дыхания:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
+                            <span class="step-value" id="val_bhastrikaTime">3:00</span>
+                            <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Отдых после практики:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
+                            <span class="step-value" id="val_rest1">60 с</span>
+                            <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. КАПАЛАБХАТИ -->
+                <div class="setting-card">
+                    <div class="setting-card-title">2. КАПАЛАБХАТИ</div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Количество циклов:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('kapalaCycles', -1)">−</button>
+                            <span class="step-value" id="val_kapalaCycles">3</span>
+                            <button class="step-btn" onclick="stepChange('kapalaCycles', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Время цикла:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('kapalaCycleTime', -30)">−</button>
+                            <span class="step-value" id="val_kapalaCycleTime">2:00</span>
+                            <button class="step-btn" onclick="stepChange('kapalaCycleTime', 30)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Отдых между циклами:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('kapalaRestSec', -15)">−</button>
+                            <span class="step-value" id="val_kapalaRestSec">60 с</span>
+                            <button class="step-btn" onclick="stepChange('kapalaRestSec', 15)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Отдых после практики:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('rest2', -15)">−</button>
+                            <span class="step-value" id="val_rest2">60 с</span>
+                            <button class="step-btn" onclick="stepChange('rest2', 15)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. ЗАМКИ (БАНДХИ) -->
+                <div class="setting-card">
+                    <div class="setting-card-title">3. ЗАМКИ (БАНДХИ)</div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Общее время:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('zamkiTime', -60)">−</button>
+                            <span class="step-value" id="val_zamkiTime">5:00</span>
+                            <button class="step-btn" onclick="stepChange('zamkiTime', 60)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Отдых после практики:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('rest3', -15)">−</button>
+                            <span class="step-value" id="val_rest3">60 с</span>
+                            <button class="step-btn" onclick="stepChange('rest3', 15)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. УДЖАЙИ -->
+                <div class="setting-card">
+                    <div class="setting-card-title">4. УДЖАЙИ</div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Общее время:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('ujjayiTime', -60)">−</button>
+                            <span class="step-value" id="val_ujjayiTime">3:00</span>
+                            <button class="step-btn" onclick="stepChange('ujjayiTime', 60)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Отдых после практики:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('rest4', -15)">−</button>
+                            <span class="step-value" id="val_rest4">60 с</span>
+                            <button class="step-btn" onclick="stepChange('rest4', 15)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. АНУЛОМ-ВИЛОМ -->
+                <div class="setting-card">
+                    <div class="setting-card-title">5. АНУЛОМ-ВИЛОМ</div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Общее время:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
+                            <span class="step-value" id="val_anulomTime">10:00</span>
+                            <button class="step-btn" onclick="stepChange('anulomTime', 60)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
 
 <script>
     /* =====================================================
-       ANTI-ZOOM / GESTURE PREVENTION
+       CONFIG & PERSISTENT SETTINGS
        ===================================================== */
-    document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
-    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-    var lastTouchEnd = 0;
-    document.addEventListener('touchend', function(e) { var now = Date.now(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, { passive: false });
+    var SETTINGS_KEY = 'prana_settings_v20_22';
+    var defaultSettings = {
+        bhastrikaTime: 180,     // 3 min
+        rest1: 60,              // 60 sec
+        kapalaCycles: 3,        // 3 cycles
+        kapalaCycleTime: 120,   // 2 min per cycle
+        kapalaRestSec: 60,      // 60 sec rest between cycles
+        rest2: 60,              // 60 sec
+        zamkiTime: 300,         // 5 min
+        rest3: 60,              // 60 sec
+        ujjayiTime: 180,        // 3 min
+        rest4: 60,              // 60 sec
+        anulomTime: 600         // 10 min
+    };
 
-    /* =====================================================
-       AUDIO ENGINE
-       ===================================================== */
-    var audioCtx = null;
-    function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+    var settings = Object.assign({}, defaultSettings);
+    try {
+        var saved = localStorage.getItem(SETTINGS_KEY);
+        if (saved) {
+            var parsed = JSON.parse(saved);
+            Object.assign(settings, parsed);
+        }
+    } catch (e) {
+        console.warn('Could not load settings:', e);
     }
-
-    function playMetronomeTick() {
-        if (!audioCtx) return;
-        var t = audioCtx.currentTime;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, t);
-        osc.frequency.exponentialRampToValueAtTime(400, t + 0.03);
-        gain.gain.setValueAtTime(0.12, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(t); osc.stop(t + 0.06);
-    }
-
-    function playBellDing() {
-        if (!audioCtx) return;
-        var t = audioCtx.currentTime;
-        // Звук колокольчика «дзинь»
-        var harmonics = [
-            { freq: 880, vol: 0.08, decay: 1.5 },
-            { freq: 1760, vol: 0.04, decay: 1.0 },
-            { freq: 2640, vol: 0.02, decay: 0.6 }
-        ];
-        harmonics.forEach(function(h) {
-            var osc = audioCtx.createOscillator();
-            var gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = h.freq;
-            gain.gain.setValueAtTime(h.vol, t);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t + h.decay);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(t); osc.stop(t + h.decay + 0.1);
-        });
-    }
-
-    function playFinishGong() {
-        if (!audioCtx) return;
-        var t = audioCtx.currentTime;
-        var freqs = [196, 293.66, 392];
-        freqs.forEach(function(f) {
-            var osc = audioCtx.createOscillator();
-            var gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = f;
-            gain.gain.setValueAtTime(0.1, t);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t + 5);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(t); osc.stop(t + 5.1);
-        });
-    }
-
-    function playTransitionBowl() {
-        if (!audioCtx) return;
-        var t = audioCtx.currentTime;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 440;
-        gain.gain.setValueAtTime(0.08, t);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(t); osc.stop(t + 2.6);
-    }
-
-    /* =====================================================
-       STATE
-       ===================================================== */
-    var bpm = 60;
-    var night = true;
-    var running = false;
-    var paused = false;
-    var currentStep = -1;        // index into sequence[]
-    var sequence = [];           // [{type, practice, cycle, totalCycles, durationSec}]
-    var timeLeftMs = 0;
-    var totalDurMs = 0;
-    var lastTick = 0;
-    var metronomeNextMs = 0;
-    var wakeLock = null;
-
-    /* =====================================================
-       THEME
-       ===================================================== */
-    function toggleTheme() {
-        night = !night; applyTheme();
-        localStorage.setItem('pranayama_night', night);
-    }
-    function applyTheme() {
-        document.body.classList.toggle('light-theme', !night);
-        document.getElementById('sunIcon').style.display = night ? 'none' : 'block';
-        document.getElementById('moonIcon').style.display = night ? 'block' : 'none';
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', night ? '#000000' : '#f4f1ea');
-    }
-
-    /* =====================================================
-       SETTINGS PERSISTENCE
-       ===================================================== */
-    var settingIds = [
-        's-0-time', 'r-0-time',
-        's-1-cycles', 's-1-time', 's-1-rest',
-        's-2-reps', 's-2-time',
-        's-3-reps', 's-3-time',
-        's-4-time'
-    ];
 
     function saveSettings() {
-        var data = {};
-        settingIds.forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) data[id] = el.value;
-        });
-        localStorage.setItem('pranayama_settings', JSON.stringify(data));
-    }
-
-    function loadSettings() {
         try {
-            var data = JSON.parse(localStorage.getItem('pranayama_settings'));
-            if (!data) return;
-            settingIds.forEach(function(id) {
-                var el = document.getElementById(id);
-                if (el && data[id] !== undefined) el.value = data[id];
-            });
-        } catch(e) {}
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        } catch (e) {}
+        updateBottomTotalLabel();
     }
 
     /* =====================================================
-       BUILD SEQUENCE
+       PIPELINE / STAGE DEFINITION
        ===================================================== */
-    function getVal(id, fallback) {
-        var v = parseFloat(document.getElementById(id).value);
-        return (isNaN(v) || v <= 0) ? fallback : v;
-    }
+    // Builds the sequence of stages dynamically from settings
+    function buildPipeline() {
+        var list = [];
 
-    function buildSequence() {
-        sequence = [];
+        // 1. Bhastrika
+        list.push({
+            id: 'bhastrika', mainIndex: 0,
+            title: '1. БХАСТРИКА', sub: 'ДЫХАНИЕ',
+            duration: settings.bhastrikaTime,
+            hasTick: true,
+            bellAtEnd: true,
+            isRest: false
+        });
+        if (settings.rest1 > 0) {
+            list.push({
+                id: 'rest1', mainIndex: 0,
+                title: 'ОТДЫХ', sub: 'ПОСЛЕ БХАСТРИКИ',
+                duration: settings.rest1,
+                hasTick: false,
+                bellAtEnd: true,
+                isRest: true
+            });
+        }
 
-        // 1. Бхастрика (1 цикл)
-        sequence.push({ type: 'practice', practice: 0, label: 'Бхастрика', cycle: 1, totalCycles: 1, durationSec: getVal('s-0-time', 3) * 60, sound: 'metronome' });
-
-        // Отдых после бхастрики
-        var rest0 = getVal('r-0-time', 2) * 60;
-        if (rest0 > 0) sequence.push({ type: 'rest', afterPractice: 0, label: 'Отдых', durationSec: rest0, sound: 'none' });
-
-        // 2. Капалабхати (N циклов)
-        var kapCycles = Math.max(1, Math.round(getVal('s-1-cycles', 3)));
-        var kapTime = getVal('s-1-time', 3) * 60;
-        var kapRest = getVal('s-1-rest', 1) * 60;
-        for (var i = 0; i < kapCycles; i++) {
-            sequence.push({ type: 'practice', practice: 1, label: 'Капалабхати', cycle: i+1, totalCycles: kapCycles, durationSec: kapTime, sound: 'metronome' });
-            if (i < kapCycles - 1 && kapRest > 0) {
-                sequence.push({ type: 'rest', afterPractice: 1, label: 'Отдых (между циклами)', durationSec: kapRest, sound: 'none' });
+        // 2. Kapalabhati (Multiple cycles)
+        var kCycles = Math.max(1, settings.kapalaCycles);
+        for (var c = 1; c <= kCycles; c++) {
+            list.push({
+                id: 'kapala_' + c, mainIndex: 1,
+                title: '2. КАПАЛАБХАТИ',
+                sub: 'ЦИКЛ ' + c + ' ИЗ ' + kCycles,
+                duration: settings.kapalaCycleTime,
+                hasTick: true,
+                bellAtEnd: true, // End of each cycle rings bell (Requirement 6)
+                isRest: false
+            });
+            // Rest between cycles (for cycles before the last)
+            if (c < kCycles && settings.kapalaRestSec > 0) {
+                list.push({
+                    id: 'kapala_rest_' + c, mainIndex: 1,
+                    title: 'ОТДЫХ',
+                    sub: 'ПАУЗА ' + c + ' ИЗ ' + (kCycles - 1),
+                    duration: settings.kapalaRestSec,
+                    hasTick: false,
+                    bellAtEnd: true,
+                    isRest: true
+                });
             }
         }
-
-        // 3. Замки (N повторов)
-        var zamkiReps = Math.max(1, Math.round(getVal('s-2-reps', 7)));
-        var zamkiTime = getVal('s-2-time', 45);
-        for (var j = 0; j < zamkiReps; j++) {
-            sequence.push({ type: 'practice', practice: 2, label: 'Замки', cycle: j+1, totalCycles: zamkiReps, durationSec: zamkiTime, sound: 'bell' });
+        if (settings.rest2 > 0) {
+            list.push({
+                id: 'rest2', mainIndex: 1,
+                title: 'ОТДЫХ', sub: 'ПОСЛЕ КАПАЛАБХАТИ',
+                duration: settings.rest2,
+                hasTick: false,
+                bellAtEnd: true,
+                isRest: true
+            });
         }
 
-        // 4. Уджайи (N повторов)
-        var ujReps = Math.max(1, Math.round(getVal('s-3-reps', 5)));
-        var ujTime = getVal('s-3-time', 30);
-        for (var k = 0; k < ujReps; k++) {
-            sequence.push({ type: 'practice', practice: 3, label: 'Уджайи', cycle: k+1, totalCycles: ujReps, durationSec: ujTime, sound: 'metronome' });
+        // 3. Zamki (Bandhas) - approximate total time, metronome on, no bells
+        list.push({
+            id: 'zamki', mainIndex: 2,
+            title: '3. ЗАМКИ (БАНДХИ)', sub: 'ОБЩЕЕ ВРЕМЯ',
+            duration: settings.zamkiTime,
+            hasTick: true,
+            bellAtEnd: false, // Requirement 7: no bells
+            isRest: false
+        });
+        if (settings.rest3 > 0) {
+            list.push({
+                id: 'rest3', mainIndex: 2,
+                title: 'ОТДЫХ', sub: 'ПОСЛЕ ЗАМКОВ',
+                duration: settings.rest3,
+                hasTick: false,
+                bellAtEnd: true,
+                isRest: true
+            });
         }
 
-        // 5. Анулом Вилом
-        sequence.push({ type: 'practice', practice: 4, label: 'Анулом Вилом', cycle: 1, totalCycles: 1, durationSec: getVal('s-4-time', 10) * 60, sound: 'metronome' });
+        // 4. Ujjayi - same simple settings as Zamki, approximate total time, no bells
+        list.push({
+            id: 'ujjayi', mainIndex: 3,
+            title: '4. УДЖАЙИ', sub: 'ОБЩЕЕ ВРЕМЯ',
+            duration: settings.ujjayiTime,
+            hasTick: true,
+            bellAtEnd: false, // Requirement 7: no bells
+            isRest: false
+        });
+        if (settings.rest4 > 0) {
+            list.push({
+                id: 'rest4', mainIndex: 3,
+                title: 'ОТДЫХ', sub: 'ПОСЛЕ УДЖАЙИ',
+                duration: settings.rest4,
+                hasTick: false,
+                bellAtEnd: true,
+                isRest: true
+            });
+        }
+
+        // 5. Anulom-Vilom
+        list.push({
+            id: 'anulom', mainIndex: 4,
+            title: '5. АНУЛОМ-ВИЛОМ', sub: 'ПОПЕРЕМЕННОЕ ДЫХАНИЕ',
+            duration: settings.anulomTime,
+            hasTick: true,
+            bellAtEnd: false,
+            isRest: false,
+            isLast: true
+        });
+
+        return list;
     }
 
     /* =====================================================
-       UI UPDATES
+       AUDIO ENGINE (WITH iOS SILENT MODE BYPASS)
        ===================================================== */
-    function formatMMSS(totalSec) {
-        var s = Math.max(0, Math.ceil(totalSec));
+    var audioCtx = null;
+    var audioUnlocked = false;
+
+    function unlockAudioSession() {
+        if (!audioUnlocked) {
+            var silentEl = document.getElementById('silentAudio');
+            if (silentEl) {
+                silentEl.play().then(function() {
+                    audioUnlocked = true;
+                }).catch(function() {});
+            }
+        }
+        if (!audioCtx) {
+            var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // Steady 60 BPM metronome tick (sine tone with organic click)
+    function playTick() {
+        if (!audioCtx) return;
+        try {
+            var t = audioCtx.currentTime;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(620, t);
+            osc.frequency.exponentialRampToValueAtTime(110, t + 0.045);
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.05);
+        } catch (e) {}
+    }
+
+    // Bell chime (for cycle end / rest transitions)
+    function playBell() {
+        if (!audioCtx) return;
+        try {
+            var t = audioCtx.currentTime;
+            var freqs = [880, 1760, 2640];
+            var gains = [0.22, 0.08, 0.03];
+            freqs.forEach(function(f, i) {
+                var osc = audioCtx.createOscillator();
+                var gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(f, t);
+                gain.gain.setValueAtTime(gains[i], t);
+                gain.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(t);
+                osc.stop(t + 1.2);
+            });
+        } catch (e) {}
+    }
+
+    // Deep Meditation Gong (Session completion)
+    function playGong() {
+        if (!audioCtx) return;
+        try {
+            var t = audioCtx.currentTime;
+            var freqs = [174, 348, 522, 696];
+            var gains = [0.35, 0.18, 0.1, 0.04];
+            freqs.forEach(function(f, i) {
+                var osc = audioCtx.createOscillator();
+                var gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(f, t);
+                gain.gain.setValueAtTime(gains[i], t);
+                gain.gain.exponentialRampToValueAtTime(0.0001, t + 3.8);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(t);
+                osc.stop(t + 3.8);
+            });
+        } catch (e) {}
+    }
+
+    /* =====================================================
+       APP RUNTIME STATE & TIMER
+       ===================================================== */
+    var pipeline = [];
+    var currentStageIdx = 0;
+    var stageSecRemaining = 0;
+    var isRunning = false;
+    var timerInterval = null;
+
+    var els = {
+        display: document.getElementById('display'),
+        practiceTitle: document.getElementById('practiceTitle'),
+        practiceSubtitle: document.getElementById('practiceSubtitle'),
+        progressBar: document.getElementById('progressBar'),
+        startBtn: document.getElementById('startBtn'),
+        bottomLabel: document.getElementById('bottomLabel'),
+        toast: document.getElementById('toast'),
+        dots: [
+            document.getElementById('dot0'),
+            document.getElementById('dot1'),
+            document.getElementById('dot2'),
+            document.getElementById('dot3'),
+            document.getElementById('dot4')
+        ]
+    };
+
+    function formatTime(s) {
         var m = Math.floor(s / 60);
         var sec = s % 60;
         return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
     }
 
-    function updateStepCards() {
-        for (var i = 0; i < 5; i++) {
-            var card = document.getElementById('step-' + i);
-            var status = document.getElementById('status-' + i);
-            if (!card || !status) continue;
-            card.classList.remove('active', 'done');
-            status.textContent = 'ожидание';
-            status.classList.remove('running');
-        }
-        // rest cards
-        var rest0El = document.getElementById('rest-0');
-        if (rest0El) { rest0El.classList.remove('active', 'done'); }
-
-        if (!running || currentStep < 0) return;
-
-        var cur = sequence[currentStep];
-        // Mark done practices
-        var donePractices = {};
-        for (var d = 0; d < currentStep; d++) {
-            if (sequence[d].type === 'practice') donePractices[sequence[d].practice] = true;
-            if (sequence[d].type === 'rest' && sequence[d].afterPractice === 0) {
-                var r0 = document.getElementById('rest-0');
-                if (r0) r0.classList.add('done');
-            }
-        }
-        for (var p in donePractices) {
-            // Only mark done if ALL cycles of this practice are done
-            var allDone = true;
-            for (var q = currentStep; q < sequence.length; q++) {
-                if (sequence[q].type === 'practice' && sequence[q].practice == p) { allDone = false; break; }
-            }
-            if (allDone) {
-                var c = document.getElementById('step-' + p);
-                var st = document.getElementById('status-' + p);
-                if (c) c.classList.add('done');
-                if (st) { st.textContent = '✓'; st.classList.remove('running'); }
-            }
-        }
-
-        // Current
-        if (cur.type === 'practice') {
-            var card2 = document.getElementById('step-' + cur.practice);
-            var status2 = document.getElementById('status-' + cur.practice);
-            if (card2) card2.classList.add('active');
-            if (status2) {
-                if (cur.totalCycles > 1) status2.textContent = 'цикл ' + cur.cycle + '/' + cur.totalCycles;
-                else status2.textContent = 'выполняется';
-                status2.classList.add('running');
-            }
-        } else if (cur.type === 'rest' && cur.afterPractice === 0) {
-            var r0a = document.getElementById('rest-0');
-            if (r0a) r0a.classList.add('active');
-        }
+    function initApp() {
+        pipeline = buildPipeline();
+        currentStageIdx = 0;
+        loadStage(currentStageIdx, false);
+        updateBottomTotalLabel();
+        syncStepperDisplays();
+        applySavedTheme();
     }
 
-    function updateTimerUI() {
-        if (!running || currentStep < 0) return;
-        var cur = sequence[currentStep];
-        var lbl = document.getElementById('practiceLabel');
-        var name = document.getElementById('practiceName');
-        var info = document.getElementById('practiceInfo');
-
-        if (cur.type === 'practice') {
-            lbl.textContent = 'Практика ' + (cur.practice + 1);
-            name.textContent = cur.label;
-            if (cur.totalCycles > 1) info.textContent = 'Цикл ' + cur.cycle + ' из ' + cur.totalCycles;
-            else info.textContent = '';
-        } else {
-            lbl.textContent = 'ПАУЗА';
-            name.textContent = cur.label;
-            info.textContent = '';
-        }
-    }
-
-    function setInputsEnabled(enabled) {
-        var inputs = document.querySelectorAll('.setting-input');
-        for (var i = 0; i < inputs.length; i++) {
-            inputs[i].disabled = !enabled;
-            inputs[i].style.opacity = enabled ? '1' : '0.4';
-        }
-    }
-
-    /* =====================================================
-       WAKE LOCK
-       ===================================================== */
-    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
-    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
-
-    /* =====================================================
-       MAIN CONTROL
-       ===================================================== */
-    function handleMain() {
-        initAudio();
-        if (!running) {
-            // START
-            saveSettings();
-            buildSequence();
-            if (sequence.length === 0) return;
-            running = true; paused = false;
-            currentStep = 0;
-            startCurrentStep();
-            document.getElementById('mainBtn').textContent = 'ПАУЗА';
-            document.getElementById('mainBtn').classList.remove('stop');
-            document.getElementById('skipBtn').style.display = '';
-            var rb = document.getElementById('resetBtn');
-            if (rb) rb.style.display = 'flex';
-            var hr = document.getElementById('headerResetBtn');
-            if (hr) hr.style.display = 'flex';
-            setInputsEnabled(false);
-            requestWakeLock();
-        } else if (!paused) {
-            // PAUSE
-            paused = true;
-            document.getElementById('mainBtn').textContent = 'ПРОДОЛЖИТЬ';
-            releaseWakeLock();
-        } else {
-            // RESUME
-            paused = false;
-            lastTick = performance.now();
-            metronomeNextMs = performance.now();
-            document.getElementById('mainBtn').textContent = 'ПАУЗА';
-            requestWakeLock();
-            requestAnimationFrame(engineLoop);
-        }
-    }
-
-    function stopAll() {
-        running = false; paused = false; currentStep = -1;
-        document.getElementById('mainBtn').textContent = 'НАЧАТЬ ПРАКТИКУ';
-        document.getElementById('mainBtn').classList.remove('stop');
-        document.getElementById('skipBtn').style.display = 'none';
-        var rb = document.getElementById('resetBtn');
-        if (rb) rb.style.display = 'none';
-        var hr = document.getElementById('headerResetBtn');
-        if (hr) hr.style.display = 'none';
-        document.getElementById('timerDisplay').textContent = '00:00';
-        document.getElementById('progressFill').style.width = '0%';
-        document.getElementById('practiceLabel').textContent = 'ПОДГОТОВКА';
-        document.getElementById('practiceName').textContent = 'Настройте практику';
-        document.getElementById('practiceInfo').textContent = 'Установите параметры ниже';
-        setInputsEnabled(true);
-        updateStepCards();
-        releaseWakeLock();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function skipCurrent() {
-        if (!running || currentStep < 0) return;
-        advanceStep();
-    }
-
-    function startCurrentStep() {
-        if (currentStep >= sequence.length) {
-            finishAll();
+    function loadStage(idx, autoStart) {
+        if (idx >= pipeline.length) {
+            finishSession();
             return;
         }
-        var cur = sequence[currentStep];
-        timeLeftMs = cur.durationSec * 1000;
-        totalDurMs = timeLeftMs;
-        lastTick = performance.now();
-        metronomeNextMs = performance.now(); // tick immediately
+        currentStageIdx = idx;
+        var stage = pipeline[currentStageIdx];
+        stageSecRemaining = stage.duration;
 
-        updateTimerUI();
-        updateStepCards();
-        scrollToActiveCard();
+        els.practiceTitle.textContent = stage.title;
+        els.practiceSubtitle.textContent = stage.sub;
+        els.display.textContent = formatTime(stageSecRemaining);
+        updateProgress();
+        updateDots(stage.mainIndex);
 
-        // Play transition sound
-        if (cur.type === 'practice') playTransitionBowl();
-
-        requestAnimationFrame(engineLoop);
-    }
-
-    function advanceStep() {
-        currentStep++;
-        if (currentStep >= sequence.length) {
-            finishAll();
-        } else {
-            startCurrentStep();
+        if (autoStart) {
+            startTimer();
         }
     }
 
-    function finishAll() {
-        playFinishGong();
-        document.getElementById('practiceLabel').textContent = '🙏';
-        document.getElementById('practiceName').textContent = 'Практика завершена';
-        document.getElementById('practiceInfo').textContent = '';
-        document.getElementById('timerDisplay').textContent = '✓';
-        document.getElementById('progressFill').style.width = '100%';
-
-        // Mark all done
-        for (var i = 0; i < 5; i++) {
-            var c = document.getElementById('step-' + i);
-            var s = document.getElementById('status-' + i);
-            if (c) { c.classList.remove('active'); c.classList.add('done'); }
-            if (s) { s.textContent = '✓'; s.classList.remove('running'); }
-        }
-        var r0 = document.getElementById('rest-0');
-        if (r0) { r0.classList.remove('active'); r0.classList.add('done'); }
-
-        setTimeout(function() { stopAll(); }, 6000);
-    }
-
-    function scrollToActiveCard() {
-        if (currentStep < 0 || currentStep >= sequence.length) return;
-        var cur = sequence[currentStep];
-        var elId = cur.type === 'practice' ? 'step-' + cur.practice : (cur.afterPractice === 0 ? 'rest-0' : null);
-        if (elId) {
-            var el = document.getElementById(elId);
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
-
-    /* =====================================================
-       ENGINE LOOP
-       ===================================================== */
-    function engineLoop(now) {
-        if (!running || paused) return;
-
-        var delta = now - lastTick;
-        lastTick = now;
-        timeLeftMs -= delta;
-
-        var cur = sequence[currentStep];
-
-        // METRONOME (always ticking calmly during practices)
-        if (cur.type === 'practice' && now >= metronomeNextMs) {
-            playMetronomeTick();
-            metronomeNextMs = now + (60000 / bpm);
-        }
-
-        // BELL for Замки (practice 2) — ding at start of each rep
-        // (already handled by transition sound at startCurrentStep)
-
-        // Timer display
-        var secLeft = Math.max(0, timeLeftMs / 1000);
-        var displayEl = document.getElementById('timerDisplay');
-        var newText = formatMMSS(secLeft);
-        if (displayEl.textContent !== newText) {
-            displayEl.textContent = newText;
-            displayEl.classList.add('pulse');
-            setTimeout(function() { displayEl.classList.remove('pulse'); }, 120);
-        }
-
-        // Progress
-        var pct = totalDurMs > 0 ? ((1 - timeLeftMs / totalDurMs) * 100) : 0;
-        document.getElementById('progressFill').style.width = Math.min(100, Math.max(0, pct)) + '%';
-
-        // Step end?
-        if (timeLeftMs <= 0) {
-            // Bell ding at end of each Замки rep
-            if (cur.type === 'practice' && cur.practice === 2) playBellDing();
-            advanceStep();
+    function updateProgress() {
+        var stage = pipeline[currentStageIdx];
+        if (!stage || stage.duration <= 0) {
+            els.progressBar.style.width = '0%';
             return;
         }
+        var elapsed = stage.duration - stageSecRemaining;
+        var pct = Math.min(100, Math.max(0, (elapsed / stage.duration) * 100));
+        els.progressBar.style.width = pct + '%';
+    }
 
-        requestAnimationFrame(engineLoop);
+    function updateDots(mainIndex) {
+        els.dots.forEach(function(dot, i) {
+            dot.className = 'stage-dot';
+            if (i === mainIndex) {
+                dot.classList.add('active');
+            } else if (i < mainIndex) {
+                dot.classList.add('completed');
+            }
+        });
+    }
+
+    function updateBottomTotalLabel() {
+        var totalSec = 0;
+        var pl = buildPipeline();
+        pl.forEach(function(st) { totalSec += st.duration; });
+        var totalMin = Math.round(totalSec / 60);
+        els.bottomLabel.textContent = 'ОБЩЕЕ ВРЕМЯ ~' + totalMin + ' МИН';
     }
 
     /* =====================================================
-       INIT
+       PLAYBACK CONTROLS
        ===================================================== */
-    try {
-        var mbNight = localStorage.getItem('pranayama_night');
-        night = mbNight === null ? true : (mbNight === 'true');
-        applyTheme();
-        loadSettings();
-    } catch(e) {}
+    function togglePlay() {
+        unlockAudioSession();
+        if (isRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
+        }
+    }
 
+    function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        els.startBtn.textContent = 'ПАУЗА';
+        els.startBtn.classList.add('paused');
+
+        timerInterval = setInterval(tick, 1000);
+    }
+
+    function pauseTimer() {
+        if (!isRunning) return;
+        isRunning = false;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        els.startBtn.textContent = 'ПРОДОЛЖИТЬ';
+        els.startBtn.classList.remove('paused');
+    }
+
+    function tick() {
+        var stage = pipeline[currentStageIdx];
+        if (!stage) return;
+
+        // Visual pulse
+        els.display.classList.add('pulse');
+        setTimeout(function() { els.display.classList.remove('pulse'); }, 180);
+
+        // Sound: tick metronome if stage permits
+        if (stage.hasTick) {
+            playTick();
+        }
+
+        stageSecRemaining--;
+        if (stageSecRemaining < 0) stageSecRemaining = 0;
+        els.display.textContent = formatTime(stageSecRemaining);
+        updateProgress();
+
+        if (stageSecRemaining <= 0) {
+            onStageComplete(stage);
+        }
+    }
+
+    function onStageComplete(stage) {
+        if (stage.bellAtEnd) {
+            playBell();
+        }
+        if (stage.isLast) {
+            finishSession();
+            return;
+        }
+        // Advance to next stage smoothly
+        currentStageIdx++;
+        if (currentStageIdx < pipeline.length) {
+            loadStage(currentStageIdx, true);
+        } else {
+            finishSession();
+        }
+    }
+
+    function finishSession() {
+        pauseTimer();
+        playGong();
+        showToast('ПРАКТИКА ЗАВЕРШЕНА 🙏');
+        els.practiceTitle.textContent = 'СЕССИЯ ЗАВЕРШЕНА';
+        els.practiceSubtitle.textContent = 'БЛАГОДАРИМ ЗА ПРАКТИКУ';
+        els.display.textContent = '00:00';
+        els.progressBar.style.width = '100%';
+        els.startBtn.textContent = 'ЗАНОВО';
+        els.startBtn.classList.remove('paused');
+        currentStageIdx = 0;
+    }
+
+    function resetCurrentStage() {
+        unlockAudioSession();
+        var wasRunning = isRunning;
+        pauseTimer();
+        var stage = pipeline[currentStageIdx];
+        if (stage) {
+            stageSecRemaining = stage.duration;
+            els.display.textContent = formatTime(stageSecRemaining);
+            updateProgress();
+        }
+        if (wasRunning) {
+            startTimer();
+        } else {
+            els.startBtn.textContent = 'СТАРТ';
+            els.startBtn.classList.remove('paused');
+        }
+        showToast('Этап сброшен');
+    }
+
+    function skipStage() {
+        unlockAudioSession();
+        var stage = pipeline[currentStageIdx];
+        if (!stage) return;
+
+        if (stage.bellAtEnd) playBell();
+
+        if (currentStageIdx + 1 < pipeline.length) {
+            currentStageIdx++;
+            loadStage(currentStageIdx, isRunning);
+            showToast('Следующий этап');
+        } else {
+            finishSession();
+        }
+    }
+
+    /* =====================================================
+       SETTINGS MODAL & STEPPERS
+       ===================================================== */
+    function openSettingsModal() {
+        syncStepperDisplays();
+        var modal = document.getElementById('settingsModal');
+        modal.classList.add('open');
+    }
+
+    function closeSettingsModal(e) {
+        if (e && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn')) return;
+        var modal = document.getElementById('settingsModal');
+        modal.classList.remove('open');
+
+        // Rebuild pipeline with updated settings and refresh current stage
+        var wasRunning = isRunning;
+        pipeline = buildPipeline();
+        if (!wasRunning) {
+            loadStage(currentStageIdx, false);
+        }
+    }
+
+    function stepChange(key, delta) {
+        unlockAudioSession();
+        if (typeof settings[key] === 'undefined') return;
+
+        var val = settings[key] + delta;
+
+        // Minimum bounds
+        if (key === 'kapalaCycles') {
+            val = Math.max(1, Math.min(10, val));
+        } else if (key.startsWith('rest') || key === 'kapalaRestSec') {
+            val = Math.max(0, Math.min(300, val)); // 0s - 5min
+        } else {
+            val = Math.max(30, Math.min(3600, val)); // min 30s
+        }
+
+        settings[key] = val;
+        saveSettings();
+        syncStepperDisplays();
+    }
+
+    function syncStepperDisplays() {
+        setValText('val_bhastrikaTime', formatMMSS(settings.bhastrikaTime));
+        setValText('val_rest1', settings.rest1 + ' с');
+        setValText('val_kapalaCycles', settings.kapalaCycles);
+        setValText('val_kapalaCycleTime', formatMMSS(settings.kapalaCycleTime));
+        setValText('val_kapalaRestSec', settings.kapalaRestSec + ' с');
+        setValText('val_rest2', settings.rest2 + ' с');
+        setValText('val_zamkiTime', formatMMSS(settings.zamkiTime));
+        setValText('val_rest3', settings.rest3 + ' с');
+        setValText('val_ujjayiTime', formatMMSS(settings.ujjayiTime));
+        setValText('val_rest4', settings.rest4 + ' с');
+        setValText('val_anulomTime', formatMMSS(settings.anulomTime));
+    }
+
+    function formatMMSS(s) {
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function setValText(id, text) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+
+    function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add('show');
+        setTimeout(function() { els.toast.classList.remove('show'); }, 1800);
+    }
+
+    /* =====================================================
+       THEME MANAGEMENT (SYNCS WITH LOCALSTORAGE)
+       ===================================================== */
+    var isNight = false;
+    function applySavedTheme() {
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'night' || savedTheme === 'dark') {
+            setNight(true);
+        } else {
+            setNight(false);
+        }
+    }
+
+    function toggleTheme() {
+        setNight(!isNight);
+    }
+
+    function setNight(night) {
+        isNight = night;
+        var sun = document.getElementById('sunIcon');
+        var moon = document.getElementById('moonIcon');
+        if (night) {
+            document.body.classList.add('night-theme');
+            if (sun) sun.style.display = 'none';
+            if (moon) moon.style.display = 'block';
+            localStorage.setItem('theme', 'night');
+        } else {
+            document.body.classList.remove('night-theme');
+            if (sun) sun.style.display = 'block';
+            if (moon) moon.style.display = 'none';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Touch gesture optimizations
+    document.addEventListener('touchstart', function(e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
