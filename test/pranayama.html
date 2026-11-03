@@ -65,68 +65,78 @@
         }
         .back-btn:active { opacity: 1; transform: scale(0.9); }
 
-        /* MASTER TITLE (EXACTLY AS IN METRONOME, ELEVATED) */
+        /* MASTER TITLE (EXACTLY AS IN METRONOME, ELEVATED -10vh) */
         .master-title {
             font-size: clamp(1.25rem, 7vw, 3rem); font-weight: 100; 
             letter-spacing: 0.35em; text-indent: 0.35em; 
-            color: var(--text); opacity: 0.8; margin: 0 0 6px 0; text-transform: uppercase;
+            color: var(--text); opacity: 0.8; margin: 0; text-transform: uppercase;
             text-align: center; white-space: nowrap;
-            transform: translateY(-8vh);
+            transform: translateY(-10vh);
+            flex-shrink: 0;
         }
 
-        /* PRACTICE TITLE & SUBTITLE (ELEVATED) */
+        /* PRACTICE TITLE & SUBTITLE (MONOLITHIC FIXED HEIGHT) */
         .practice-header {
-            transform: translateY(-6.5vh);
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 48px; width: 100%; max-width: 380px;
+            transform: translateY(-8.5vh);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 48px; min-height: 48px; max-height: 48px;
+            width: 100%; max-width: 380px; flex-shrink: 0;
+            margin-bottom: 4px;
         }
         .practice-title {
-            font-size: clamp(1.15rem, 5.5vw, 1.55rem); font-weight: 700;
+            font-size: clamp(1.05rem, 5vw, 1.45rem); font-weight: 700;
             letter-spacing: 0.08em; color: var(--gold);
             margin: 0; text-transform: uppercase; text-align: center;
+            line-height: 1.2;
         }
         .practice-title.is-rest { color: var(--accent); }
         .practice-subtitle {
-            font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em;
             color: var(--accent); text-transform: uppercase; text-align: center;
-            opacity: 0.85; margin-top: 3px; min-height: 14px;
+            opacity: 0.85; margin-top: 3px; height: 14px; line-height: 14px;
         }
 
-        /* TIMER DISPLAY (GIANT & MINIMALIST) */
+        /* TIMER DISPLAY (GIANT, TABULAR NUMS, MONOLITHIC HEIGHT) */
         .timer-display {
-            font-size: clamp(5.4rem, 24vw, 7.5rem); font-weight: 100;
+            font-size: clamp(5.2rem, 23vw, 7.5rem); font-weight: 100;
             font-variant-numeric: tabular-nums; color: var(--gold);
             letter-spacing: -0.02em; line-height: 1;
             text-shadow: 0 0 12px transparent;
             transition: transform 0.18s ease, text-shadow 0.18s ease;
             cursor: pointer; -webkit-tap-highlight-color: transparent;
-            margin-bottom: 16px;
-            transform: translateY(-2.5vh);
+            margin-bottom: 12px;
+            transform: translateY(-3.5vh);
+            height: 90px; min-height: 90px; max-height: 90px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
         .timer-display.pulse {
-            transform: translateY(-2.5vh) scale(1.04); text-shadow: 0 0 24px var(--glow);
+            transform: translateY(-3.5vh) scale(1.04); text-shadow: 0 0 24px var(--glow);
         }
 
         /* PROGRESS BAR */
         .progress-wrapper {
-            width: 100%; max-width: 280px; height: 3px;
+            width: 100%; max-width: 280px; height: 3px; min-height: 3px; max-height: 3px;
             background: rgba(142, 128, 106, 0.18); border-radius: 3px;
-            overflow: hidden; margin-bottom: 24px;
-            transform: translateY(-2.5vh);
+            overflow: hidden; margin-bottom: 18px;
+            transform: translateY(-3vh);
+            flex-shrink: 0;
         }
         .progress-bar {
             height: 100%; width: 0%; background: var(--gold);
             border-radius: 3px; transition: width 0.3s linear;
         }
 
-        /* CONTROLS (ROW OF BUTTONS ABOVE MAIN START/PAUSE) */
+        /* CONTROLS AREA */
         .controls-area {
             display: flex; flex-direction: column; align-items: center;
-            gap: 16px; width: 100%; max-width: 380px;
+            gap: 14px; width: 100%; max-width: 380px;
+            transform: translateY(-1vh);
+            flex-shrink: 0;
         }
         .secondary-btns {
             display: flex; justify-content: center; align-items: center;
-            gap: 18px; margin-bottom: 4px;
+            gap: 18px; margin-bottom: 2px;
         }
         .icon-btn {
             background: var(--surface); border: 1px solid var(--border);
@@ -137,28 +147,45 @@
         }
         .icon-btn:active { transform: scale(0.9); }
 
-        /* FIXED-SIZE BUTTON TO PREVENT JUMPING ON START/PAUSE */
+        /* FIXED-SIZE MAIN BUTTON (ZERO JUMP, EXACT BOX-SIZING 220x58) */
         .btn-main {
-            background: var(--gold); border: 2px solid transparent;
-            border-radius: 40px; cursor: pointer; font-family: inherit;
-            font-size: 1.15rem; font-weight: 900; color: #ffffff;
-            box-shadow: 0 8px 24px var(--glow); width: 220px; height: 58px;
-            display: flex; align-items: center; justify-content: center;
-            transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
-            text-transform: uppercase; letter-spacing: 0.1em;
-            -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
+            background: var(--gold);
+            border: 2px solid transparent;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #ffffff;
+            box-shadow: 0 8px 24px var(--glow);
+            width: 220px;
+            height: 58px;
+            min-height: 58px;
+            max-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            flex-shrink: 0;
         }
         .btn-main:active { transform: scale(0.96); }
         .btn-main.paused {
-            background: var(--surface); color: var(--gold);
-            border: 2px solid var(--gold); box-shadow: none;
+            background: var(--surface);
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            box-shadow: none;
         }
 
         /* BOTTOM STAGES & TIME */
         .bottom-stats {
             position: absolute; bottom: 5vh; display: flex;
             flex-direction: column; align-items: center; gap: 6px;
+            flex-shrink: 0;
         }
         .dots-row {
             display: flex; gap: 8px; align-items: center;
@@ -180,7 +207,7 @@
             color: var(--accent); text-transform: uppercase; opacity: 0.8;
         }
 
-        /* SETTINGS SLIDE-UP MODAL (HIDDEN BY DEFAULT) */
+        /* SETTINGS SLIDE-UP MODAL (COMPACT & DENSE) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.65);
@@ -192,12 +219,12 @@
             display: flex; opacity: 1;
         }
         .modal-sheet {
-            background: var(--surface); width: 100%; max-width: 480px;
-            max-height: 85vh; border-top-left-radius: 28px;
-            border-top-right-radius: 28px; padding: 20px 22px env(safe-area-inset-bottom);
+            background: var(--surface); width: 100%; max-width: 410px;
+            max-height: 84vh; border-top-left-radius: 24px;
+            border-top-right-radius: 24px; padding: 14px 16px env(safe-area-inset-bottom);
             box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column;
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
             border-top: 1px solid var(--border);
         }
         .modal-overlay.open .modal-sheet {
@@ -205,69 +232,79 @@
         }
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 14px; border-bottom: 1px solid var(--border);
+            padding-bottom: 8px; border-bottom: 1px solid var(--border);
         }
         .modal-title {
-            font-size: 0.85rem; font-weight: 800; letter-spacing: 0.18em;
+            font-size: 0.78rem; font-weight: 800; letter-spacing: 0.15em;
             text-transform: uppercase; color: var(--gold);
         }
         .modal-close-btn {
             background: transparent; border: none; color: var(--accent);
-            font-size: 0.85rem; font-weight: 700; cursor: pointer;
-            padding: 6px 12px; -webkit-tap-highlight-color: transparent;
+            font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            padding: 4px 8px; -webkit-tap-highlight-color: transparent;
         }
         .modal-scroll {
             overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 14px 2px 24px; display: flex; flex-direction: column; gap: 8px;
+            padding: 8px 2px 18px; display: flex; flex-direction: column; gap: 4px;
         }
 
-        /* SETTING CARD */
+        /* SETTING PRACTICE CARD (COMPACT) */
         .setting-card {
-            background: var(--bg); border-radius: 16px; padding: 12px 16px;
-            border: 1px solid var(--border);
+            background: var(--bg); border-radius: 12px; padding: 7px 12px;
+            border: 1px solid var(--border); margin-bottom: 2px;
         }
         .setting-card-title {
-            font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em;
-            text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 3px;
         }
         .stepper-row {
             display: flex; justify-content: space-between; align-items: center;
-            margin-top: 6px; padding: 2px 0;
+            margin-top: 3px; padding: 1px 0;
         }
         .stepper-label {
-            font-size: 0.78rem; font-weight: 600; color: var(--text);
+            font-size: 0.73rem; font-weight: 600; color: var(--text);
             opacity: 0.9;
         }
         .stepper-ctrls {
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 6px;
         }
         .step-btn {
             background: var(--surface); border: 1px solid var(--border);
-            width: 36px; height: 36px; border-radius: 50%;
+            width: 28px; height: 28px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 1.2rem; font-weight: 600; color: var(--gold);
+            font-size: 1rem; font-weight: 600; color: var(--gold);
             cursor: pointer; transition: all 0.15s;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; padding: 0;
         }
         .step-btn:active {
             transform: scale(0.9); background: var(--surface-hover);
         }
         .step-value {
-            min-width: 64px; text-align: center; font-size: 0.92rem;
+            min-width: 48px; text-align: center; font-size: 0.84rem;
             font-weight: 700; font-variant-numeric: tabular-nums;
             color: var(--text);
         }
 
-        /* COMPACT REST ROW (LIKE VERSION 1) */
+        /* ULTRA-COMPACT REST ROW (NARROW, ELEGANT, AS IN V1) */
         .rest-compact-row {
-            background: var(--rest-bg); border-radius: 12px;
-            padding: 8px 14px; border: 1px dashed var(--accent);
+            background: var(--rest-bg); border-radius: 10px;
+            padding: 3px 10px; border: 1px dashed rgba(194, 160, 94, 0.45);
             display: flex; justify-content: space-between; align-items: center;
-            opacity: 0.85; margin: 2px 0;
+            opacity: 0.9; margin: 2px 0; min-height: 34px;
+        }
+        .night-theme .rest-compact-row {
+            border-color: rgba(212, 175, 55, 0.45);
         }
         .rest-compact-label {
-            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
             text-transform: uppercase; color: var(--accent);
+            display: flex; align-items: center; gap: 5px;
+        }
+        .rest-compact-row .step-btn {
+            width: 26px; height: 26px; font-size: 0.9rem;
+        }
+        .rest-compact-row .step-value {
+            min-width: 44px; font-size: 0.8rem;
         }
 
         /* TOAST */
@@ -288,7 +325,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- Silent audio element for iOS silent mode audio bypass -->
+    <!-- Silent audio element for iOS Safari background audio keep-alive -->
     <audio id="silentAudio" loop playsinline webkit-playsinline preload="auto">
         <source src="data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA==" type="audio/wav">
     </audio>
@@ -301,16 +338,16 @@
         </svg>
     </div>
 
-    <!-- MASTER TITLE (ELEVATED TO TOP THIRD, EXACTLY AS IN METRONOME) -->
+    <!-- MASTER TITLE (ELEVATED -10vh, EXACTLY AS IN METRONOME) -->
     <div class="master-title">МАСТЕР</div>
 
-    <!-- PRACTICE HEADER -->
+    <!-- PRACTICE HEADER (MONOLITHIC FIXED HEIGHT 48px) -->
     <div class="practice-header">
         <div class="practice-title" id="practiceTitle">1. БХАСТРИКА</div>
         <div class="practice-subtitle" id="practiceSubtitle">ДЫХАНИЕ</div>
     </div>
 
-    <!-- GIANT TIMER DISPLAY -->
+    <!-- GIANT TIMER DISPLAY (FIXED HEIGHT 90px) -->
     <div class="timer-display" id="display" onclick="togglePlay()">03:00</div>
 
     <!-- PROGRESS BAR -->
@@ -318,7 +355,7 @@
         <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <!-- CONTROLS -->
+    <!-- CONTROLS AREA -->
     <div class="controls-area">
         <!-- SECONDARY BUTTONS ROW (ABOVE START/PAUSE) -->
         <div class="secondary-btns">
@@ -351,7 +388,7 @@
             </button>
         </div>
 
-        <!-- MAIN START/PAUSE BUTTON (ZERO JUMP) -->
+        <!-- MAIN START/PAUSE BUTTON (ZERO JUMP, EXACT 220x58) -->
         <button id="startBtn" class="btn-main" onclick="togglePlay()">СТАРТ</button>
     </div>
 
@@ -367,7 +404,7 @@
         <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
     </div>
 
-    <!-- SETTINGS SLIDE-UP MODAL (HIDDEN BY DEFAULT) -->
+    <!-- SETTINGS SLIDE-UP MODAL (COMPACT & DENSE) -->
     <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -389,9 +426,9 @@
                     </div>
                 </div>
 
-                <!-- ⏳ ОТДЫХ 1 (COMPACT) -->
+                <!-- ☕ ОТДЫХ 1 (УЛЬТРА-КОМПАКТНЫЙ) -->
                 <div class="rest-compact-row">
-                    <div class="rest-compact-label">⏳ Отдых</div>
+                    <div class="rest-compact-label">☕ Отдых</div>
                     <div class="stepper-ctrls">
                         <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
                         <span class="step-value" id="val_rest1">60 с</span>
@@ -428,9 +465,9 @@
                     </div>
                 </div>
 
-                <!-- ⏳ ОТДЫХ 2 (COMPACT) -->
+                <!-- ☕ ОТДЫХ 2 (УЛЬТРА-КОМПАКТНЫЙ) -->
                 <div class="rest-compact-row">
-                    <div class="rest-compact-label">⏳ Отдых</div>
+                    <div class="rest-compact-label">☕ Отдых</div>
                     <div class="stepper-ctrls">
                         <button class="step-btn" onclick="stepChange('rest2', -15)">−</button>
                         <span class="step-value" id="val_rest2">60 с</span>
@@ -438,22 +475,30 @@
                     </div>
                 </div>
 
-                <!-- 3. ЗАМКИ (БАНДХИ) -->
+                <!-- 3. ЗАМКИ (БАНДХИ) — ВОССТАНОВЛЕНЫ ПОВТОРЫ И ВРЕМЯ ИЗ БЭКАПА -->
                 <div class="setting-card">
                     <div class="setting-card-title">3. ЗАМКИ (БАНДХИ)</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Повторы:</span>
                         <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('zamkiTime', -60)">−</button>
-                            <span class="step-value" id="val_zamkiTime">5:00</span>
-                            <button class="step-btn" onclick="stepChange('zamkiTime', 60)">+</button>
+                            <button class="step-btn" onclick="stepChange('zamkiReps', -1)">−</button>
+                            <span class="step-value" id="val_zamkiReps">7</span>
+                            <button class="step-btn" onclick="stepChange('zamkiReps', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Время удержания:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('zamkiHoldTime', -5)">−</button>
+                            <span class="step-value" id="val_zamkiHoldTime">45 с</span>
+                            <button class="step-btn" onclick="stepChange('zamkiHoldTime', 5)">+</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ⏳ ОТДЫХ 3 (COMPACT) -->
+                <!-- ☕ ОТДЫХ 3 (УЛЬТРА-КОМПАКТНЫЙ) -->
                 <div class="rest-compact-row">
-                    <div class="rest-compact-label">⏳ Отдых</div>
+                    <div class="rest-compact-label">☕ Отдых</div>
                     <div class="stepper-ctrls">
                         <button class="step-btn" onclick="stepChange('rest3', -15)">−</button>
                         <span class="step-value" id="val_rest3">60 с</span>
@@ -461,22 +506,30 @@
                     </div>
                 </div>
 
-                <!-- 4. УДЖАЙИ -->
+                <!-- 4. УДЖАЙИ — ТОЧНО ТАКИЕ ЖЕ НАСТРОЙКИ (ПОВТОРЫ И ВРЕМЯ) -->
                 <div class="setting-card">
                     <div class="setting-card-title">4. УДЖАЙИ</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Повторы:</span>
                         <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('ujjayiTime', -60)">−</button>
-                            <span class="step-value" id="val_ujjayiTime">3:00</span>
-                            <button class="step-btn" onclick="stepChange('ujjayiTime', 60)">+</button>
+                            <button class="step-btn" onclick="stepChange('ujjayiReps', -1)">−</button>
+                            <span class="step-value" id="val_ujjayiReps">5</span>
+                            <button class="step-btn" onclick="stepChange('ujjayiReps', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="stepper-row">
+                        <span class="stepper-label">Время удержания:</span>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('ujjayiHoldTime', -5)">−</button>
+                            <span class="step-value" id="val_ujjayiHoldTime">30 с</span>
+                            <button class="step-btn" onclick="stepChange('ujjayiHoldTime', 5)">+</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ⏳ ОТДЫХ 4 (COMPACT) -->
+                <!-- ☕ ОТДЫХ 4 (УЛЬТРА-КОМПАКТНЫЙ) -->
                 <div class="rest-compact-row">
-                    <div class="rest-compact-label">⏳ Отдых</div>
+                    <div class="rest-compact-label">☕ Отдых</div>
                     <div class="stepper-ctrls">
                         <button class="step-btn" onclick="stepChange('rest4', -15)">−</button>
                         <span class="step-value" id="val_rest4">60 с</span>
@@ -488,7 +541,7 @@
                 <div class="setting-card">
                     <div class="setting-card-title">5. АНУЛОМ-ВИЛОМ</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Время дыхания:</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
                             <span class="step-value" id="val_anulomTime">10:00</span>
@@ -509,21 +562,25 @@
        ===================================================== */
     var currentMbTotal = 0;
     try {
-        currentMbTotal = parseInt(localStorage.getItem('mb_total')) || 0;
-    } catch(e) {}
+        var rawTotal = localStorage.getItem('mb_total');
+        currentMbTotal = parseInt(rawTotal, 10);
+        if (isNaN(currentMbTotal)) currentMbTotal = 0;
+    } catch(e) {
+        currentMbTotal = 0;
+    }
 
     function addGlobalPracticeSecond() {
         currentMbTotal++;
         if (currentMbTotal % 5 === 0) {
-            try {
-                localStorage.setItem('mb_total', currentMbTotal);
-            } catch(e) {}
+            flushGlobalPracticeTime();
         }
     }
 
     function flushGlobalPracticeTime() {
         try {
-            localStorage.setItem('mb_total', currentMbTotal);
+            if (currentMbTotal > 0) {
+                localStorage.setItem('mb_total', currentMbTotal);
+            }
         } catch(e) {}
     }
 
@@ -537,7 +594,7 @@
     /* =====================================================
        CONFIG & PERSISTENT SETTINGS
        ===================================================== */
-    var SETTINGS_KEY = 'prana_settings_v20_22';
+    var SETTINGS_KEY = 'prana_settings_v20_22_2';
     var defaultSettings = {
         bhastrikaTime: 180,     // 3 min
         rest1: 60,              // 60 sec
@@ -545,9 +602,11 @@
         kapalaCycleTime: 120,   // 2 min per cycle
         kapalaRestSec: 60,      // 60 sec rest between cycles
         rest2: 60,              // 60 sec
-        zamkiTime: 300,         // 5 min
+        zamkiReps: 7,           // 7 reps (восстановлено из бэкапа v20.21.3)
+        zamkiHoldTime: 45,      // 45 sec удержание
         rest3: 60,              // 60 sec
-        ujjayiTime: 180,        // 3 min
+        ujjayiReps: 5,          // 5 reps (точно как в замках)
+        ujjayiHoldTime: 30,     // 30 sec удержание
         rest4: 60,              // 60 sec
         anulomTime: 600         // 10 min
     };
@@ -555,8 +614,15 @@
     var settings = Object.assign({}, defaultSettings);
     try {
         var saved = localStorage.getItem(SETTINGS_KEY);
+        if (!saved) {
+            saved = localStorage.getItem('prana_settings_v20_22');
+        }
         if (saved) {
             var parsed = JSON.parse(saved);
+            if (!parsed.zamkiReps) parsed.zamkiReps = defaultSettings.zamkiReps;
+            if (!parsed.zamkiHoldTime) parsed.zamkiHoldTime = defaultSettings.zamkiHoldTime;
+            if (!parsed.ujjayiReps) parsed.ujjayiReps = defaultSettings.ujjayiReps;
+            if (!parsed.ujjayiHoldTime) parsed.ujjayiHoldTime = defaultSettings.ujjayiHoldTime;
             Object.assign(settings, parsed);
         }
     } catch (e) {
@@ -576,7 +642,7 @@
     function buildPipeline() {
         var list = [];
 
-        // 1. Bhastrika
+        // 1. БХАСТРИКА: звенит колокольчик в конце цикла + настраиваемый отдых
         list.push({
             id: 'bhastrika', mainIndex: 0,
             title: '1. БХАСТРИКА', sub: 'ДЫХАНИЕ',
@@ -588,15 +654,15 @@
         if (settings.rest1 > 0) {
             list.push({
                 id: 'rest1', mainIndex: 0,
-                title: '⏳ ОТДЫХ', sub: '',
+                title: '☕ ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
                 duration: settings.rest1,
                 hasTick: false,
-                bellAtEnd: true,
+                bellAtEnd: true, // колокольчик после отдыха
                 isRest: true
             });
         }
 
-        // 2. Kapalabhati (Multiple cycles)
+        // 2. КАПАЛАБХАТИ: отдых в секундах, звенит в конце каждого цикла и после отдыха
         var kCycles = Math.max(1, settings.kapalaCycles);
         for (var c = 1; c <= kCycles; c++) {
             list.push({
@@ -605,18 +671,18 @@
                 sub: 'ЦИКЛ ' + c + ' ИЗ ' + kCycles,
                 duration: settings.kapalaCycleTime,
                 hasTick: true,
-                bellAtEnd: true,
+                bellAtEnd: true, // звенит в конце каждого цикла
                 isRest: false
             });
-            // Rest between cycles
+            // Отдых между циклами
             if (c < kCycles && settings.kapalaRestSec > 0) {
                 list.push({
                     id: 'kapala_rest_' + c, mainIndex: 1,
-                    title: '⏳ ОТДЫХ',
-                    sub: '',
+                    title: '☕ ОТДЫХ',
+                    sub: 'МЕЖДУ ЦИКЛАМИ (' + c + '/' + (kCycles - 1) + ')',
                     duration: settings.kapalaRestSec,
                     hasTick: false,
-                    bellAtEnd: true,
+                    bellAtEnd: true, // звенит после отдыха перед следующим циклом
                     isRest: true
                 });
             }
@@ -624,61 +690,69 @@
         if (settings.rest2 > 0) {
             list.push({
                 id: 'rest2', mainIndex: 1,
-                title: '⏳ ОТДЫХ', sub: '',
+                title: '☕ ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
                 duration: settings.rest2,
                 hasTick: false,
-                bellAtEnd: true,
+                bellAtEnd: true, // звенит после отдыха перед Замками
                 isRest: true
             });
         }
 
-        // 3. Zamki (Bandhas) - approximate total time, metronome on, no bells
-        list.push({
-            id: 'zamki', mainIndex: 2,
-            title: '3. ЗАМКИ (БАНДХИ)', sub: 'ОБЩЕЕ ВРЕМЯ',
-            duration: settings.zamkiTime,
-            hasTick: true,
-            bellAtEnd: false,
-            isRest: false
-        });
+        // 3. ЗАМКИ (БАНДХИ): повторы и время удержания, ровный метроном БЕЗ звонков между подходами
+        var zReps = Math.max(1, settings.zamkiReps);
+        for (var z = 1; z <= zReps; z++) {
+            list.push({
+                id: 'zamki_' + z, mainIndex: 2,
+                title: '3. ЗАМКИ (БАНДХИ)',
+                sub: 'ПОДХОД ' + z + ' ИЗ ' + zReps,
+                duration: settings.zamkiHoldTime,
+                hasTick: true,
+                bellAtEnd: false, // БЕЗ резких звонков между подходами
+                isRest: false
+            });
+        }
         if (settings.rest3 > 0) {
             list.push({
                 id: 'rest3', mainIndex: 2,
-                title: '⏳ ОТДЫХ', sub: '',
+                title: '☕ ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
                 duration: settings.rest3,
                 hasTick: false,
-                bellAtEnd: true,
+                bellAtEnd: true, // звенит в конце отдыха перед Уджайи
                 isRest: true
             });
         }
 
-        // 4. Ujjayi - approximate total time, metronome on, no bells
-        list.push({
-            id: 'ujjayi', mainIndex: 3,
-            title: '4. УДЖАЙИ', sub: 'ОБЩЕЕ ВРЕМЯ',
-            duration: settings.ujjayiTime,
-            hasTick: true,
-            bellAtEnd: false,
-            isRest: false
-        });
+        // 4. УДЖАЙИ: ТОЧНО ТАКИЕ ЖЕ настройки (повторы и время), ровный метроном БЕЗ звонков
+        var uReps = Math.max(1, settings.ujjayiReps);
+        for (var u = 1; u <= uReps; u++) {
+            list.push({
+                id: 'ujjayi_' + u, mainIndex: 3,
+                title: '4. УДЖАЙИ',
+                sub: 'ПОДХОД ' + u + ' ИЗ ' + uReps,
+                duration: settings.ujjayiHoldTime,
+                hasTick: true,
+                bellAtEnd: false, // БЕЗ резких звонков между подходами
+                isRest: false
+            });
+        }
         if (settings.rest4 > 0) {
             list.push({
                 id: 'rest4', mainIndex: 3,
-                title: '⏳ ОТДЫХ', sub: '',
+                title: '☕ ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
                 duration: settings.rest4,
                 hasTick: false,
-                bellAtEnd: true,
+                bellAtEnd: true, // звенит в конце отдыха перед Анулом-Вилом
                 isRest: true
             });
         }
 
-        // 5. Anulom-Vilom
+        // 5. АНУЛОМ-ВИЛОМ: завершается глубоким тибетским гонгом (196 Гц)
         list.push({
             id: 'anulom', mainIndex: 4,
             title: '5. АНУЛОМ-ВИЛОМ', sub: 'ПОПЕРЕМЕННОЕ ДЫХАНИЕ',
             duration: settings.anulomTime,
             hasTick: true,
-            bellAtEnd: false,
+            bellAtEnd: false, // гонг звучит на finishSession
             isRest: false,
             isLast: true
         });
@@ -704,7 +778,6 @@
                 masterGain = audio.createGain();
                 masterGain.gain.value = 0.85;
 
-                // Limiter preventing digital clipping
                 masterCompressor = audio.createDynamicsCompressor();
                 masterCompressor.threshold.setValueAtTime(-6, audio.currentTime);
                 masterCompressor.knee.setValueAtTime(12, audio.currentTime);
@@ -717,20 +790,26 @@
             }
         }
         if (audio && audio.state === 'suspended') {
-            audio.resume();
+            audio.resume().catch(function(){});
         }
     }
 
     function unlockAudioSession() {
+        initAudio();
         if (!audioUnlocked) {
             var silentEl = document.getElementById('silentAudio');
             if (silentEl) {
+                try {
+                    if (audio && audio.createMediaStreamDestination) {
+                        var streamDest = audio.createMediaStreamDestination();
+                        silentEl.srcObject = streamDest.stream;
+                    }
+                } catch(e) {}
                 silentEl.play().then(function() {
                     audioUnlocked = true;
                 }).catch(function() {});
             }
         }
-        initAudio();
     }
 
     function ensureReverb() {
@@ -778,6 +857,7 @@
     // Authentic Tibetan Singing Bowl from index.html
     function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
         if (!audio) return;
+        if (audio.state === 'suspended') audio.resume().catch(function(){});
         var vol = volumeMult || 1;
         var now = audio.currentTime;
         ensureReverb();
@@ -824,12 +904,12 @@
         playStrikeNoise(dry, strikeVol, 0.05);
     }
 
-    // Singing Bowl for stage bells
+    // Singing Bowl for stage bell
     function playBell() {
         playBowl(440.00, 0, 0.7, 0.3, 0.04, 1.0);
     }
 
-    // Mega Gong for practice finish
+    // Mega Gong for practice finish (196 Hz)
     function playMegaGong() {
         playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2);
     }
@@ -838,6 +918,7 @@
     function playTick() {
         if (!audio) return;
         try {
+            if (audio.state === 'suspended') audio.resume().catch(function(){});
             var t = audio.currentTime;
             var osc = audio.createOscillator();
             var gain = audio.createGain();
@@ -916,6 +997,7 @@
         els.display.textContent = formatTime(stageSecRemaining);
         updateProgress();
         updateDots(stage.mainIndex);
+        updateMediaSession(stage.title, stage.sub);
 
         if (autoStart) {
             startTimer();
@@ -953,9 +1035,10 @@
     }
 
     function requestScreenLock() {
-        if ('wakeLock' in navigator) {
+        if ('wakeLock' in navigator && !wakeLock) {
             navigator.wakeLock.request('screen').then(function(wl) {
                 wakeLock = wl;
+                wl.addEventListener('release', function() { wakeLock = null; });
             }).catch(function(){});
         }
     }
@@ -967,11 +1050,27 @@
         }
     }
 
-    // Handles tab switching: syncs time immediately on wake
-    document.addEventListener('visibilitychange', function() {
+    function updateMediaSession(title, subtitle) {
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title || 'Пранаяма MASTER',
+                    artist: 'MASTER',
+                    album: subtitle || 'Осознанное дыхание'
+                });
+                navigator.mediaSession.playbackState = isRunning ? 'playing' : 'paused';
+                navigator.mediaSession.setActionHandler('play', function() { if (!isRunning) togglePlay(); });
+                navigator.mediaSession.setActionHandler('pause', function() { if (isRunning) togglePlay(); });
+                navigator.mediaSession.setActionHandler('stop', function() { handleFullReset(); });
+            } catch(e) {}
+        }
+    }
+
+    function handleVisibilityOrFocus() {
         if (!document.hidden) {
             unlockAudioSession();
             if (isRunning) {
+                requestScreenLock();
                 var now = Date.now();
                 var remaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
                 stageSecRemaining = remaining;
@@ -983,7 +1082,11 @@
                 }
             }
         }
-    });
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('pageshow', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
 
     /* =====================================================
        PLAYBACK CONTROLS
@@ -1002,9 +1105,10 @@
         isRunning = true;
         stageEndTime = Date.now() + (stageSecRemaining * 1000);
         els.startBtn.textContent = 'ПАУЗА';
-        els.startBtn.classList.add('paused');
+        els.startBtn.classList.remove('paused');
 
         requestScreenLock();
+        updateMediaSession(pipeline[currentStageIdx] ? pipeline[currentStageIdx].title : '', 'Практика активна');
         timerInterval = setInterval(tick, 1000);
     }
 
@@ -1016,7 +1120,8 @@
         releaseScreenLock();
         flushGlobalPracticeTime();
         els.startBtn.textContent = 'ПРОДОЛЖИТЬ';
-        els.startBtn.classList.remove('paused');
+        els.startBtn.classList.add('paused');
+        updateMediaSession(pipeline[currentStageIdx] ? pipeline[currentStageIdx].title : '', 'На паузе');
     }
 
     function tick() {
@@ -1027,7 +1132,7 @@
         els.display.classList.add('pulse');
         setTimeout(function() { els.display.classList.remove('pulse'); }, 180);
 
-        // Sound: authentic metronome tick if stage permits
+        // Sound: metronome tick if stage permits
         if (stage.hasTick) {
             playTick();
         }
@@ -1133,10 +1238,14 @@
 
         if (key === 'kapalaCycles') {
             val = Math.max(1, Math.min(10, val));
+        } else if (key === 'zamkiReps' || key === 'ujjayiReps') {
+            val = Math.max(1, Math.min(20, val));
+        } else if (key === 'zamkiHoldTime' || key === 'ujjayiHoldTime') {
+            val = Math.max(5, Math.min(300, val));
         } else if (key.startsWith('rest') || key === 'kapalaRestSec') {
-            val = Math.max(0, Math.min(300, val)); // 0s - 5min
+            val = Math.max(0, Math.min(300, val));
         } else {
-            val = Math.max(30, Math.min(3600, val)); // min 30s
+            val = Math.max(30, Math.min(3600, val));
         }
 
         settings[key] = val;
@@ -1151,9 +1260,11 @@
         setValText('val_kapalaCycleTime', formatMMSS(settings.kapalaCycleTime));
         setValText('val_kapalaRestSec', settings.kapalaRestSec + ' с');
         setValText('val_rest2', settings.rest2 + ' с');
-        setValText('val_zamkiTime', formatMMSS(settings.zamkiTime));
+        setValText('val_zamkiReps', settings.zamkiReps);
+        setValText('val_zamkiHoldTime', settings.zamkiHoldTime + ' с');
         setValText('val_rest3', settings.rest3 + ' с');
-        setValText('val_ujjayiTime', formatMMSS(settings.ujjayiTime));
+        setValText('val_ujjayiReps', settings.ujjayiReps);
+        setValText('val_ujjayiHoldTime', settings.ujjayiHoldTime + ' с');
         setValText('val_rest4', settings.rest4 + ' с');
         setValText('val_anulomTime', formatMMSS(settings.anulomTime));
     }
@@ -1176,15 +1287,16 @@
     }
 
     /* =====================================================
-       THEME MANAGEMENT (SYNCS WITH LOCALSTORAGE)
+       THEME MANAGEMENT (SYNCS WITH MB_NIGHT & LOCALSTORAGE)
        ===================================================== */
     var isNight = false;
     function applySavedTheme() {
-        var savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'night' || savedTheme === 'dark') {
-            setNight(true);
+        var mbNight = localStorage.getItem('mb_night');
+        if (mbNight !== null) {
+            setNight(mbNight === 'true');
         } else {
-            setNight(false);
+            var savedTheme = localStorage.getItem('theme');
+            setNight(savedTheme === 'night' || savedTheme === 'dark');
         }
     }
 
@@ -1200,13 +1312,17 @@
             document.body.classList.add('night-theme');
             if (sun) sun.style.display = 'none';
             if (moon) moon.style.display = 'block';
+            localStorage.setItem('mb_night', 'true');
             localStorage.setItem('theme', 'night');
         } else {
             document.body.classList.remove('night-theme');
             if (sun) sun.style.display = 'block';
             if (moon) moon.style.display = 'none';
+            localStorage.setItem('mb_night', 'false');
             localStorage.setItem('theme', 'light');
         }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', night ? '#000000' : '#f4f1ea');
     }
 
     // Touch gesture optimizations

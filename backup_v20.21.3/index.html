@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#f4f1ea">
+    <meta name="description" content="MASTER — приложение для практики осознанности. Сандхья-кала, дыхательный таймер, медитация.">
+    <title>MASTER</title>
+    <meta name="apple-mobile-web-app-title" content="MASTER">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+       var METRICA_ID = 108490319;
+       ym(METRICA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+       function trackEvent(eventName) { if (typeof ym === 'function') { ym(METRICA_ID, 'reachGoal', eventName); } }
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/108490319" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <!-- SunCalc -->
+    <script src="suncalc.min.js"></script>
+
+    <style>
+        *, *::before, *::after { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+        :root {
+            --bg: #f4f1ea;
+            --surface: #ffffff;
+            --text: #000000;
+            --accent: #8e806a;
+            --gold: #c2a05e;
+            --circle-bg: rgba(0,0,0,0.06);
+            --glow: rgba(194, 160, 94, 0.4);
+            --triangle-stroke: rgba(194, 160, 94, 0.25);
+            --triangle-glow: rgba(194, 160, 94, 0.15);
+            --aura-color: rgba(194, 160, 94, 0.1);
+            --sandhya-bg: rgba(255,255,255,0.85);
+            --sandhya-border: rgba(194,160,94,0.2);
+        }
+
+        .night-theme {
+            --bg: #000000;
+            --surface: #1c1c1e;
+            --text: #ffffff;
+            --accent: #8e8e93;
+            --gold: #d4af37;
+            --circle-bg: rgba(255,255,255,0.04);
+            --glow: rgba(212, 175, 55, 0.5);
+            --triangle-stroke: rgba(212, 175, 55, 0.35);
+            --triangle-glow: rgba(212, 175, 55, 0.25);
+            --aura-color: rgba(212, 175, 55, 0.15);
+            --sandhya-bg: rgba(28,28,30,0.92);
+            --sandhya-border: rgba(212,175,55,0.25);
+        }
+
+        html { background-color: var(--bg); }
+
+        body {
+            margin: 0; padding: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            min-height: 100vh; min-height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-transition: background-color 0.8s ease; transition: background-color 0.8s ease;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* SANDHYA CARD */
+        #sandhyaCard {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: var(--sandhya-bg);
+            border-bottom: 1px solid var(--sandhya-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: calc(10px + env(safe-area-inset-top)) 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #sandhyaCard.visible { transform: translateY(0); }
+
+        .sandhya-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+        }
+        .sandhya-title {
+            position: absolute;
+            left: 50%; transform: translateX(-50%);
+            font-size: 0.6rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+        .sandhya-city-btn {
+            font-size: 0.58rem;
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 20px;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
+        .sandhya-city-btn:active { opacity: 0.5; }
+
+        .sandhya-periods {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .sandhya-period {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 4px;
+            border-radius: 12px;
+            transition: background 0.3s, transform 0.2s;
+            position: relative;
+        }
+        .sandhya-period.active {
+            background: rgba(194, 160, 94, 0.15);
+        }
+        .sandhya-period.current {
+            background: rgba(194, 160, 94, 0.25);
+            transform: scale(1.03);
+        }
+        .sandhya-period.passed {
+            opacity: 0.35;
+        }
+        .sandhya-period .s-emoji {
+            font-size: 1.1rem;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .sandhya-period .s-name {
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1px;
+        }
+        .sandhya-period .s-time {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+        .sandhya-period.tomorrow {
+            opacity: 0.5;
+        }
+        .sandhya-period.current .s-time {
+            color: var(--gold);
+        }
+        .sandhya-period .s-window {
+            font-size: 0.52rem;
+            color: var(--text);
+            margin-top: 1px;
+            font-weight: 600;
+        }
+
+        /* Обратный отсчёт до ближайшей */
+        #sandhyaCountdown {
+            text-align: center;
+            font-size: 0.55rem;
+            color: var(--accent);
+            letter-spacing: 0.12em;
+            padding-top: 1px;
+        }
+        #sandhyaCountdown b {
+            color: var(--gold);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* CITY MODAL */
+        #cityModal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9000;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+        }
+        #cityModal.open { display: flex; }
+        .city-sheet {
+            background: var(--surface);
+            border-radius: 24px 24px 16px 16px;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px 16px 28px;
+            animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .city-sheet-title {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+        .city-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .city-btn {
+            background: var(--bg);
+            border: 1.5px solid var(--sandhya-border);
+            border-radius: 16px;
+            padding: 12px 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .city-btn:active { transform: scale(0.96); }
+        .city-btn.selected {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+        .city-geo-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: transparent;
+            border: 1.5px solid var(--gold);
+            border-radius: 16px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .city-close-btn {
+            width: 100%;
+            margin-top: 8px;
+            background: transparent;
+            border: none;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            color: var(--accent);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* NOTIFICATION BANNER */
+        #notifBanner {
+            position: fixed;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 14px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            min-width: 280px;
+            max-width: 340px;
+            transition: top 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #notifBanner.show { top: 52px; }
+        .notif-emoji { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+        .notif-title { font-size: 0.9rem; font-weight: 800; color: var(--gold); letter-spacing: 0.05em; }
+        .notif-sub { font-size: 0.72rem; color: var(--accent); margin-top: 2px; }
+        .notif-close { 
+            background: var(--gold); color: white; border: none; 
+            border-radius: 20px; padding: 8px 20px; margin-top: 10px;
+            font-family: inherit; font-size: 0.75rem; font-weight: 700; 
+            cursor: pointer; letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 100%; max-width: 600px; text-align: center;
+            position: relative; z-index: 10;
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            padding-top: calc(40px + env(safe-area-inset-top)); /* отступ под sandhya card (уменьшен, так как она будет скрываться) */
+            padding-bottom: 5px;
+        }
+
+        .visualizer {
+            position: relative;
+            width: 90vw; max-width: 380px;
+            height: 45vh; max-height: 380px;
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            z-index: 5; pointer-events: none;
+            margin-bottom: -10px; overflow: visible;
+        }
+
+        .triangle-svg {
+            width: 100%; height: 100%;
+            -webkit-transform: scale(1.05); transform: scale(1.05);
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+            z-index: 5;
+        }
+        .edge-bg { fill: none; stroke: var(--triangle-stroke); stroke-width: 2; }
+        .edge-active {
+            fill: none; stroke: var(--gold); stroke-width: 10;
+            stroke-linecap: round;
+            opacity: 0;
+            -webkit-transition: opacity 0.2s; transition: opacity 0.2s;
+        }
+
+        .timer-box {
+            position: absolute;
+            top: 38%; left: 50%;
+            -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            -webkit-justify-content: center; justify-content: center;
+            width: 100%;
+        }
+
+        .status-inner {
+            font-weight: 800; letter-spacing: 0.4em; text-indent: 0.4em;
+            font-size: 1rem; color: var(--gold); text-transform: uppercase;
+            text-align: center; display: block; width: 100%;
+        }
+        .timer-display {
+            font-size: 6rem; font-weight: 100;
+            font-variant-numeric: tabular-nums; color: var(--text);
+            line-height: 0.85; text-align: center;
+            display: block; width: 100%;
+            -webkit-transition: opacity 0.15s ease, -webkit-transform 0.15s ease;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .timer-display.tick { opacity: 0.4; -webkit-transform: scale(0.92); transform: scale(0.92); }
+
+        .intervals-grid {
+            display: -ms-grid; display: grid;
+            grid-template-columns: repeat(4, 1fr); gap: 8px;
+            width: 92%; margin-bottom: 16px;
+            -webkit-transition: opacity 0.6s ease; transition: opacity 0.6s ease;
+        }
+        .running .intervals-grid { opacity: 0.1; pointer-events: none; }
+
+        .interval-box {
+            background: var(--surface); padding: 10px 0; border-radius: 18px;
+            -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.04); box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            -webkit-justify-content: center; justify-content: center;
+        }
+        .interval-label { font-size: 0.52rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+        .interval-input {
+            background: transparent; border: none; font-family: inherit;
+            font-size: 18px; font-weight: 700; width: 100%; text-align: center;
+            color: var(--text); outline: none; padding: 0; margin: 0;
+            -moz-appearance: textfield;
+            -webkit-appearance: none; appearance: none;
+        }
+        .interval-input::-webkit-outer-spin-button,
+        .interval-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .controls {
+            display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            gap: 14px; width: 100%;
+        }
+        .master-label { font-weight: 300; letter-spacing: 0.2em; font-size: 1.1rem; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+
+        .secondary-btns {
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            gap: 24px; margin-bottom: 4px;
+            -webkit-align-items: center; align-items: center;
+        }
+
+        .icon-btn {
+            background: var(--surface); border: none; cursor: pointer; color: var(--text);
+            width: 54px; height: 54px; border-radius: 50%;
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            -webkit-box-shadow: 0 5px 15px rgba(0,0,0,0.08); box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            -webkit-transition: all 0.2s; transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #installGuideBtn {
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 8px 16px; border-radius: 20px; font-family: inherit; font-size: 0.8rem;
+            cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.1em;
+            text-decoration: none; display: inline-block;
+        }
+        .sandhya-period .s-name { font-weight: 800; color: var(--accent); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
+        .night-theme .sandhya-period .s-name { color: #fff; }
+        @media all and (display-mode: standalone) { #installGuideBtn { display: none !important; } }
+
+        /* Install Overlay */
+        #installOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 5000;
+            display: none; -webkit-flex-direction: column; flex-direction: column;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        #installOverlay.show { display: -webkit-flex; display: flex; }
+        .install-card {
+            background: var(--surface); padding: 24px; border-radius: 24px;
+            width: 100%; max-width: 400px; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid var(--sandhya-border);
+        }
+        .install-close {
+            position: absolute; top: 16px; right: 16px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--text); cursor: pointer; opacity: 0.6;
+        }
+        .install-title {
+            text-align: center; color: var(--gold); font-size: 1.2rem;
+            font-weight: 800; letter-spacing: 0.1em; margin-bottom: 20px;
+        }
+        .install-tabs {
+            display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 16px;
+        }
+        .install-tab {
+            flex: 1; padding: 10px; text-align: center; background: var(--bg);
+            border-radius: 12px; color: var(--accent); font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .install-tab.active {
+            background: var(--gold); color: #fff;
+        }
+        .install-content { display: none; }
+        .install-content.active { display: block; }
+        .install-step {
+            display: -webkit-flex; display: flex; gap: 12px; margin-bottom: 16px;
+            align-items: flex-start;
+        }
+        .install-step-num {
+            background: var(--gold); color: #fff; width: 28px; height: 28px;
+            border-radius: 50%; display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .install-step-text {
+            color: var(--text); font-size: 0.95rem; line-height: 1.4;
+        }
+        .install-step-text b { color: var(--gold); }
+        .install-accordion-btn {
+            background: var(--bg); border: 1px solid var(--accent); color: var(--accent);
+            padding: 10px; border-radius: 12px; width: 100%; font-family: inherit;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 10px;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s;
+        }
+        .install-accordion-content {
+            display: none; margin-top: 16px; padding-top: 16px;
+            border-top: 1px solid var(--sandhya-border);
+            max-height: 50vh; overflow-y: auto; padding-right: 8px;
+        }
+        .install-accordion-content.show { display: block; }
+        .install-accordion-content img {
+            width: 78%; max-width: 250px; margin: 0 auto 16px auto; display: block;
+            border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .install-img-caption {
+            font-size: 0.85rem; color: var(--text); opacity: 0.8;
+            margin-bottom: 8px; font-weight: 600; text-align: center;
+        }
+
+        .main-action-btns {
+            display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; justify-content: center;
+            gap: 12px; width: 100%; max-width: 340px;
+        }
+        .btn-main {
+            background: var(--gold); border: none; padding: 18px 0; border-radius: 40px;
+            cursor: pointer; font-family: inherit; font-size: 1rem; font-weight: 900;
+            color: #ffffff;
+            -webkit-box-shadow: 0 12px 30px var(--glow); box-shadow: 0 12px 30px var(--glow);
+            flex: 1;
+            -webkit-transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent; text-transform: uppercase;
+        }
+        .btn-alt {
+            background: transparent; color: var(--gold);
+            border: 2px solid var(--gold); box-shadow: none;
+        }
+        .btn-main:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
+
+        .cycle-progress {
+            margin-top: 10px; display: -webkit-flex; display: flex;
+            gap: 6px; -webkit-justify-content: center; justify-content: center;
+            -webkit-flex-wrap: wrap; flex-wrap: wrap; width: 85%;
+        }
+        .cycle-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: var(--circle-bg);
+            -webkit-transition: 0.4s; transition: 0.4s;
+        }
+        .cycle-dot.active { background: var(--gold); -webkit-transform: scale(1.3); transform: scale(1.3); }
+
+        .stat-container {
+            margin-top: 12px; display: -webkit-flex; display: flex;
+            -webkit-flex-direction: column; flex-direction: column;
+            -webkit-align-items: center; align-items: center;
+            cursor: pointer; -webkit-tap-highlight-color: transparent;
+            min-height: 40px;
+        }
+        .stat-value {
+            font-size: 1.1rem; font-weight: 700; color: var(--gold);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .version-tag {
+            margin-top: 4px; font-size: 0.52rem; letter-spacing: 0.15em;
+            color: var(--accent); opacity: 0.4; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            padding: 14px 28px;
+            touch-action: manipulation;
+            transition: transform 0.12s ease, opacity 0.12s ease;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* HIDDEN PRANAYAMA BUTTON */
+        #pranaBtn {
+            display: none;
+        }
+        #pranaBtn.unlocked {
+            display: flex;
+        }
+        @keyframes pulseGold {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,175,55,0.7); }
+            50% { transform: scale(1.15); box-shadow: 0 0 20px 6px rgba(212,175,55,0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+        }
+        #pranaBtn.pulse-highlight {
+            animation: pulseGold 0.8s ease-in-out;
+            border: 2px solid var(--gold);
+        }
+
+        /* PIN MODAL */
+        #pinModal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 999999; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        #pinModal.open { display: flex; }
+        .pin-card {
+            background: var(--surface); border-radius: 24px;
+            padding: 28px 24px; width: 100%; max-width: 300px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid var(--sandhya-border);
+            animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .pin-title {
+            font-size: 0.8rem; font-weight: 800; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+        }
+        .pin-input {
+            background: var(--bg); border: 2px solid var(--gold); border-radius: 16px;
+            padding: 14px; width: 100%; font-family: inherit;
+            font-size: 1.8rem; font-weight: 700; text-align: center;
+            color: var(--text); outline: none; letter-spacing: 0.5em;
+            -webkit-appearance: none;
+        }
+        .pin-input.error { border-color: #ff453a; animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .pin-hint {
+            margin-top: 12px; font-size: 0.68rem; color: var(--accent);
+        }
+        .pin-submit-btn {
+            margin-top: 16px; width: 100%; padding: 14px;
+            background: var(--gold); color: #fff; border: none;
+            border-radius: 16px; font-family: inherit; font-size: 0.9rem;
+            font-weight: 800; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 0.1em;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pin-submit-btn:active { transform: scale(0.96); }
+        .pin-close {
+            margin-top: 10px; background: transparent; border: none;
+            color: var(--accent); font-family: inherit; font-size: 0.75rem;
+            cursor: pointer; padding: 8px 16px; width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- SANDHYA CARD -->
+<div id="sandhyaCard" onclick="hideSandhyaCard()">
+    <div class="sandhya-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="sandhya-title" style="display: none;"></div>
+        <div class="sandhya-city-label" style="font-size: 0.55rem; font-weight: 500; margin-top: 4px; color: var(--accent); opacity: 0.85; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; padding: 2px 8px; border-radius: 6px;" onclick="event.stopPropagation(); useGeolocation(true);" title="Нажмите для обновления геопозиции">
+            <span id="cityLabel"></span>
+        </div>
+    </div>
+    <div class="sandhya-periods" id="sandhyaPeriods">
+        <div class="sandhya-period" id="sp-morning">
+            <div class="s-name" id="sn-morning">Утро</div>
+            <div class="s-time" id="st-morning">--:--</div>
+            <div class="s-window" id="sw-morning"></div>
+        </div>
+        <div class="sandhya-period" id="sp-midday">
+            <div class="s-name">Полдень</div>
+            <div class="s-time" id="st-midday">--:--</div>
+            <div class="s-window" id="sw-midday"></div>
+        </div>
+        <div class="sandhya-period" id="sp-evening">
+            <div class="s-name">Вечер</div>
+            <div class="s-time" id="st-evening">--:--</div>
+            <div class="s-window" id="sw-evening"></div>
+        </div>
+        <div class="sandhya-period" id="sp-night">
+            <div class="s-name">Полночь</div>
+            <div class="s-time" id="st-night">--:--</div>
+            <div class="s-window" id="sw-night"></div>
+        </div>
+    </div>
+    <div id="sandhyaCountdown">—</div>
+</div>
+
+<!-- CITY MODAL (Removed) -->
+
+<!-- NOTIFICATION BANNER -->
+<div id="notifBanner">
+    <span class="notif-emoji">🙏</span>
+    <div class="notif-title" id="notifTitle">Сандхья-кала</div>
+    <div class="notif-sub" id="notifSub">Время практики через 30 минут</div>
+    <button class="notif-close" onclick="closeNotifBanner()">Хорошо</button>
+</div>
+
+
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="container">
+    <div class="visualizer" id="vizMain">
+        <svg class="triangle-svg" id="triangleSvg" viewBox="0 0 500 500">
+            <path class="edge-bg" d="M250 460 L40 60 L460 60 Z" />
+            <path id="edge0" class="edge-active" d="M250 460 L40 60" />
+            <path id="edge1" class="edge-active" d="M40 60 L460 60" />
+            <path id="edge2" class="edge-active" d="M460 60 L250 460" />
+        </svg>
+        <div class="timer-box">
+            <div class="status-inner" id="statusText">ГОТОВ</div>
+            <div class="timer-display" id="display">0</div>
+        </div>
+    </div>
+
+    <div class="intervals-grid">
+        <div class="interval-box"><span class="interval-label">Вдох</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-0" value="4"></div>
+        <div class="interval-box"><span class="interval-label">Задержка</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-1" value="16"></div>
+        <div class="interval-box"><span class="interval-label">Выдох</span><input type="text" inputmode="decimal" pattern="[0-9]*" class="interval-input" id="int-2" value="8"></div>
+        <div class="interval-box"><span class="interval-label">Круги</span><input type="text" inputmode="numeric" pattern="[0-9]*" class="interval-input" id="repeat-input" value="10"></div>
+    </div>
+
+    <div class="controls">
+        <div class="master-label">❤️ МАСТЕР 🙏</div>
+        <div class="secondary-btns">
+            <button id="themeBtn" class="icon-btn" onclick="handleTheme(event)">
+                <svg id="sunIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg id="moonIcon" style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button id="sandhyaInfoBtn" class="icon-btn" onclick="toggleSandhyaCard()" title="Сандхья-кала">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </button>
+            <button id="metronomeBtn" class="icon-btn" onclick="window.location.href='metronome.html'" title="Метроном">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            </button>
+            <button id="pranaBtn" class="icon-btn" onclick="window.location.href='pranayama.html'" title="Пранаяма">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 4c-1.8 3.5-1.8 8.5 0 12c1.8-3.5 1.8-8.5 0-12z"/>
+                    <path d="M11 16c-2.5-.8-6.5-3.5-7.5-7.5c3.5 0 6.5 3.5 7.5 7.5z"/>
+                    <path d="M13 16c2.5-.8 6.5-3.5 7.5-7.5c-3.5 0-6.5 3.5-7.5 7.5z"/>
+                    <path d="M6 19.5c3.5 1.5 8.5 1.5 12 0"/>
+                </svg>
+            </button>
+            <button id="resetBtn" class="icon-btn" onclick="handleReset(event)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+        </div>
+        <button id="installGuideBtn" onclick="openInstallOverlay()">Как установить приложение</button>
+        <div class="main-action-btns">
+            <button id="startBtn" class="btn-main" style="width: 100%; max-width: 260px;" onclick="handleStart(event)">НАЧАТЬ</button>
+            <!-- <button id="sandhyaBtn" class="btn-main btn-alt" onclick="openMediaPlayer()">2. Сандхья</button> -->
+        </div>
+    </div>
+
+    <div class="cycle-progress" id="cycleDots"></div>
+
+    <div class="stat-container" id="statContainer">
+        <div class="stat-value" id="statValue">00:00:00</div>
+    </div>
+
+    <div class="version-tag" id="versionTag">v20.21 (Prana Alfa)</div>
+</div>
+
+<!-- PIN MODAL -->
+<div id="pinModal">
+    <div class="pin-card">
+        <div class="pin-title">🔒 Введите пинкод</div>
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="3" class="pin-input" id="pinInput" placeholder="•••" autocomplete="off">
+        <div class="pin-hint" id="pinHint">Доступ для разработчиков</div>
+        <button class="pin-submit-btn" onclick="handlePinSubmit()">Войти</button>
+        <button class="pin-close" onclick="closePinModal()">Отмена</button>
+    </div>
+</div>
+
+<div id="installOverlay">
+    <div class="install-card">
+        <button class="install-close" onclick="closeInstallOverlay()">×</button>
+        <div class="install-title">УСТАНОВКА</div>
+        <div class="install-tabs">
+            <div class="install-tab active" id="tabIOS" onclick="switchInstallTab('ios')">Apple (iOS)</div>
+            <div class="install-tab" id="tabAndroid" onclick="switchInstallTab('android')">Android</div>
+        </div>
+        
+        <div class="install-content active" id="contentIOS">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Внизу экрана нажмите на меню <b>«Три точки» (...)</b>, затем выберите <b>«Поделиться»</b>.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">В появившемся меню пролистайте вниз и найдите пункт <b>«На экран "Домой"»</b> (иконка с плюсиком). Если его нет, нажмите <b>«Показать больше»</b>.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">Нажмите кнопку <b>«Добавить»</b> в правом верхнем углу.</div>
+            </div>
+
+            <button class="install-accordion-btn" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+            <div class="install-accordion-content">
+                <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (...) в нижней панели браузера</div>
+                <img src="img/ios-step1.jpeg" alt="Шаг 1" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 2: В открывшемся меню нажмите «Поделиться»</div>
+                <img src="img/ios-step2.jpeg" alt="Шаг 2" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 3: Пролистайте вниз до конца. Если кнопки нет, нажмите «Показать больше»</div>
+                <img src="img/ios-step3.jpeg" alt="Шаг 3" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 4: Выберите пункт «Добавить на экран "Домой"»</div>
+                <img src="img/ios-step4.jpeg" alt="Шаг 4" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 5: Нажмите синюю кнопку «Добавить» сверху</div>
+                <img src="img/ios-step5.jpeg" alt="Шаг 5" loading="lazy">
+            </div>
+        </div>
+
+        <div class="install-content" id="contentAndroid">
+            <div class="install-step">
+                <div class="install-step-num">1</div>
+                <div class="install-step-text">Откройте сайт в <b>Google Chrome</b> или другом браузере.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">2</div>
+                <div class="install-step-text">Нажмите на иконку меню <b>«Три точки» (⋮)</b> в правом верхнем или нижнем углу.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">3</div>
+                <div class="install-step-text">В списке найдите и выберите <b>«Установить»</b> (или «Добавить на главный экран»).</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">4</div>
+                <div class="install-step-text">Нажмите ещё раз <b>«Установить»</b> в появившемся окне.</div>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">5</div>
+                <div class="install-step-text">Готово! Приложение появится на рабочем столе.</div>
+            </div>
+
+            <button class="install-accordion-btn" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+            <div class="install-accordion-content">
+                <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (⋮) в правом верхнем или нижнем углу</div>
+                <img src="img/android-step1.jpeg" alt="Шаг 1" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 2: В открывшемся меню выберите «Установить»</div>
+                <img src="img/android-step2.jpeg" alt="Шаг 2" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 3: Нажмите кнопку «Установить» в окне подтверждения</div>
+                <img src="img/android-step3.jpeg" alt="Шаг 3" loading="lazy">
+                
+                <div class="install-img-caption">Шаг 4: Нажмите ещё раз «Установить» в появившемся окне</div>
+                <img src="img/android-step4.jpeg" alt="Шаг 4" loading="lazy">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    trackEvent('app_open');
+
+    document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    var lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        var now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+    }, { passive: false });
+
+    var sc = document.getElementById('sandhyaCard');
+    var startY = 0;
+    sc.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, {passive: true});
+    sc.addEventListener('touchmove', function(e) {
+        if (!startY) return;
+        var y = e.touches[0].clientY;
+        if (startY - y > 40) { // swipe up
+            hideSandhyaCard();
+            startY = 0;
+        }
+    }, {passive: true});
+
+    var TWO_PI = Math.PI * 2;
+
+    var els = {
+        display: document.getElementById('display'),
+        startBtn: document.getElementById('startBtn'),
+        statusText: document.getElementById('statusText'),
+        cycleDots: document.getElementById('cycleDots'),
+        statValue: document.getElementById('statValue'),
+        edges: [document.getElementById('edge0'), document.getElementById('edge1'), document.getElementById('edge2')],
+        inputs: [0,1,2].map(function(i) { return document.getElementById('int-' + i); }),
+        repeats: document.getElementById('repeat-input'),
+        canvas: document.getElementById('particleCanvas'),
+        triangleSvg: document.getElementById('triangleSvg')
+    };
+
+    var state = {
+        idx: 0, timeLeft: 0, dur: 0, running: false, paused: false,
+        totalSec: 0, ints: [4, 16, 8, 0.2], reps: 10, curRep: 1,
+        night: false, lastTick: 0
+    };
+
+    var edgeLengths = [450, 420, 450];
+
+    var appStats = {
+        totalVdoh: parseInt(localStorage.getItem('mb_total_vdoh')) || 0,
+        totalHold: parseFloat(localStorage.getItem('mb_total_hold')) || 0,
+        maxCycles: parseInt(localStorage.getItem('mb_max_cycles')) || 0,
+        maxVdoh: parseFloat(localStorage.getItem('mb_max_vdoh')) || 0,
+        maxHold: parseFloat(localStorage.getItem('mb_max_hold')) || 0,
+        maxOut: parseFloat(localStorage.getItem('mb_max_out')) || 0,
+        streak: parseInt(localStorage.getItem('mb_streak')) || 1,
+        lastDate: localStorage.getItem('mb_last_date') || ''
+    };
+
+    // Streak is updated ONLY after completing a practice session (see done())
+    // We just restore the current date to avoid drift
+    var todayStr = new Date().toDateString();
+
+    function formatTime(totalSeconds) {
+        var rounded = Math.floor(totalSeconds);
+        var h = Math.floor(rounded / 3600), m = Math.floor((rounded % 3600) / 60), s = rounded % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    function formatHHMM(date) {
+        if (!date || isNaN(date.getTime())) return '--:--';
+        return (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes();
+    }
+    function renderStatText() { els.statValue.textContent = formatTime(state.totalSec); }
+
+    var cachedGold = '#c2a05e';
+    function updateCachedGold() { cachedGold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(); }
+
+    /* =====================================================
+       SANDHYA KALA MODULE
+       ===================================================== */
+    var CITIES = [
+        { name: 'Москва',        lat: 55.7558, lng: 37.6173 },
+        { name: 'СПб',           lat: 59.9311, lng: 30.3609 },
+        { name: 'Екатеринбург',  lat: 56.8389, lng: 60.6057 },
+        { name: 'Новосибирск',   lat: 55.0084, lng: 82.9357 },
+        { name: 'Челябинск',     lat: 55.1644, lng: 61.4368 },
+        { name: 'Алматы',        lat: 43.2220, lng: 76.8512 },
+        { name: 'Бали (Убуд)',   lat: -8.5069, lng: 115.2625 }
+    ];
+
+    var sandhyaLat = (localStorage.getItem('sandhya_lat') !== null) ? parseFloat(localStorage.getItem('sandhya_lat')) : null;
+    var sandhyaLng = (localStorage.getItem('sandhya_lng') !== null) ? parseFloat(localStorage.getItem('sandhya_lng')) : null;
+    var sandhyaCityName = localStorage.getItem('sandhya_city') || null;
+    if (sandhyaCityName === 'Авто' || sandhyaCityName === 'Гео' || sandhyaCityName === 'АВТО') {
+        sandhyaCityName = null;
+        localStorage.removeItem('sandhya_city');
+    }
+    function hasCoords(lat, lng) {
+        return lat !== null && !isNaN(lat) && lng !== null && !isNaN(lng);
+    }
+    var sandhyaTimers = [];
+    var sandhyaData = null;
+
+    var sandhyaHideTimeout;
+    function toggleSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        if (card.classList.contains('visible')) {
+            hideSandhyaCard();
+        } else {
+            showSandhyaCard();
+        }
+    }
+    function showSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        card.classList.add('visible');
+        clearTimeout(sandhyaHideTimeout);
+        sandhyaHideTimeout = setTimeout(hideSandhyaCard, 15000);
+    }
+    function hideSandhyaCard() {
+        var card = document.getElementById('sandhyaCard');
+        if(card) card.classList.remove('visible');
+    }
+
+    function computeSandhya(now, lat, lng) {
+        var todayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+        var tomorrowNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12, 0, 0);
+        var yesterdayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 12, 0, 0);
+
+        var tToday = SunCalc.getTimes(todayNoon, lat, lng);
+        var tTomorrow = SunCalc.getTimes(tomorrowNoon, lat, lng);
+        var tYesterday = SunCalc.getTimes(yesterdayNoon, lat, lng);
+
+        // 1. Утренняя Сандхья (Пратах / Рассвет): ±24 мин от sunrise (1 мухурта). Пик: sunrise.
+        var morningStart = new Date(tToday.sunrise.getTime() - 24 * 60000);
+        var morningEnd   = new Date(tToday.sunrise.getTime() + 24 * 60000);
+
+        // 2. Полуденная Сандхья (Мадхьянха / Полдень): ±24 мин от solarNoon. Пик: solarNoon.
+        var middayStart  = new Date(tToday.solarNoon.getTime() - 24 * 60000);
+        var middayEnd    = new Date(tToday.solarNoon.getTime() + 24 * 60000);
+
+        // 3. Вечерняя Сандхья (Саям / Закат): ±24 мин от sunset. Пик: sunset.
+        var eveningStart = new Date(tToday.sunset.getTime() - 24 * 60000);
+        var eveningEnd   = new Date(tToday.sunset.getTime() + 24 * 60000);
+
+        // 4. Ночная Сандхья (Нишита / Полночь):
+        // Если сейчас время до завершения утренней Сандхьи (00:00 - morningEnd) и надир сегодняшней ночи еще не прошел или идет прямо сейчас:
+        var nightNadir = (now.getTime() < morningEnd.getTime() && now.getTime() <= tToday.nadir.getTime() + 24 * 60000) 
+                         ? tToday.nadir 
+                         : tTomorrow.nadir;
+
+        var nightStart = new Date(nightNadir.getTime() - 24 * 60000);
+        var nightEnd   = new Date(nightNadir.getTime() + 24 * 60000);
+
+        return {
+            morning: { start: morningStart, peak: tToday.sunrise, end: morningEnd },
+            midday:  { start: middayStart,  peak: tToday.solarNoon, end: middayEnd },
+            evening: { start: eveningStart, peak: tToday.sunset, end: eveningEnd },
+            night:   { start: nightStart,   peak: nightNadir, end: nightEnd },
+            nextMorning: { start: new Date(tTomorrow.sunrise.getTime() - 24 * 60000), peak: tTomorrow.sunrise, end: new Date(tTomorrow.sunrise.getTime() + 24 * 60000) }
+        };
+    }
+
+    function renderSandhya() {
+        if (!hasCoords(sandhyaLat, sandhyaLng)) return;
+        var now = new Date();
+        sandhyaData = computeSandhya(now, sandhyaLat, sandhyaLng);
+
+        var periods = [
+            { key: 'morning', id: 'morning' },
+            { key: 'midday',  id: 'midday'  },
+            { key: 'evening', id: 'evening' },
+            { key: 'night',   id: 'night'   }
+        ];
+
+        var nowMs = now.getTime();
+        var nextPeriod = null;
+        var nextMs = Infinity;
+
+        periods.forEach(function(p) {
+            var d = sandhyaData[p.key];
+            var elPeriod = document.getElementById('sp-' + p.id);
+            var elTime = document.getElementById('st-' + p.id);
+            var elWindow = document.getElementById('sw-' + p.id);
+
+            elTime.textContent = formatHHMM(d.peak);
+            elWindow.textContent = formatHHMM(d.start) + '–' + formatHHMM(d.end);
+
+            elPeriod.classList.remove('current', 'active', 'passed', 'tomorrow');
+
+            var nameEl = document.getElementById('sn-' + p.id);
+            if (nameEl) nameEl.textContent = getperiodNameUI(p.key);
+
+            if (p.key === 'morning' && nowMs > d.end.getTime()) {
+                d = sandhyaData.nextMorning;
+                elTime.textContent = formatHHMM(d.peak);
+                elWindow.textContent = formatHHMM(d.start) + '–' + formatHHMM(d.end);
+                elPeriod.classList.add('tomorrow');
+                if (nameEl) nameEl.textContent = 'Утро (Завтра)';
+                // Для tomorrow утро не делаем его nextPeriod, если только мы не прошли midnight
+            }
+
+            if (nowMs >= d.start.getTime() && nowMs <= d.end.getTime()) {
+                elPeriod.classList.add('current');
+            } else if (nowMs > d.end.getTime()) {
+                elPeriod.classList.add('passed');
+            } else {
+                if (p.key !== 'morning' || !elPeriod.classList.contains('tomorrow')) {
+                    elPeriod.classList.add('active');
+                }
+                if (d.start.getTime() < nextMs) {
+                    nextMs = d.start.getTime();
+                    nextPeriod = { name: getperiodName(p.key), start: d.start };
+                }
+            }
+        });
+
+        // Если все периоды текущего дня уже завершились (глубокая ночь после надира), следующий — рассвет завтра
+        if (!nextPeriod && sandhyaData.nextMorning && sandhyaData.nextMorning.start.getTime() > nowMs) {
+            nextPeriod = { name: getperiodName('morning'), start: sandhyaData.nextMorning.start };
+        }
+
+        updateCountdown(nextPeriod);
+        startCountdownLoop(nextPeriod);
+        document.getElementById('sandhyaCard').classList.add('visible');
+        updateCityLabel();
+        clearTimeout(sandhyaHideTimeout);
+        sandhyaHideTimeout = setTimeout(hideSandhyaCard, 15000);
+    }
+
+    function getperiodName(key) {
+        var names = { morning: 'Утренняя Сандхья', midday: 'Полуденная Сандхья', evening: 'Вечерняя Сандхья', night: 'Ночная Сандхья' };
+        return names[key] || 'Сандхья-кала';
+    }
+
+    function getperiodNameUI(key) {
+        var names = { morning: 'Утро', midday: 'Полдень', evening: 'Вечер', night: 'Ночь' };
+        return names[key] || '';
+    }
+
+    function updateCountdown(nextPeriod) {
+        var el = document.getElementById('sandhyaCountdown');
+        if (!el) return;
+        if (!nextPeriod) { el.textContent = ''; return; }
+        var diff = nextPeriod.start.getTime() - Date.now();
+        if (diff <= 0) { 
+            el.textContent = ''; 
+            if (hasCoords(sandhyaLat, sandhyaLng)) renderSandhya();
+            return; 
+        }
+        var h = Math.floor(diff / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        var s = Math.floor((diff % 60000) / 1000);
+        var label = nextPeriod.name.split(' ')[0];
+        el.innerHTML = label + ' через <b>' + (h > 0 ? h + 'ч ' : '') + m + 'м ' + s + 'с</b>';
+    }
+
+    var countdownInterval = null;
+    var currentNextPeriod = null;
+    function startCountdownLoop(nextPeriod) {
+        currentNextPeriod = nextPeriod;
+        if (countdownInterval) clearInterval(countdownInterval);
+        if (!currentNextPeriod) return;
+        countdownInterval = setInterval(function() {
+            updateCountdown(currentNextPeriod);
+        }, 1000);
+    }
+
+    /* =====================================================
+       NOTIFICATIONS
+       ===================================================== */
+    var notifTimeouts = [];
+    function clearAllNotifTimeouts() {
+        notifTimeouts.forEach(function(t) { clearTimeout(t); });
+        notifTimeouts = [];
+    }
+
+    function scheduleNotification(nextPeriod) {
+        // Уведомления отключены по просьбе
+    }
+
+    function requestNotificationPermission() {
+        if (window.Notification && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    }
+
+    function showNotificationBanner(title, sub) {
+        document.getElementById('notifTitle').textContent = title;
+        document.getElementById('notifSub').textContent = sub;
+        var banner = document.getElementById('notifBanner');
+        banner.classList.add('show');
+        initAudio();
+        playSingingBowl(0);
+    }
+    function closeNotifBanner() {
+        document.getElementById('notifBanner').classList.remove('show');
+    }
+
+    /* =====================================================
+       CITY GEOLOCATION
+       ===================================================== */
+    function useGeolocation(showFeedback) {
+        if (!navigator.geolocation) {
+            if (showFeedback) alert('Геолокация не поддерживается браузером');
+            return;
+        }
+        var geoOptions = { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 };
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            sandhyaLat = pos.coords.latitude;
+            sandhyaLng = pos.coords.longitude;
+            localStorage.setItem('sandhya_lat', sandhyaLat);
+            localStorage.setItem('sandhya_lng', sandhyaLng);
+
+            // Мгновенно отображаем координаты
+            sandhyaCityName = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
+            localStorage.setItem('sandhya_city', sandhyaCityName);
+            renderSandhya();
+
+            // Фоновое определение города
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
+                if (city) {
+                    sandhyaCityName = city;
+                    localStorage.setItem('sandhya_city', sandhyaCityName);
+                    updateCityLabel();
+                }
+            }).catch(function(){});
+        }, function(err) {
+            if (showFeedback) {
+                alert('Не удалось получить геопозицию. Разрешите доступ к геопозиции в настройках браузера.');
+            }
+            if (!hasCoords(sandhyaLat, sandhyaLng)) {
+                sandhyaLat = 55.7558; sandhyaLng = 37.6173; sandhyaCityName = 'Москва';
+                localStorage.setItem('sandhya_lat', sandhyaLat);
+                localStorage.setItem('sandhya_lng', sandhyaLng);
+                localStorage.setItem('sandhya_city', sandhyaCityName);
+                renderSandhya();
+            }
+        }, geoOptions);
+    }
+
+    function updateCityLabel() {
+        var lbl = document.getElementById('cityLabel');
+        if (!lbl) return;
+        if (sandhyaCityName && sandhyaCityName !== 'Авто' && sandhyaCityName !== 'Гео' && sandhyaCityName !== 'АВТО') {
+            lbl.textContent = sandhyaCityName;
+        } else if (hasCoords(sandhyaLat, sandhyaLng)) {
+            lbl.textContent = Math.abs(sandhyaLat).toFixed(1) + (sandhyaLat >= 0 ? '°N' : '°S') + ' ' + Math.abs(sandhyaLng).toFixed(1) + (sandhyaLng >= 0 ? '°E' : '°W');
+        } else {
+            lbl.textContent = 'Москва';
+        }
+    }
+
+
+    function openInstallOverlay() {
+        document.getElementById('installOverlay').classList.add('show');
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(ua)) switchInstallTab('android');
+        else switchInstallTab('ios');
+    }
+    function closeInstallOverlay() {
+        document.getElementById('installOverlay').classList.remove('show');
+    }
+    function switchInstallTab(platform) {
+        document.getElementById('tabIOS').classList.remove('active');
+        document.getElementById('tabAndroid').classList.remove('active');
+        document.getElementById('contentIOS').classList.remove('active');
+        document.getElementById('contentAndroid').classList.remove('active');
+        
+        if (platform === 'ios') {
+            document.getElementById('tabIOS').classList.add('active');
+            document.getElementById('contentIOS').classList.add('active');
+        } else {
+            document.getElementById('tabAndroid').classList.add('active');
+            document.getElementById('contentAndroid').classList.add('active');
+        }
+    }
+    function toggleInstallAccordion(btn) {
+        var content = btn.nextElementSibling;
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            btn.innerHTML = '📸 Показать инструкцию с фото';
+        } else {
+            content.classList.add('show');
+            btn.innerHTML = 'Скрыть фото';
+        }
+    }
+
+
+
+    /* =====================================================
+       AUDIO ENGINE (Limiter Compressor + Optimized Reverb)
+       ===================================================== */
+    var audio = null;
+    var masterGain = null;
+    var masterCompressor = null;
+    var reverbNode = null;
+
+    function initAudio() {
+        if (!audio) {
+            audio = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audio.createGain();
+            masterGain.gain.value = 0.85;
+
+            // Master Limiter preventing hard digital clipping/crackling on weak devices
+            masterCompressor = audio.createDynamicsCompressor();
+            masterCompressor.threshold.setValueAtTime(-6, audio.currentTime);
+            masterCompressor.knee.setValueAtTime(12, audio.currentTime);
+            masterCompressor.ratio.setValueAtTime(12, audio.currentTime);
+            masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
+            masterCompressor.release.setValueAtTime(0.25, audio.currentTime);
+
+            masterGain.connect(masterCompressor);
+            masterCompressor.connect(audio.destination);
+        }
+        if (audio.state === 'suspended') audio.resume();
+    }
+
+    var wakeLock = null;
+    function requestWakeLock() { if ('wakeLock' in navigator) { navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function(){}); } }
+    function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(function(){}); wakeLock = null; } }
+
+    function resetZoom() {
+        document.activeElement.blur();
+        var vp = document.querySelector('meta[name="viewport"]');
+        vp.setAttribute('content', 'width=device-width, initial-scale=0.9999, maximum-scale=0.9999, user-scalable=no, viewport-fit=cover');
+        requestAnimationFrame(function() { vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'); });
+        window.scrollTo(0, 0);
+    }
+
+    var allInputs = document.querySelectorAll('.interval-input');
+    for (var ii = 0; ii < allInputs.length; ii++) { allInputs[ii].addEventListener('blur', function() { setTimeout(resetZoom, 50); }); }
+
+    function ensureReverb() {
+        if (reverbNode || !audio) return;
+        var len = Math.floor(audio.sampleRate * 1.0);
+        var buf = audio.createBuffer(2, len, audio.sampleRate);
+        for (var ch = 0; ch < 2; ch++) {
+            var data = buf.getChannelData(ch);
+            for (var i = 0; i < len; i++) {
+                var p = 1 - i / len;
+                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.5);
+            }
+        }
+        reverbNode = audio.createConvolver();
+        reverbNode.buffer = buf;
+        reverbNode.connect(masterGain);
+    }
+
+    var strikeNoiseBuffer = null;
+    function playStrikeNoise(dest, volume, duration) {
+        var now = audio.currentTime;
+        var bufLen = Math.floor(audio.sampleRate * duration);
+        if (bufLen < 1) return;
+        if (!strikeNoiseBuffer) {
+            strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate);
+            var data = strikeNoiseBuffer.getChannelData(0);
+            for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audio.sampleRate * 0.008));
+        }
+        var noise = audio.createBufferSource();
+        noise.buffer = strikeNoiseBuffer;
+        var bp = audio.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 2500;
+        bp.Q.value = 0.8;
+        var g = audio.createGain();
+        g.gain.setValueAtTime(volume, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        noise.connect(bp);
+        bp.connect(g);
+        g.connect(dest);
+        noise.start(now);
+        noise.stop(now + duration);
+    }
+
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
+        if (!audio) return;
+        var vol = volumeMult || 1;
+        var now = audio.currentTime;
+        ensureReverb();
+
+        var dry = audio.createGain();
+        var wet = audio.createGain();
+        dry.gain.value = dryVal;
+        wet.gain.value = wetVal;
+        dry.connect(masterGain);
+        wet.connect(reverbNode || masterGain);
+
+        var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
+        for (var i = 0; i < harmonics.length; i++) {
+            var h = harmonics[i];
+            var decay = h[2] + decayExtra;
+            var hVol = h[1] * vol;
+
+            var osc = audio.createOscillator();
+            var g = audio.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now);
+
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.linearRampToValueAtTime(hVol, now + 0.015);
+            g.gain.exponentialRampToValueAtTime(Math.max(0.0001, hVol * 0.4), now + decay * 0.3);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+            var lfo = audio.createOscillator();
+            var lfoG = audio.createGain();
+            lfo.frequency.value = 3 + Math.random() * 2;
+            lfoG.gain.value = h[0] > 3 ? 1.2 : 0.4;
+            lfo.connect(lfoG);
+            lfoG.connect(osc.frequency);
+            lfo.start(now);
+
+            osc.connect(g);
+            g.connect(dry);
+            g.connect(wet);
+
+            osc.start(now);
+            osc.stop(now + decay + 0.2);
+            lfo.stop(now + decay + 0.2);
+        }
+        playStrikeNoise(dry, strikeVol, 0.05);
+    }
+
+    function playSingingBowl(stage) { if (stage === 3) return; var bases = [349.23, 440, 293.66, 0, 523.25]; var baseFreq = bases[stage] || 440; var strikeVol = (stage === 1) ? 0.02 : 0.04; playBowl(baseFreq, 0, 0.7, 0.3, strikeVol); if (stage === 4) setTimeout(function(){ playSingingBowl(2); }, 300); }
+    function playMegaGong() { playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2); }
+
+    var BREATH_MIN = 1.0, BREATH_MAX = 1.12;
+    function updateBreathAnimation(progress) {
+        var scale;
+        if (state.idx === 0) scale = BREATH_MIN + (BREATH_MAX-BREATH_MIN)*progress;
+        else if (state.idx === 1) scale = BREATH_MAX + Math.sin(progress*TWO_PI*2)*0.008;
+        else if (state.idx === 2) scale = BREATH_MAX - (BREATH_MAX-BREATH_MIN)*progress;
+        else scale = BREATH_MIN;
+        els.triangleSvg.style.transform = 'scale('+scale+')';
+    }
+
+    for(var ei=0; ei<els.edges.length; ei++) { els.edges[ei].style.strokeDasharray = edgeLengths[ei]; els.edges[ei].style.strokeDashoffset = edgeLengths[ei]; }
+
+    try {
+        state.totalSec = parseInt(localStorage.getItem('mb_total')) || 0;
+        var saved = JSON.parse(localStorage.getItem('mb_ints')); if (saved) { for(var si=0;si<3;si++) state.ints[si] = Math.max(0.1, parseFloat(saved[si]) || state.ints[si]); }
+        state.reps = Math.max(1, parseInt(localStorage.getItem('mb_repeats')) || 10);
+        var mbNight = localStorage.getItem('mb_night');
+        state.night = mbNight === null ? true : (mbNight === 'true');
+        for(var ini=0;ini<els.inputs.length;ini++) els.inputs[ini].value = state.ints[ini];
+        els.repeats.value = state.reps; if (state.night) applyTheme();
+    } catch(e){}
+
+    updateCachedGold();
+
+    function handleStart(e) {
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        trackEvent('practice_start'); initAudio(); resetZoom();
+        requestNotificationPermission();
+        if(!state.running){
+            state.ints = [];
+            for(var i=0;i<els.inputs.length;i++) {
+                var raw = parseFloat(els.inputs[i].value);
+                var val = (isNaN(raw) || !isFinite(raw) || raw <= 0) ? 1 : Math.min(Math.max(0.1, raw), 3600);
+                els.inputs[i].value = val;
+                state.ints.push(val);
+                if(i===0 && val > appStats.maxVdoh) { appStats.maxVdoh = val; localStorage.setItem('mb_max_vdoh', val); }
+                if(i===1 && val > appStats.maxHold) { appStats.maxHold = val; localStorage.setItem('mb_max_hold', val); }
+                if(i===2 && val > appStats.maxOut) { appStats.maxOut = val; localStorage.setItem('mb_max_out', val); }
+            }
+            var rawReps = parseInt(els.repeats.value);
+            state.reps = (isNaN(rawReps) || !isFinite(rawReps) || rawReps <= 0) ? 1 : Math.min(rawReps, 1000);
+            els.repeats.value = state.reps;
+            localStorage.setItem('mb_ints', JSON.stringify(state.ints));
+            localStorage.setItem('mb_repeats', state.reps);
+            state.running = true; state.paused = false; state.curRep = 1; document.body.classList.add('running'); els.startBtn.textContent = 'Пауза'; requestWakeLock(); renderDots(); runIdx(0);
+        } else if(!state.paused){ state.paused = true; els.startBtn.textContent = 'Продолжить'; releaseWakeLock(); }
+        else { state.paused = false; els.startBtn.textContent = 'Пауза'; requestWakeLock(); state.lastTick = performance.now(); requestAnimationFrame(engine); }
+    }
+
+    function handleReset(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.running = false; state.paused = false; document.body.classList.remove('running'); els.startBtn.textContent = 'НАЧАТЬ'; els.display.textContent = '0'; els.statusText.textContent = 'ГОТОВ'; for(var i=0;i<els.edges.length;i++) { els.edges[i].style.opacity = 0; els.edges[i].style.strokeDashoffset = edgeLengths[i]; } els.triangleSvg.style.transform = 'scale(1.05)'; releaseWakeLock(); renderDots(); }
+
+    function handleTheme(e) { if(e) { e.preventDefault(); e.stopPropagation(); } state.night = !state.night; applyTheme(); localStorage.setItem('mb_night', state.night); }
+    function applyTheme() { document.body.classList.toggle('night-theme', state.night); document.getElementById('sunIcon').style.display = state.night ? 'none' : 'block'; document.getElementById('moonIcon').style.display = state.night ? 'block' : 'none'; var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.night ? '#000000' : '#f4f1ea'); updateCachedGold(); }
+
+    function runIdx(idx) {
+        if(idx >= 4) {
+            appStats.totalVdoh++; localStorage.setItem('mb_total_vdoh', appStats.totalVdoh);
+            if (state.curRep > appStats.maxCycles) { appStats.maxCycles = state.curRep; localStorage.setItem('mb_max_cycles', appStats.maxCycles); }
+            renderStatText();
+            if(state.curRep < state.reps) { state.curRep++; renderDots(); playSingingBowl(4); runIdx(0); } else { done(); }
+            return;
+        }
+        state.idx = idx; state.dur = (idx===3 ? 0.2 : state.ints[idx]) * 1000; state.timeLeft = state.dur;
+        var labels = ["Вдох","Задержка","Выдох","Пауза"]; els.statusText.textContent = labels[idx];
+        if(idx<3) playSingingBowl(idx); state.lastTick = performance.now(); requestAnimationFrame(engine);
+    }
+
+    function engine(now) {
+        if(!state.running||state.paused) return;
+        var delta = now - state.lastTick; state.lastTick = now;
+        state.timeLeft -= delta;
+        if (state.idx === 1) {
+            var oldHold = Math.floor(appStats.totalHold); appStats.totalHold += delta / 1000;
+            if (Math.floor(appStats.totalHold) !== oldHold) { localStorage.setItem('mb_total_hold', appStats.totalHold); }
+        }
+        // Precision timestamp tracking for totalSec without setInterval drift
+        if (state.idx !== 3) {
+            state.totalSecAcc = (state.totalSecAcc || 0) + delta / 1000;
+            if (state.totalSecAcc >= 1.0) {
+                var addSec = Math.floor(state.totalSecAcc);
+                state.totalSecAcc -= addSec;
+                state.totalSec += addSec;
+                updJournal();
+            }
+        }
+        var sec = Math.ceil(state.timeLeft/1000);
+        if(sec>=0 && els.display.textContent != sec) { els.display.classList.add('tick'); setTimeout(function(){ els.display.textContent = sec; els.display.classList.remove('tick'); }, 150); }
+        updateEdges((state.timeLeft/state.dur)*100); updateBreathAnimation(1 - (state.timeLeft/state.dur));
+        if(state.timeLeft<=0) runIdx(state.idx+1); else requestAnimationFrame(engine);
+    }
+
+    function updateEdges(pct) { var p = 1-(pct/100); if(state.idx===0) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=edgeLengths[0]-(p*edgeLengths[0]); els.edges[1].style.opacity=0; els.edges[2].style.opacity=0; } else if(state.idx===1) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=edgeLengths[1]-(p*edgeLengths[1]); els.edges[2].style.opacity=0; } else if(state.idx===2) { els.edges[0].style.opacity=1; els.edges[0].style.strokeDashoffset=0; els.edges[1].style.opacity=1; els.edges[1].style.strokeDashoffset=0; els.edges[2].style.opacity=1; els.edges[2].style.strokeDashoffset=edgeLengths[2]-(p*edgeLengths[2]); } }
+
+    function done() {
+        trackEvent('practice_finish');
+        // Streak update: only after actual practice completion
+        var finishDate = new Date().toDateString();
+        if (appStats.lastDate !== finishDate) {
+            var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            if (appStats.lastDate === yesterday.toDateString()) { appStats.streak++; }
+            else if (appStats.lastDate !== '') { appStats.streak = 1; }
+            appStats.lastDate = finishDate;
+            localStorage.setItem('mb_streak', appStats.streak);
+            localStorage.setItem('mb_last_date', appStats.lastDate);
+            renderStatText();
+        }
+        playMegaGong();
+        handleReset();
+    }
+
+    function renderDots() { els.cycleDots.innerHTML = ''; els.cycleDots.className = 'cycle-progress'; if(state.reps>20) els.cycleDots.classList.add('ultra-compact'); else if(state.reps>12) els.cycleDots.classList.add('compact'); for(var i=1;i<=state.reps;i++) { var d = document.createElement('div'); d.className = 'cycle-dot' + (i<=state.curRep?' active':''); els.cycleDots.appendChild(d); } }
+    function updJournal() { if (state.totalSec % 10 === 0) localStorage.setItem('mb_total', state.totalSec); renderStatText(); }
+
+    /* PARTICLE CANVAS */
+    var ctx = els.canvas.getContext('2d'); var parts = [];
+    function resize() { els.canvas.width = window.innerWidth; els.canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    function Particle() { this.reset(); }
+    Particle.prototype.reset = function() { this.x = Math.random()*els.canvas.width; this.y = Math.random()*els.canvas.height; this.s = Math.random()*2+0.5; this.vX = (Math.random()-0.5)*0.2; this.vY = (Math.random()-0.5)*0.2; this.a = 0; this.f = Math.random()*0.01+0.005; this.m = Math.random()*0.4+0.1; this.growing = true; };
+    Particle.prototype.update = function() { this.x += this.vX; this.y += this.vY; if(this.growing){ this.a += this.f; if(this.a>=this.m) this.growing=false; } else { this.a -= this.f; if(this.a<=0) this.reset(); } };
+    Particle.prototype.draw = function() { ctx.fillStyle = cachedGold; ctx.globalAlpha = this.a; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,TWO_PI); ctx.fill(); };
+    for(var pi=0; pi<10; pi++) parts.push(new Particle());
+    function anim() { ctx.clearRect(0,0,els.canvas.width,els.canvas.height); for(var i=0;i<parts.length;i++){ parts[i].update(); parts[i].draw(); } requestAnimationFrame(anim); }
+    anim();
+
+    renderStatText(); renderDots();
+
+    // Hide install guide button if standalone via JS as well for iOS
+    if (window.navigator.standalone === true) {
+        var installBtn = document.getElementById('installGuideBtn');
+        if(installBtn) installBtn.style.display = 'none';
+    }
+
+    /* INIT SANDHYA */
+    if (hasCoords(sandhyaLat, sandhyaLng)) {
+        renderSandhya();
+
+        // Если город еще не был определен (были только координаты), уточняем его фоном
+        if (!sandhyaCityName || sandhyaCityName.indexOf('°') !== -1) {
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + sandhyaLat + '&lon=' + sandhyaLng + '&zoom=10&accept-language=ru')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county || data.address.state)) || null;
+                if (city) {
+                    sandhyaCityName = city;
+                    localStorage.setItem('sandhya_city', sandhyaCityName);
+                    updateCityLabel();
+                }
+            }).catch(function(){});
+        }
+    } else {
+        // Первый запуск — запрашиваем геопозицию
+        setTimeout(function() {
+            useGeolocation(false);
+        }, 500);
+    }
+
+    /* =====================================================
+       PRANAYAMA SECRET ACCESS (5 taps + PIN)
+       ===================================================== */
+    var pranaTapCount = 0;
+    var pranaTapTimer = null;
+    var lastTapTime = 0;
+    var PRANA_PIN = '888';
+
+    // Check if already unlocked
+    if (localStorage.getItem('prana_unlocked') === 'true') {
+        var pb = document.getElementById('pranaBtn');
+        if (pb) pb.classList.add('unlocked');
+    }
+
+    function handleVersionTap(e) {
+        var now = Date.now();
+        if (now - lastTapTime < 80) return;
+        lastTapTime = now;
+
+        if (e && e.cancelable) e.preventDefault();
+        if (e) e.stopPropagation();
+
+        pranaTapCount++;
+        clearTimeout(pranaTapTimer);
+        pranaTapTimer = setTimeout(function() {
+            pranaTapCount = 0;
+            var vt = document.getElementById('versionTag');
+            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
+        }, 3500);
+
+        // Immediate tactile/visual response on tap
+        var vt = document.getElementById('versionTag');
+        if (vt) {
+            vt.style.opacity = '1';
+            vt.style.transform = 'scale(1.25)';
+            vt.style.color = 'var(--gold)';
+            var dots = ' •'.repeat(Math.min(pranaTapCount, 5));
+            vt.textContent = 'v20.21 (Prana Alfa)' + dots;
+            setTimeout(function() {
+                vt.style.opacity = '';
+                vt.style.transform = '';
+                vt.style.color = '';
+            }, 150);
+        }
+
+        if (pranaTapCount >= 5) {
+            pranaTapCount = 0;
+            if (vt) vt.textContent = 'v20.21 (Prana Alfa)';
+
+            if (localStorage.getItem('prana_unlocked') === 'true') {
+                // If already unlocked -> straight to pranayama!
+                window.location.href = 'pranayama.html';
+            } else {
+                openPinModal();
+            }
+        }
+    }
+
+    var vtEl = document.getElementById('versionTag');
+    if (vtEl) {
+        if (window.PointerEvent) {
+            vtEl.addEventListener('pointerdown', handleVersionTap, { passive: false });
+        } else {
+            vtEl.addEventListener('touchstart', handleVersionTap, { passive: false });
+            vtEl.addEventListener('click', handleVersionTap);
+        }
+    }
+
+    var pinInputEl = document.getElementById('pinInput');
+    if (pinInputEl) {
+        pinInputEl.addEventListener('input', handlePinInput);
+    }
+
+    function openPinModal() {
+        var modal = document.getElementById('pinModal');
+        var input = document.getElementById('pinInput');
+        modal.classList.add('open');
+        input.value = '';
+        input.classList.remove('error');
+        document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
+        input.focus();
+    }
+
+    function verifyPin(val) {
+        var input = document.getElementById('pinInput');
+        if (val === PRANA_PIN) {
+            // SUCCESS
+            localStorage.setItem('prana_unlocked', 'true');
+            var pb = document.getElementById('pranaBtn');
+            if (pb) pb.classList.add('unlocked');
+            closePinModal();
+            if (navigator.vibrate) navigator.vibrate(100);
+            setTimeout(function() {
+                window.location.href = 'pranayama.html';
+            }, 300);
+        } else {
+            // WRONG
+            input.classList.add('error');
+            document.getElementById('pinHint').textContent = 'Неверный пинкод';
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            setTimeout(function() {
+                input.value = '';
+                input.classList.remove('error');
+                document.getElementById('pinHint').textContent = 'Доступ для разработчиков';
+            }, 800);
+        }
+    }
+
+    function handlePinInput() {
+        var input = document.getElementById('pinInput');
+        var val = input.value.replace(/\D/g, '');
+        input.value = val;
+        if (val.length === 3) {
+            verifyPin(val);
+        }
+    }
+
+    function handlePinSubmit() {
+        var input = document.getElementById('pinInput');
+        var val = input.value.replace(/\D/g, '');
+        verifyPin(val);
+    }
+
+    function closePinModal() {
+        var modal = document.getElementById('pinModal');
+        var input = document.getElementById('pinInput');
+        modal.classList.remove('open');
+        input.blur();
+    }
+
+    // Close pin modal on backdrop click
+    document.getElementById('pinModal').addEventListener('click', function(e) {
+        if (e.target === this) closePinModal();
+    });
+
+    /* SERVICE WORKER */
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(function(){}); }
+</script>
+</body>
+</html>
