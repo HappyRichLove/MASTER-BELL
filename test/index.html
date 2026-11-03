@@ -759,7 +759,7 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.22 (Prana Beta)</div>
+    <div class="version-tag" id="versionTag">v20.22.2 (Prana)</div>
 </div>
 
 <!-- PIN MODAL -->
@@ -1569,7 +1569,7 @@
         pranaTapTimer = setTimeout(function() {
             pranaTapCount = 0;
             var vt = document.getElementById('versionTag');
-            if (vt) vt.textContent = 'v20.22 (Prana Beta)';
+            if (vt) vt.textContent = 'v20.22.2 (Prana)';
         }, 5000);
 
         // Immediate tactile/visual response on tap
@@ -1579,7 +1579,7 @@
             vt.style.transform = 'scale(1.2)';
             vt.style.color = 'var(--gold)';
             var dots = ' •'.repeat(Math.min(pranaTapCount, 5));
-            vt.textContent = 'v20.22 (Prana Beta)' + dots;
+            vt.textContent = 'v20.22.2 (Prana)' + dots;
             setTimeout(function() {
                 if (vt) {
                     vt.style.opacity = '';
@@ -1595,7 +1595,7 @@
 
         if (pranaTapCount >= 5) {
             pranaTapCount = 0;
-            if (vt) vt.textContent = 'v20.22 (Prana Beta)';
+            if (vt) vt.textContent = 'v20.22.2 (Prana)';
 
             // 1. Reveal the button with pulsing animation
             var pb = document.getElementById('pranaBtn');
@@ -1687,7 +1687,11 @@
     });
 
     /* SERVICE WORKER */
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(function(){}); }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(function(reg) {
+            reg.update();
+        }).catch(function(){});
+    }
 </script>
 </body>
 </html>
