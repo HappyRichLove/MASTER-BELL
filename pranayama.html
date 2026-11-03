@@ -35,6 +35,7 @@
             --glow: rgba(194, 160, 94, 0.4);
             --surface-hover: #ebe7de;
             --border: rgba(142, 128, 106, 0.2);
+            --rest-bg: rgba(194, 160, 94, 0.08);
         }
         .night-theme {
             --bg: #000000; --surface: #1c1c1e; --text: #ffffff;
@@ -42,70 +43,74 @@
             --glow: rgba(212, 175, 55, 0.5);
             --surface-hover: #2c2c2e;
             --border: rgba(212, 175, 55, 0.2);
+            --rest-bg: rgba(212, 175, 55, 0.1);
         }
         html { background-color: var(--bg); }
         body {
             margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg); color: var(--text);
-            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             height: 100vh; height: 100dvh; width: 100vw; overflow: hidden;
             transition: background-color 0.8s ease; touch-action: manipulation; user-select: none;
             -webkit-user-select: none;
         }
 
-        /* HEADER */
-        .top-nav {
-            width: 100%; max-width: 500px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 24px 8px; z-index: 10;
+        /* BACK BUTTON (EXACTLY AS IN METRONOME) */
+        .back-btn {
+            position: absolute; top: 5vh; left: 24px; z-index: 100;
+            color: var(--accent); opacity: 0.6; cursor: pointer;
+            -webkit-tap-highlight-color: transparent; padding: 6px;
+            transition: opacity 0.2s, transform 0.15s;
         }
-        .nav-btn {
-            background: transparent; border: none; cursor: pointer;
-            color: var(--accent); opacity: 0.7; padding: 6px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; transition: opacity 0.2s, transform 0.15s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .nav-btn:active { opacity: 1; transform: scale(0.9); }
-        .nav-right { display: flex; gap: 8px; }
+        .back-btn:active { opacity: 1; transform: scale(0.9); }
 
-        /* CENTER CONTENT */
-        .main-stage {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            width: 100%; max-width: 440px; padding: 0 20px;
-            text-align: center; margin-top: -2vh;
+        /* CENTER AREA */
+        .center-container {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; width: 100%; max-width: 440px;
+            padding: 0 20px;
         }
 
+        /* MASTER TITLE (EXACTLY AS IN METRONOME, ELEVATED) */
         .master-title {
-            font-size: clamp(1rem, 5vw, 1.8rem); font-weight: 100;
-            letter-spacing: 0.35em; text-indent: 0.35em;
-            color: var(--text); opacity: 0.6; margin: 0 0 10px 0;
-            text-transform: uppercase; white-space: nowrap;
+            font-size: clamp(1.25rem, 7vw, 2.8rem); font-weight: 100; 
+            letter-spacing: 0.35em; text-indent: 0.35em; 
+            color: var(--text); opacity: 0.8; margin: 0 0 10px 0; text-transform: uppercase;
+            text-align: center; white-space: nowrap;
+            transform: translateY(-4vh);
         }
 
+        /* PRACTICE TITLE & SUBTITLE (ELEVATED) */
+        .practice-header {
+            transform: translateY(-2.5vh);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 52px;
+        }
         .practice-title {
-            font-size: clamp(1.2rem, 5.5vw, 1.6rem); font-weight: 700;
+            font-size: clamp(1.15rem, 5.5vw, 1.55rem); font-weight: 700;
             letter-spacing: 0.08em; color: var(--gold);
             margin: 0 0 4px 0; text-transform: uppercase;
-            transition: color 0.3s;
+            text-align: center; transition: color 0.3s;
+        }
+        .practice-title.is-rest {
+            color: var(--accent);
         }
         .practice-subtitle {
-            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+            font-size: 0.76rem; font-weight: 600; letter-spacing: 0.14em;
             color: var(--accent); text-transform: uppercase;
-            min-height: 18px; margin-bottom: 12px;
+            text-align: center; opacity: 0.85;
         }
 
-        /* TIMER DISPLAY */
+        /* TIMER DISPLAY (GIANT & MINIMALIST) */
         .timer-display {
-            font-size: clamp(4.8rem, 21vw, 6.8rem); font-weight: 100;
+            font-size: clamp(5.2rem, 23vw, 7.2rem); font-weight: 100;
             font-variant-numeric: tabular-nums; color: var(--gold);
             letter-spacing: -0.02em; line-height: 1;
             text-shadow: 0 0 12px transparent;
             transition: transform 0.18s ease, text-shadow 0.18s ease;
             cursor: pointer; -webkit-tap-highlight-color: transparent;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .timer-display.pulse {
             transform: scale(1.04); text-shadow: 0 0 24px var(--glow);
@@ -113,7 +118,7 @@
 
         /* PROGRESS BAR */
         .progress-wrapper {
-            width: 100%; max-width: 320px; height: 3px;
+            width: 100%; max-width: 300px; height: 3px;
             background: rgba(142, 128, 106, 0.18); border-radius: 3px;
             overflow: hidden; margin-bottom: 24px;
         }
@@ -122,18 +127,18 @@
             border-radius: 3px; transition: width 0.3s linear;
         }
 
-        /* CONTROLS */
+        /* CONTROLS (BUTTONS ROW ABOVE MAIN START/PAUSE) */
         .controls-area {
             display: flex; flex-direction: column; align-items: center;
             gap: 16px; width: 100%; max-width: 380px;
         }
         .secondary-btns {
             display: flex; justify-content: center; align-items: center;
-            gap: 24px;
+            gap: 18px; margin-bottom: 4px;
         }
         .icon-btn {
             background: var(--surface); border: 1px solid var(--border);
-            cursor: pointer; color: var(--text); width: 52px; height: 52px;
+            cursor: pointer; color: var(--text); width: 50px; height: 50px;
             border-radius: 50%; display: flex; justify-content: center;
             align-items: center; box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             transition: all 0.2s; -webkit-tap-highlight-color: transparent;
@@ -154,11 +159,10 @@
             border: 2px solid var(--gold); box-shadow: none;
         }
 
-        /* BOTTOM STAGES INDICATOR */
-        .bottom-indicator {
-            padding-bottom: clamp(14px, 3vh, 28px);
-            display: flex; flex-direction: column; align-items: center;
-            gap: 8px; z-index: 10;
+        /* BOTTOM STAGES & TIME (EXACTLY AS USER LIKED) */
+        .bottom-stats {
+            position: absolute; bottom: 5vh; display: flex;
+            flex-direction: column; align-items: center; gap: 6px;
         }
         .dots-row {
             display: flex; gap: 8px; align-items: center;
@@ -180,7 +184,7 @@
             color: var(--accent); text-transform: uppercase; opacity: 0.8;
         }
 
-        /* SETTINGS SLIDE-UP MODAL / SPOILER */
+        /* SETTINGS SLIDE-UP MODAL (HIDDEN BY DEFAULT) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.65);
@@ -218,22 +222,22 @@
         }
         .modal-scroll {
             overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 14px 2px 24px; display: flex; flex-direction: column; gap: 14px;
+            padding: 14px 2px 24px; display: flex; flex-direction: column; gap: 12px;
         }
 
-        /* SETTING CARD & STEPPERS */
+        /* SETTING CARD & SEPARATORS WITH HOURGLASS */
         .setting-card {
             background: var(--bg); border-radius: 18px; padding: 14px 16px;
             border: 1px solid var(--border);
         }
         .setting-card-title {
             font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em;
-            text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+            text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
             display: flex; justify-content: space-between; align-items: center;
         }
         .stepper-row {
             display: flex; justify-content: space-between; align-items: center;
-            margin-top: 8px; padding: 4px 0;
+            margin-top: 8px; padding: 2px 0;
         }
         .stepper-label {
             font-size: 0.78rem; font-weight: 600; color: var(--text);
@@ -259,6 +263,24 @@
             color: var(--text);
         }
 
+        /* REST SEPARATOR CARD (HOURGLASS DESIGN) */
+        .rest-divider-card {
+            background: var(--rest-bg); border-radius: 14px;
+            padding: 10px 16px; border: 1px dashed var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 4px 0;
+        }
+        .rest-divider-header {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .rest-icon {
+            font-size: 1.1rem; line-height: 1;
+        }
+        .rest-title {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--accent);
+        }
+
         /* TOAST */
         .toast {
             position: fixed; top: calc(env(safe-area-inset-top) + 20px);
@@ -282,39 +304,22 @@
         <source src="data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA==" type="audio/wav">
     </audio>
 
-    <!-- TOP HEADER -->
-    <div class="top-nav">
-        <button class="nav-btn" onclick="window.location.href='index.html'" title="Назад">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-        </button>
-
-        <div class="nav-right">
-            <button id="settingsBtn" class="nav-btn" onclick="openSettingsModal()" title="Настройки">
-                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-            </button>
-            <button id="themeBtn" class="nav-btn" onclick="toggleTheme()" title="Тема">
-                <svg id="sunIcon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                </svg>
-                <svg id="moonIcon" style="display:none" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-            </button>
-        </div>
+    <!-- BACK BUTTON (TOP LEFT, METRONOME STYLE) -->
+    <div class="back-btn" onclick="saveAndGoHome()" title="Назад">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
     </div>
 
-    <!-- MAIN MINIMALIST STAGE (METRONOME STYLE) -->
-    <div class="main-stage">
+    <!-- MAIN CENTER STAGE -->
+    <div class="center-container">
         <div class="master-title">МАСТЕР</div>
-        <div class="practice-title" id="practiceTitle">1. БХАСТРИКА</div>
-        <div class="practice-subtitle" id="practiceSubtitle">ДЫХАНИЕ</div>
+
+        <div class="practice-header">
+            <div class="practice-title" id="practiceTitle">1. БХАСТРИКА</div>
+            <div class="practice-subtitle" id="practiceSubtitle">ДЫХАНИЕ</div>
+        </div>
 
         <div class="timer-display" id="display" onclick="togglePlay()">03:00</div>
 
@@ -323,11 +328,27 @@
         </div>
 
         <div class="controls-area">
+            <!-- SECONDARY BUTTONS ROW (ABOVE START/PAUSE) -->
             <div class="secondary-btns">
-                <button class="icon-btn" onclick="resetCurrentStage()" title="Сбросить текущий этап">
+                <button class="icon-btn" onclick="resetCurrentStage()" title="Сбросить этап">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                         <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+                <button id="settingsBtn" class="icon-btn" onclick="openSettingsModal()" title="Настройки практик">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+                <button id="themeBtn" class="icon-btn" onclick="toggleTheme()" title="Переключить тему">
+                    <svg id="sunIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                    <svg id="moonIcon" style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </button>
                 <button class="icon-btn" onclick="skipStage()" title="Пропустить этап">
@@ -338,12 +359,13 @@
                 </button>
             </div>
 
+            <!-- MAIN BIG BUTTON -->
             <button id="startBtn" class="btn-main" onclick="togglePlay()">СТАРТ</button>
         </div>
     </div>
 
     <!-- BOTTOM PROGRESS & STATS -->
-    <div class="bottom-indicator">
+    <div class="bottom-stats">
         <div class="dots-row">
             <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
             <div class="stage-dot" id="dot1" title="Капалабхати"></div>
@@ -374,13 +396,18 @@
                             <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
                         </div>
                     </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Отдых после практики:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
-                            <span class="step-value" id="val_rest1">60 с</span>
-                            <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
-                        </div>
+                </div>
+
+                <!-- ⏳ ОТДЫХ 1 -->
+                <div class="rest-divider-card">
+                    <div class="rest-divider-header">
+                        <span class="rest-icon">⏳</span>
+                        <span class="rest-title">ОТДЫХ ПОСЛЕ БХАСТРИКИ</span>
+                    </div>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
+                        <span class="step-value" id="val_rest1">60 с</span>
+                        <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
                     </div>
                 </div>
 
@@ -396,7 +423,7 @@
                         </div>
                     </div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Время цикла:</span>
+                        <span class="stepper-label">Время дыхания в цикле:</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('kapalaCycleTime', -30)">−</button>
                             <span class="step-value" id="val_kapalaCycleTime">2:00</span>
@@ -411,13 +438,18 @@
                             <button class="step-btn" onclick="stepChange('kapalaRestSec', 15)">+</button>
                         </div>
                     </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Отдых после практики:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('rest2', -15)">−</button>
-                            <span class="step-value" id="val_rest2">60 с</span>
-                            <button class="step-btn" onclick="stepChange('rest2', 15)">+</button>
-                        </div>
+                </div>
+
+                <!-- ⏳ ОТДЫХ 2 -->
+                <div class="rest-divider-card">
+                    <div class="rest-divider-header">
+                        <span class="rest-icon">⏳</span>
+                        <span class="rest-title">ОТДЫХ ПОСЛЕ КАПАЛАБХАТИ</span>
+                    </div>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="stepChange('rest2', -15)">−</button>
+                        <span class="step-value" id="val_rest2">60 с</span>
+                        <button class="step-btn" onclick="stepChange('rest2', 15)">+</button>
                     </div>
                 </div>
 
@@ -425,20 +457,25 @@
                 <div class="setting-card">
                     <div class="setting-card-title">3. ЗАМКИ (БАНДХИ)</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Общее время практики:</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('zamkiTime', -60)">−</button>
                             <span class="step-value" id="val_zamkiTime">5:00</span>
                             <button class="step-btn" onclick="stepChange('zamkiTime', 60)">+</button>
                         </div>
                     </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Отдых после практики:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('rest3', -15)">−</button>
-                            <span class="step-value" id="val_rest3">60 с</span>
-                            <button class="step-btn" onclick="stepChange('rest3', 15)">+</button>
-                        </div>
+                </div>
+
+                <!-- ⏳ ОТДЫХ 3 -->
+                <div class="rest-divider-card">
+                    <div class="rest-divider-header">
+                        <span class="rest-icon">⏳</span>
+                        <span class="rest-title">ОТДЫХ ПОСЛЕ ЗАМКОВ</span>
+                    </div>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="stepChange('rest3', -15)">−</button>
+                        <span class="step-value" id="val_rest3">60 с</span>
+                        <button class="step-btn" onclick="stepChange('rest3', 15)">+</button>
                     </div>
                 </div>
 
@@ -446,20 +483,25 @@
                 <div class="setting-card">
                     <div class="setting-card-title">4. УДЖАЙИ</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Общее время практики:</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('ujjayiTime', -60)">−</button>
                             <span class="step-value" id="val_ujjayiTime">3:00</span>
                             <button class="step-btn" onclick="stepChange('ujjayiTime', 60)">+</button>
                         </div>
                     </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Отдых после практики:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('rest4', -15)">−</button>
-                            <span class="step-value" id="val_rest4">60 с</span>
-                            <button class="step-btn" onclick="stepChange('rest4', 15)">+</button>
-                        </div>
+                </div>
+
+                <!-- ⏳ ОТДЫХ 4 -->
+                <div class="rest-divider-card">
+                    <div class="rest-divider-header">
+                        <span class="rest-icon">⏳</span>
+                        <span class="rest-title">ОТДЫХ ПОСЛЕ УДЖАЙИ</span>
+                    </div>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="stepChange('rest4', -15)">−</button>
+                        <span class="step-value" id="val_rest4">60 с</span>
+                        <button class="step-btn" onclick="stepChange('rest4', 15)">+</button>
                     </div>
                 </div>
 
@@ -467,7 +509,7 @@
                 <div class="setting-card">
                     <div class="setting-card-title">5. АНУЛОМ-ВИЛОМ</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Общее время:</span>
+                        <span class="stepper-label">Общее время практики:</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
                             <span class="step-value" id="val_anulomTime">10:00</span>
@@ -483,6 +525,36 @@
     <div class="toast" id="toast"></div>
 
 <script>
+    /* =====================================================
+       GLOBAL LIFETIME PRACTICE TIMER (mb_total)
+       ===================================================== */
+    var currentMbTotal = 0;
+    try {
+        currentMbTotal = parseInt(localStorage.getItem('mb_total')) || 0;
+    } catch(e) {}
+
+    function addGlobalPracticeSecond() {
+        currentMbTotal++;
+        if (currentMbTotal % 5 === 0) {
+            try {
+                localStorage.setItem('mb_total', currentMbTotal);
+            } catch(e) {}
+        }
+    }
+
+    function flushGlobalPracticeTime() {
+        try {
+            localStorage.setItem('mb_total', currentMbTotal);
+        } catch(e) {}
+    }
+
+    function saveAndGoHome() {
+        flushGlobalPracticeTime();
+        window.location.href = 'index.html';
+    }
+
+    window.addEventListener('beforeunload', flushGlobalPracticeTime);
+
     /* =====================================================
        CONFIG & PERSISTENT SETTINGS
        ===================================================== */
@@ -522,7 +594,6 @@
     /* =====================================================
        PIPELINE / STAGE DEFINITION
        ===================================================== */
-    // Builds the sequence of stages dynamically from settings
     function buildPipeline() {
         var list = [];
 
@@ -538,7 +609,7 @@
         if (settings.rest1 > 0) {
             list.push({
                 id: 'rest1', mainIndex: 0,
-                title: 'ОТДЫХ', sub: 'ПОСЛЕ БХАСТРИКИ',
+                title: '⏳ ОТДЫХ', sub: 'ПОСЛЕ БХАСТРИКИ',
                 duration: settings.rest1,
                 hasTick: false,
                 bellAtEnd: true,
@@ -558,11 +629,11 @@
                 bellAtEnd: true, // End of each cycle rings bell (Requirement 6)
                 isRest: false
             });
-            // Rest between cycles (for cycles before the last)
+            // Rest between cycles
             if (c < kCycles && settings.kapalaRestSec > 0) {
                 list.push({
                     id: 'kapala_rest_' + c, mainIndex: 1,
-                    title: 'ОТДЫХ',
+                    title: '⏳ ОТДЫХ',
                     sub: 'ПАУЗА ' + c + ' ИЗ ' + (kCycles - 1),
                     duration: settings.kapalaRestSec,
                     hasTick: false,
@@ -574,7 +645,7 @@
         if (settings.rest2 > 0) {
             list.push({
                 id: 'rest2', mainIndex: 1,
-                title: 'ОТДЫХ', sub: 'ПОСЛЕ КАПАЛАБХАТИ',
+                title: '⏳ ОТДЫХ', sub: 'ПОСЛЕ КАПАЛАБХАТИ',
                 duration: settings.rest2,
                 hasTick: false,
                 bellAtEnd: true,
@@ -594,7 +665,7 @@
         if (settings.rest3 > 0) {
             list.push({
                 id: 'rest3', mainIndex: 2,
-                title: 'ОТДЫХ', sub: 'ПОСЛЕ ЗАМКОВ',
+                title: '⏳ ОТДЫХ', sub: 'ПОСЛЕ ЗАМКОВ',
                 duration: settings.rest3,
                 hasTick: false,
                 bellAtEnd: true,
@@ -602,7 +673,7 @@
             });
         }
 
-        // 4. Ujjayi - same simple settings as Zamki, approximate total time, no bells
+        // 4. Ujjayi - approximate total time, metronome on, no bells
         list.push({
             id: 'ujjayi', mainIndex: 3,
             title: '4. УДЖАЙИ', sub: 'ОБЩЕЕ ВРЕМЯ',
@@ -614,7 +685,7 @@
         if (settings.rest4 > 0) {
             list.push({
                 id: 'rest4', mainIndex: 3,
-                title: 'ОТДЫХ', sub: 'ПОСЛЕ УДЖАЙИ',
+                title: '⏳ ОТДЫХ', sub: 'ПОСЛЕ УДЖАЙИ',
                 duration: settings.rest4,
                 hasTick: false,
                 bellAtEnd: true,
@@ -660,7 +731,7 @@
         }
     }
 
-    // Steady 60 BPM metronome tick (sine tone with organic click)
+    // Steady 60 BPM metronome tick
     function playTick() {
         if (!audioCtx) return;
         try {
@@ -679,7 +750,7 @@
         } catch (e) {}
     }
 
-    // Bell chime (for cycle end / rest transitions)
+    // Bell chime
     function playBell() {
         if (!audioCtx) return;
         try {
@@ -701,7 +772,7 @@
         } catch (e) {}
     }
 
-    // Deep Meditation Gong (Session completion)
+    // Deep Meditation Gong
     function playGong() {
         if (!audioCtx) return;
         try {
@@ -724,13 +795,15 @@
     }
 
     /* =====================================================
-       APP RUNTIME STATE & TIMER
+       APP RUNTIME STATE & TIMER (TIMESTAMP DRIFT-FREE)
        ===================================================== */
     var pipeline = [];
     var currentStageIdx = 0;
     var stageSecRemaining = 0;
+    var stageEndTime = 0;
     var isRunning = false;
     var timerInterval = null;
+    var wakeLock = null;
 
     var els = {
         display: document.getElementById('display'),
@@ -772,12 +845,19 @@
         currentStageIdx = idx;
         var stage = pipeline[currentStageIdx];
         stageSecRemaining = stage.duration;
+        stageEndTime = Date.now() + (stageSecRemaining * 1000);
 
         els.practiceTitle.textContent = stage.title;
+        if (stage.isRest) {
+            els.practiceTitle.classList.add('is-rest');
+        } else {
+            els.practiceTitle.classList.remove('is-rest');
+        }
         els.practiceSubtitle.textContent = stage.sub;
         els.display.textContent = formatTime(stageSecRemaining);
         updateProgress();
         updateDots(stage.mainIndex);
+        updateMediaSession(stage);
 
         if (autoStart) {
             startTimer();
@@ -815,6 +895,54 @@
     }
 
     /* =====================================================
+       LOCK SCREEN & MEDIA SESSION
+       ===================================================== */
+    function updateMediaSession(stage) {
+        if ('mediaSession' in navigator && stage) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: stage.title,
+                    artist: 'МАСТЕР — ' + stage.sub,
+                    album: 'Пранаяма'
+                });
+            } catch (e) {}
+        }
+    }
+
+    function requestScreenLock() {
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen').then(function(wl) {
+                wakeLock = wl;
+            }).catch(function(){});
+        }
+    }
+
+    function releaseScreenLock() {
+        if (wakeLock) {
+            wakeLock.release().catch(function(){});
+            wakeLock = null;
+        }
+    }
+
+    // Handles tab switching or locking: syncs time immediately on wake
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            unlockAudioSession();
+            if (isRunning) {
+                var now = Date.now();
+                var remaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
+                stageSecRemaining = remaining;
+                els.display.textContent = formatTime(stageSecRemaining);
+                updateProgress();
+                if (stageSecRemaining <= 0) {
+                    var stage = pipeline[currentStageIdx];
+                    onStageComplete(stage);
+                }
+            }
+        }
+    });
+
+    /* =====================================================
        PLAYBACK CONTROLS
        ===================================================== */
     function togglePlay() {
@@ -829,9 +957,11 @@
     function startTimer() {
         if (isRunning) return;
         isRunning = true;
+        stageEndTime = Date.now() + (stageSecRemaining * 1000);
         els.startBtn.textContent = 'ПАУЗА';
         els.startBtn.classList.add('paused');
 
+        requestScreenLock();
         timerInterval = setInterval(tick, 1000);
     }
 
@@ -840,6 +970,8 @@
         isRunning = false;
         clearInterval(timerInterval);
         timerInterval = null;
+        releaseScreenLock();
+        flushGlobalPracticeTime();
         els.startBtn.textContent = 'ПРОДОЛЖИТЬ';
         els.startBtn.classList.remove('paused');
     }
@@ -857,8 +989,11 @@
             playTick();
         }
 
-        stageSecRemaining--;
-        if (stageSecRemaining < 0) stageSecRemaining = 0;
+        // Add to lifetime global practice counter
+        addGlobalPracticeSecond();
+
+        var now = Date.now();
+        stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
         els.display.textContent = formatTime(stageSecRemaining);
         updateProgress();
 
@@ -875,7 +1010,6 @@
             finishSession();
             return;
         }
-        // Advance to next stage smoothly
         currentStageIdx++;
         if (currentStageIdx < pipeline.length) {
             loadStage(currentStageIdx, true);
@@ -887,8 +1021,10 @@
     function finishSession() {
         pauseTimer();
         playGong();
+        flushGlobalPracticeTime();
         showToast('ПРАКТИКА ЗАВЕРШЕНА 🙏');
         els.practiceTitle.textContent = 'СЕССИЯ ЗАВЕРШЕНА';
+        els.practiceTitle.classList.remove('is-rest');
         els.practiceSubtitle.textContent = 'БЛАГОДАРИМ ЗА ПРАКТИКУ';
         els.display.textContent = '00:00';
         els.progressBar.style.width = '100%';
@@ -904,6 +1040,7 @@
         var stage = pipeline[currentStageIdx];
         if (stage) {
             stageSecRemaining = stage.duration;
+            stageEndTime = Date.now() + (stageSecRemaining * 1000);
             els.display.textContent = formatTime(stageSecRemaining);
             updateProgress();
         }
@@ -946,7 +1083,6 @@
         var modal = document.getElementById('settingsModal');
         modal.classList.remove('open');
 
-        // Rebuild pipeline with updated settings and refresh current stage
         var wasRunning = isRunning;
         pipeline = buildPipeline();
         if (!wasRunning) {
@@ -960,7 +1096,6 @@
 
         var val = settings[key] + delta;
 
-        // Minimum bounds
         if (key === 'kapalaCycles') {
             val = Math.max(1, Math.min(10, val));
         } else if (key.startsWith('rest') || key === 'kapalaRestSec') {
