@@ -238,13 +238,28 @@
         var t = audio.currentTime;
         var osc = audio.createOscillator();
         var gain = audio.createGain();
+        var filter = audio.createBiquadFilter();
+
+        // Warm wooden tone: 240 Hz dropping to 120 Hz
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-        osc.connect(gain); gain.connect(audio.destination);
-        osc.start(t); osc.stop(t + 0.05);
+        osc.frequency.setValueAtTime(240, t);
+        osc.frequency.exponentialRampToValueAtTime(120, t + 0.04);
+
+        // Lowpass filter softens any harsh treble
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(750, t);
+
+        // 4ms smooth fade-in completely eliminates DC pop / harsh punch on eardrums!
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(0.08, t + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audio.destination);
+
+        osc.start(t);
+        osc.stop(t + 0.05);
     }
 
     function engine(now) {

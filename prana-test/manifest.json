@@ -1,6 +1,6 @@
 {
-  "name": "MASTER PRANA TEST",
-  "short_name": "PRANA TEST",
+  "name": "MASTER PRANA",
+  "short_name": "PRANA",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
