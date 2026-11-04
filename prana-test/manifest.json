@@ -1,10 +1,10 @@
 {
-  "name": "MASTER PRANA",
-  "short_name": "PRANA",
+  "name": "MASTER",
+  "short_name": "MASTER",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#0e0d0a",
   "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [

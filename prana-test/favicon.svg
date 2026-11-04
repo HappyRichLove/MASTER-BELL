@@ -1,29 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <rect width="512" height="512" rx="128" fill="#000000"/>
   <defs>
-    <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    <!-- Background Lamp Glow -->
+    <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.30"/>
+      <stop offset="35%" stop-color="#d4af37" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#9a7b1c" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0e0d0a" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#9a7b1c"/>
+
+    <!-- Golden Filament Gradient -->
+    <linearGradient id="goldFilament" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="25%" stop-color="#fef08a"/>
+      <stop offset="65%" stop-color="#f5d565"/>
+      <stop offset="100%" stop-color="#d4af37"/>
     </linearGradient>
+
+    <!-- Outer Bloom Filter -->
+    <filter id="bloom" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="16" result="blur1"/>
+      <feGaussianBlur stdDeviation="8" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <circle cx="256" cy="256" r="220" fill="url(#goldGlow)"/>
-  <g transform="translate(256, 260) scale(1.45) translate(-256, -256)" stroke="url(#goldGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <!-- Center Petal -->
-    <path d="M256 90 C220 150 180 215 180 270 C180 330 215 365 256 370 C297 365 332 330 332 270 C332 215 292 150 256 90 Z" fill="rgba(212,175,55,0.15)"/>
-    <!-- Left Inner Petal -->
-    <path d="M256 180 C200 190 125 240 125 305 C125 350 165 375 220 370 C200 335 205 270 256 180 Z" fill="rgba(212,175,55,0.1)"/>
-    <!-- Right Inner Petal -->
-    <path d="M256 180 C312 190 387 240 387 305 C387 350 347 375 292 370 C312 335 307 270 256 180 Z" fill="rgba(212,175,55,0.1)"/>
-    <!-- Left Outer Petal -->
-    <path d="M220 320 C160 310 80 340 80 380 C80 405 130 420 190 400 C210 393 235 375 245 360" stroke-width="10"/>
-    <!-- Right Outer Petal -->
-    <path d="M292 320 C352 310 432 340 432 380 C432 405 382 420 322 400 C302 393 277 375 267 360" stroke-width="10"/>
-    <!-- Stem/Base -->
-    <circle cx="256" cy="385" r="8" fill="#d4af37"/>
+
+  <!-- Dark Warm Obsidian Canvas -->
+  <rect width="512" height="512" rx="112" fill="#0e0d0a"/>
+
+  <!-- Ambient Light from Lamp -->
+  <circle cx="256" cy="256" r="240" fill="url(#lampGlow)"/>
+
+  <!-- Glowing Letter M (Lamp Effect) -->
+  <g filter="url(#bloom)" text-anchor="middle">
+    <!-- Outer Glow Silhouette -->
+    <text x="256" y="375" font-family="'Georgia', 'Times New Roman', serif" font-weight="bold" font-size="340" fill="#d4af37" opacity="0.6">M</text>
+    <!-- Core Luminous Filament -->
+    <text x="256" y="375" font-family="'Georgia', 'Times New Roman', serif" font-weight="bold" font-size="340" fill="url(#goldFilament)">M</text>
   </g>
 </svg>

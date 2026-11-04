@@ -8,7 +8,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#000000">
-    <title>MASTER PRANA</title>
+    <meta name="apple-mobile-web-app-title" content="MASTER">
+    <meta name="application-name" content="MASTER">
+    <title>MASTER</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -42,27 +44,26 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
+            touch-action: none;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
         }
 
-        /* HEADER AREA — REFINED PROPORTIONAL BALANCE */
+        /* HEADER AREA — REFINED PROPORTIONAL BALANCE (NO OVERFLOW) */
         .header-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: clamp(16px, 3.5vh, 28px);
-            padding-bottom: clamp(10px, 2vh, 18px);
+            padding-top: clamp(10px, 2.5vh, 22px);
+            padding-bottom: clamp(6px, 1.5vh, 12px);
             flex-shrink: 0;
         }
 
         .master-title {
-            font-size: clamp(2.2rem, 8.5vw, 3.2rem);
+            font-size: clamp(2rem, 7.5vw, 2.8rem);
             font-weight: 200;
             letter-spacing: 0.32em;
             text-indent: 0.32em;
@@ -103,7 +104,7 @@
             width: 100%;
             max-width: 420px;
             padding: 0 20px;
-            gap: clamp(14px, 2.5vh, 22px);
+            gap: clamp(10px, 2vh, 18px);
             flex: 1;
             margin: 0 auto;
         }
@@ -113,8 +114,8 @@
             width: 100%;
             background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.15) 0%, rgba(18, 18, 20, 0.92) 75%);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: clamp(16px, 2.4vh, 22px) 20px clamp(14px, 2vh, 18px);
+            border-radius: 20px;
+            padding: clamp(12px, 1.8vh, 18px) 18px clamp(10px, 1.5vh, 14px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -128,7 +129,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .duo-sparkle {
@@ -151,7 +152,7 @@
         }
 
         .duo-time-value {
-            font-size: clamp(2.2rem, 8.5vw, 3.2rem);
+            font-size: clamp(2rem, 7.5vw, 2.8rem);
             font-weight: 200;
             font-variant-numeric: tabular-nums;
             letter-spacing: 0.03em;
@@ -166,7 +167,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            gap: clamp(10px, 1.8vh, 14px);
+            gap: clamp(8px, 1.4vh, 12px);
         }
 
         /* PRIMARY LOTUS BUTTON (PRANAYAMA) */
@@ -174,8 +175,8 @@
             width: 100%;
             background: linear-gradient(135deg, #2a220d 0%, #151410 100%);
             border: 1.5px solid var(--gold);
-            border-radius: 22px;
-            padding: clamp(14px, 2vh, 18px) 20px;
+            border-radius: 20px;
+            padding: clamp(11px, 1.6vh, 15px) 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -193,12 +194,12 @@
         .btn-left-content {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         .icon-circle-badge {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(212, 175, 55, 0.15);
             border: 1px solid var(--border);
@@ -218,7 +219,7 @@
         }
 
         .btn-primary-title {
-            font-size: clamp(1.02rem, 3.8vw, 1.18rem);
+            font-size: clamp(1rem, 3.6vw, 1.15rem);
             font-weight: 300;
             letter-spacing: 0.22em;
             text-indent: 0.22em;
@@ -239,8 +240,8 @@
             width: 100%;
             background: var(--surface);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 22px;
-            padding: clamp(14px, 2vh, 18px) 20px;
+            border-radius: 20px;
+            padding: clamp(11px, 1.6vh, 15px) 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -268,8 +269,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 8px;
-            padding-bottom: max(14px, 2vh);
+            padding-top: 4px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
             gap: 4px;
             flex-shrink: 0;
         }
@@ -540,7 +541,7 @@
 
     <!-- FOOTER -->
     <footer class="footer-area">
-        <div class="version-tag">MASTER PRANA v1.0.3</div>
+        <div class="version-tag">MASTER PRANA v1.0.4</div>
     </footer>
 
     <!-- PIN CODE MODAL (888 / 3 DAYS) -->
@@ -750,7 +751,7 @@
     });
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.0.3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.4').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
