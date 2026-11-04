@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#000000">
-    <title>MASTER PRANA TEST — Метроном</title>
+    <title>MASTER PRANA — Метроном</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -26,6 +26,7 @@
         }
 
         body {
+            position: relative;
             margin: 0;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -46,11 +47,11 @@
 
         .master-title {
             font-size: clamp(2rem, 7.5vw, 3.2rem);
-            font-weight: 100;
-            letter-spacing: 0.35em;
-            text-indent: 0.35em;
+            font-weight: 200;
+            letter-spacing: 0.32em;
+            text-indent: 0.32em;
             color: var(--text);
-            opacity: 0.9;
+            opacity: 0.95;
             margin: 0;
             text-transform: uppercase;
             text-align: center;
@@ -62,8 +63,8 @@
 
         .back-btn {
             position: absolute;
-            top: max(20px, 4vh);
-            left: 24px;
+            top: max(20px, env(safe-area-inset-top, 20px));
+            left: max(20px, env(safe-area-inset-left, 20px));
             z-index: 100;
             color: var(--accent);
             opacity: 0.7;
@@ -158,7 +159,7 @@
 
         .bottom-stats {
             position: absolute;
-            bottom: max(24px, 6vh);
+            bottom: max(20px, calc(10px + env(safe-area-inset-bottom, 0px)));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -230,8 +231,25 @@
         return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
     }
 
+    var masterGain = null;
+    var masterCompressor = null;
+
     function initAudio() { 
-        if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); 
+        if (!audio) {
+            audio = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audio.createGain();
+            masterGain.gain.value = 0.85;
+
+            masterCompressor = audio.createDynamicsCompressor();
+            masterCompressor.threshold.setValueAtTime(-2, audio.currentTime);
+            masterCompressor.knee.setValueAtTime(6, audio.currentTime);
+            masterCompressor.ratio.setValueAtTime(10, audio.currentTime);
+            masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
+            masterCompressor.release.setValueAtTime(0.15, audio.currentTime);
+
+            masterGain.connect(masterCompressor);
+            masterCompressor.connect(audio.destination);
+        }
         if (audio.state === 'suspended') audio.resume(); 
     }
 
@@ -239,31 +257,46 @@
         if (!audio) return;
         var t0 = audio.currentTime;
 
+        // Warm organic temple wood / bamboo tap
         var osc = audio.createOscillator();
+        var subOsc = audio.createOscillator();
         var gain = audio.createGain();
-        var bp = audio.createBiquadFilter();
+        var subGain = audio.createGain();
+        var lp = audio.createBiquadFilter();
 
-        // Resonant wooden clack tone
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(860, t0);
-        osc.frequency.exponentialRampToValueAtTime(320, t0 + 0.022);
+        // Pure sine, mellow pitch drop (320 Hz -> 190 Hz)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, t0);
+        osc.frequency.exponentialRampToValueAtTime(190, t0 + 0.035);
 
-        // Bandpass filter isolates warm wooden body
-        bp.type = 'bandpass';
-        bp.frequency.setValueAtTime(880, t0);
-        bp.Q.setValueAtTime(3.0, t0);
+        // Grounding sub-body (150 Hz -> 85 Hz) for acoustic tactile solidity
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(150, t0);
+        subOsc.frequency.exponentialRampToValueAtTime(85, t0 + 0.025);
 
-        // 2ms smooth attack (NO clicks on eardrum) + crisp 22ms decay
+        // Strict lowpass filter at 550 Hz — cuts ALL harsh high frequencies, 100% gentle on eardrums
+        lp.type = 'lowpass';
+        lp.frequency.setValueAtTime(550, t0);
+
+        // Cushion envelope: 5ms smooth fade-in (NO pop/click) + 38ms gentle decay
         gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.linearRampToValueAtTime(0.24, t0 + 0.002);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.024);
+        gain.gain.linearRampToValueAtTime(0.22, t0 + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.042);
 
-        osc.connect(bp);
-        bp.connect(gain);
-        gain.connect(audio.destination);
+        subGain.gain.setValueAtTime(0.0001, t0);
+        subGain.gain.linearRampToValueAtTime(0.08, t0 + 0.004);
+        subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
+
+        osc.connect(gain);
+        subOsc.connect(subGain);
+        gain.connect(lp);
+        subGain.connect(lp);
+        lp.connect(masterGain || audio.destination);
 
         osc.start(t0);
-        osc.stop(t0 + 0.028);
+        subOsc.start(t0);
+        osc.stop(t0 + 0.046);
+        subOsc.stop(t0 + 0.035);
     }
 
     function engine(now) {

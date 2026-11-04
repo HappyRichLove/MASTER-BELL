@@ -35,60 +35,63 @@
             background-color: var(--bg);
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             width: 100vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
             overflow-x: hidden;
+            overflow-y: auto;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
         }
 
-        /* HEADER AREA — MATHEMATICALLY CENTERED BETWEEN TOP OF SCREEN AND TIMER */
+        /* HEADER AREA — REFINED PROPORTIONAL BALANCE */
         .header-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex: 1;
-            min-height: 20vh;
             width: 100%;
-            margin: 0;
-            padding: 0;
+            padding-top: clamp(16px, 3.5vh, 28px);
+            padding-bottom: clamp(10px, 2vh, 18px);
+            flex-shrink: 0;
         }
 
         .master-title {
-            font-size: clamp(2.4rem, 9.5vw, 3.8rem);
-            font-weight: 100;
-            letter-spacing: 0.35em;
-            text-indent: 0.35em;
+            font-size: clamp(2.2rem, 8.5vw, 3.2rem);
+            font-weight: 200;
+            letter-spacing: 0.32em;
+            text-indent: 0.32em;
             color: var(--text);
             text-transform: uppercase;
             text-align: center;
             margin: 0;
             opacity: 0.95;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.18);
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
             line-height: 1.1;
         }
 
-        /* ELEGANT GOLD OUTLINE BADGE (RETURNED AS REQUESTED) */
+        /* ELEGANT GOLD OUTLINE BADGE WITH LUMINESCENT GLOW */
         .badge-brand {
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 0.65rem;
             letter-spacing: 0.28em;
             text-indent: 0.28em;
             color: var(--gold);
             text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 600;
             padding: 4px 16px;
             border-radius: 20px;
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid var(--border);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            box-shadow: 0 0 16px rgba(212, 175, 55, 0.35), inset 0 0 10px rgba(212, 175, 55, 0.15);
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         /* MAIN HUB CONTAINER */
@@ -98,24 +101,25 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 440px;
-            padding: 0 24px;
-            gap: 26px;
-            margin: auto 0;
+            max-width: 420px;
+            padding: 0 20px;
+            gap: clamp(14px, 2.5vh, 22px);
+            flex: 1;
+            margin: 0 auto;
         }
 
         /* DUOLINGO GOLD COUNTER CARD */
         .duo-counter-card {
             width: 100%;
-            background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.16) 0%, rgba(18, 18, 20, 0.92) 75%);
+            background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.15) 0%, rgba(18, 18, 20, 0.92) 75%);
             border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 24px 20px 22px;
+            border-radius: 24px;
+            padding: clamp(16px, 2.4vh, 22px) 20px clamp(14px, 2vh, 18px);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            box-shadow: 0 14px 45px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(212, 175, 55, 0.3);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 55, 0.25);
             position: relative;
             overflow: hidden;
         }
@@ -124,7 +128,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .duo-sparkle {
@@ -139,15 +143,15 @@
         }
 
         .duo-label {
-            font-size: 0.68rem;
-            font-weight: 800;
+            font-size: 0.65rem;
+            font-weight: 700;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--gold);
         }
 
         .duo-time-value {
-            font-size: clamp(2.6rem, 10vw, 3.6rem);
+            font-size: clamp(2.2rem, 8.5vw, 3.2rem);
             font-weight: 200;
             font-variant-numeric: tabular-nums;
             letter-spacing: 0.03em;
@@ -162,7 +166,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            gap: 16px;
+            gap: clamp(10px, 1.8vh, 14px);
         }
 
         /* PRIMARY LOTUS BUTTON (PRANAYAMA) */
@@ -170,31 +174,31 @@
             width: 100%;
             background: linear-gradient(135deg, #2a220d 0%, #151410 100%);
             border: 1.5px solid var(--gold);
-            border-radius: 26px;
-            padding: 20px 24px;
+            border-radius: 22px;
+            padding: clamp(14px, 2vh, 18px) 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.18);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.16);
             transition: transform 0.15s ease, box-shadow 0.15s ease;
             -webkit-tap-highlight-color: transparent;
         }
 
         .btn-lotus-main:active {
             transform: scale(0.97);
-            box-shadow: 0 5px 18px rgba(212, 175, 55, 0.25);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
         }
 
         .btn-left-content {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
         .icon-circle-badge {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: rgba(212, 175, 55, 0.15);
             border: 1px solid var(--border);
@@ -214,11 +218,13 @@
         }
 
         .btn-primary-title {
-            font-size: clamp(1.2rem, 4.5vw, 1.45rem);
-            font-weight: 700;
-            letter-spacing: 0.16em;
+            font-size: clamp(1.02rem, 3.8vw, 1.18rem);
+            font-weight: 300;
+            letter-spacing: 0.22em;
+            text-indent: 0.22em;
             color: #ffffff;
             text-transform: uppercase;
+            line-height: 1.2;
         }
 
         .btn-arrow {
@@ -233,13 +239,13 @@
             width: 100%;
             background: var(--surface);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 26px;
-            padding: 18px 24px;
+            border-radius: 22px;
+            padding: clamp(14px, 2vh, 18px) 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
             transition: all 0.15s ease;
             -webkit-tap-highlight-color: transparent;
         }
@@ -257,17 +263,15 @@
             box-shadow: none;
         }
 
-        .btn-metro-main .btn-primary-sub {
-            color: var(--accent);
-        }
-
         /* FOOTER */
         .footer-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: max(20px, 3vh);
+            padding-top: 8px;
+            padding-bottom: max(14px, 2vh);
             gap: 4px;
+            flex-shrink: 0;
         }
 
         .version-tag {

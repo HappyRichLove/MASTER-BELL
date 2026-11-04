@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#000000">
-    <title>MASTER PRANA TEST — Пранаяма</title>
+    <title>MASTER PRANA — Пранаяма</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -29,6 +29,7 @@
         }
 
         body {
+            position: relative;
             margin: 0;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -50,8 +51,8 @@
         /* BACK BUTTON */
         .back-btn {
             position: absolute;
-            top: max(20px, 4vh);
-            left: 24px;
+            top: max(20px, env(safe-area-inset-top, 20px));
+            left: max(20px, env(safe-area-inset-left, 20px));
             z-index: 100;
             color: var(--accent);
             opacity: 0.7;
@@ -69,26 +70,24 @@
             transform: scale(0.92);
         }
 
-        /* TOP HEADER ZONE — MATHEMATICALLY CENTERED BETWEEN SCREEN TOP AND PRACTICE */
+        /* TOP HEADER ZONE — BALANCED VERTICAL BREATHING */
         .top-header-zone {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            flex: 1;
-            min-height: 16vh;
-            max-height: 22vh;
-            margin: 0;
-            padding: 0;
+            padding-top: clamp(16px, 3.5vh, 28px);
+            padding-bottom: clamp(8px, 1.8vh, 16px);
+            flex-shrink: 0;
         }
 
         .master-title {
-            font-size: clamp(2rem, 7.5vw, 3.2rem);
-            font-weight: 100;
-            letter-spacing: 0.35em;
-            text-indent: 0.35em;
+            font-size: clamp(2rem, 7.5vw, 3rem);
+            font-weight: 200;
+            letter-spacing: 0.32em;
+            text-indent: 0.32em;
             color: var(--text);
-            opacity: 0.9;
+            opacity: 0.95;
             margin: 0;
             text-transform: uppercase;
             text-align: center;
@@ -244,7 +243,7 @@
         /* BOTTOM STAGES & STATS */
         .bottom-stats {
             position: absolute;
-            bottom: max(20px, 4vh);
+            bottom: max(20px, calc(10px + env(safe-area-inset-bottom, 0px)));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -347,7 +346,7 @@
         }
 
         .modal-scroll {
-            padding: 12px 18px 24px;
+            padding: 12px 18px max(24px, calc(14px + env(safe-area-inset-bottom, 0px)));
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             display: flex;
@@ -486,9 +485,6 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- SILENT AUDIO ELEMENT FOR IOS BACKGROUND AUDIO KEEP-ALIVE -->
-    <audio id="silentAudio" loop playsinline preload="auto" style="display:none;"></audio>
-
     <!-- BACK BUTTON (GO TO HUB) -->
     <div class="back-btn" onclick="saveAndGoHome()" title="На главный экран">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -555,7 +551,7 @@
             <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
         </div>
         <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
-        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA TEST v1.0.0</div>
+        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.0</div>
     </div>
 
     <!-- SETTINGS MODAL -->
@@ -662,7 +658,7 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA TEST v1.0.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.0.0</div>
             </div>
         </div>
     </div>
@@ -870,15 +866,15 @@
     }
 
     /* =====================================================
-       AUTHENTIC MASTER SOUND ENGINE (OPTIMIZED / ZERO LAG)
-       Authentic Singing Bowl + Original Mega Gong (196 Hz) + Wooden Tick
+       AUTHENTIC MASTER SOUND ENGINE (PURE / ANTI-CRACKLE / WARM)
+       Celestial Singing Bowl + Original Mega Gong (196 Hz) + Warm Temple Tick
        ===================================================== */
     var audio = null;
     var masterGain = null;
     var masterCompressor = null;
     var reverbNode = null;
     var strikeNoiseBuffer = null;
-    var audioUnlocked = false;
+    var activeBellGains = [];
 
     function initAudio() {
         if (!audio) {
@@ -888,13 +884,13 @@
                 masterGain = audio.createGain();
                 masterGain.gain.value = 0.85;
 
-                // Soft Limiter: prevents clipping while keeping sounds rich and warm
+                // Transparent Brickwall Limiter: prevents clipping while preserving all harmonics
                 masterCompressor = audio.createDynamicsCompressor();
-                masterCompressor.threshold.setValueAtTime(-4, audio.currentTime);
-                masterCompressor.knee.setValueAtTime(8, audio.currentTime);
-                masterCompressor.ratio.setValueAtTime(6, audio.currentTime);
-                masterCompressor.attack.setValueAtTime(0.005, audio.currentTime);
-                masterCompressor.release.setValueAtTime(0.20, audio.currentTime);
+                masterCompressor.threshold.setValueAtTime(-2, audio.currentTime);
+                masterCompressor.knee.setValueAtTime(6, audio.currentTime);
+                masterCompressor.ratio.setValueAtTime(10, audio.currentTime);
+                masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
+                masterCompressor.release.setValueAtTime(0.15, audio.currentTime);
 
                 masterGain.connect(masterCompressor);
                 masterCompressor.connect(audio.destination);
@@ -907,32 +903,32 @@
 
     function unlockAudioSession() {
         initAudio();
-        if (!audioUnlocked) {
-            var silentEl = document.getElementById('silentAudio');
-            if (silentEl) {
-                try {
-                    if (audio && audio.createMediaStreamDestination) {
-                        var streamDest = audio.createMediaStreamDestination();
-                        silentEl.srcObject = streamDest.stream;
-                    }
-                } catch(e) {}
-                silentEl.play().then(function() {
-                    audioUnlocked = true;
-                }).catch(function() {});
-            }
-        }
     }
 
-    /* LIGHTWEIGHT COMPACT REVERB (0.35s BUFFER — ZERO MOBILE CPU LAG) */
+    function stopActiveBells() {
+        if (!audio) return;
+        var now = audio.currentTime;
+        for (var i = 0; i < activeBellGains.length; i++) {
+            try {
+                var g = activeBellGains[i];
+                g.gain.cancelScheduledValues(now);
+                g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), now);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+            } catch(e) {}
+        }
+        activeBellGains = [];
+    }
+
+    /* LIGHTWEIGHT COMPACT REVERB FOR MEGA GONG */
     function ensureReverb() {
         if (reverbNode || !audio) return;
-        var len = Math.floor(audio.sampleRate * 0.35);
+        var len = Math.floor(audio.sampleRate * 0.8);
         var buf = audio.createBuffer(2, len, audio.sampleRate);
         for (var ch = 0; ch < 2; ch++) {
             var data = buf.getChannelData(ch);
             for (var i = 0; i < len; i++) {
                 var p = 1 - i / len;
-                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.8);
+                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.5);
             }
         }
         reverbNode = audio.createConvolver();
@@ -954,19 +950,20 @@
         noise.buffer = strikeNoiseBuffer;
         var bp = audio.createBiquadFilter();
         bp.type = 'bandpass';
-        bp.frequency.value = 2500;
+        bp.frequency.value = 1800;
         bp.Q.value = 0.8;
         var g = audio.createGain();
-        g.gain.setValueAtTime(volume, now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(volume, now + 0.003);
         g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
         noise.connect(bp);
         bp.connect(g);
         g.connect(dest);
         noise.start(now);
-        noise.stop(now + duration);
+        noise.stop(now + duration + 0.01);
     }
 
-    /* EXACT ORIGINAL PLAYBOWL ENGINE FROM MAIN APPLICATION */
+    /* EXACT ORIGINAL PLAYBOWL ENGINE FROM MAIN APPLICATION (USED FOR MEGA GONG) */
     function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
         if (!audio) return;
         var vol = volumeMult || 1;
@@ -979,6 +976,9 @@
         wet.gain.value = wetVal;
         dry.connect(masterGain);
         wet.connect(reverbNode || masterGain);
+
+        activeBellGains.push(dry);
+        activeBellGains.push(wet);
 
         var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
         for (var i = 0; i < harmonics.length; i++) {
@@ -1015,11 +1015,60 @@
         playStrikeNoise(dry, strikeVol, 0.05);
     }
 
-    /* PRACTICE TRANSITION BELL (COMFORTABLE HARMONIOUS VOLUME) */
+    /* PRACTICE TRANSITION BELL — PURE CELESTIAL TIBETAN BOWL (432 HZ / ZERO POP / ZERO CRACKLE) */
     function playBell() {
         try {
             initAudio();
-            playBowl(440, 0, 0.7, 0.3, 0.025, 0.9);
+            if (!audio) return;
+            stopActiveBells();
+
+            var now = audio.currentTime;
+            var bellMaster = audio.createGain();
+            bellMaster.gain.setValueAtTime(1.0, now);
+            bellMaster.connect(masterGain);
+            activeBellGains.push(bellMaster);
+
+            // Pure Tibetan singing bowl harmonics (432 Hz Solfeggio / Verdi serenity)
+            var partials = [
+                [1.0,   0.20, 3.2], // 432 Hz fundamental
+                [2.0,   0.06, 2.2], // 864 Hz octave
+                [3.01,  0.025, 1.4] // 1300 Hz ethereal sparkle
+            ];
+
+            partials.forEach(function(p) {
+                var osc = audio.createOscillator();
+                var g = audio.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(432.0 * p[0], now);
+
+                // 12ms soft linear rise (NO click, NO pop) + smooth exponential decay
+                g.gain.setValueAtTime(0.0001, now);
+                g.gain.linearRampToValueAtTime(p[1], now + 0.012);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + p[2]);
+
+                osc.connect(g);
+                g.connect(bellMaster);
+
+                osc.start(now);
+                osc.stop(now + p[2] + 0.05);
+            });
+
+            // Soft felt mallet strike (warm sine pulse, zero scratch noise)
+            var mallet = audio.createOscillator();
+            var mGain = audio.createGain();
+            mallet.type = 'sine';
+            mallet.frequency.setValueAtTime(360, now);
+            mallet.frequency.exponentialRampToValueAtTime(160, now + 0.016);
+
+            mGain.gain.setValueAtTime(0.0001, now);
+            mGain.gain.linearRampToValueAtTime(0.04, now + 0.002);
+            mGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.020);
+
+            mallet.connect(mGain);
+            mGain.connect(bellMaster);
+
+            mallet.start(now);
+            mallet.stop(now + 0.025);
         } catch(e) {}
     }
 
@@ -1027,41 +1076,56 @@
     function playMegaGong() {
         try {
             initAudio();
+            stopActiveBells();
             playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2);
         } catch(e) {}
     }
 
-    /* WARM WOODEN TEMPLE TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
+    /* WARM ORGANIC TEMPLE WOOD / BAMBOO TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
     function playTick() {
         try {
             if (!audio) return;
             var t0 = audio.currentTime;
 
             var osc = audio.createOscillator();
+            var subOsc = audio.createOscillator();
             var gain = audio.createGain();
-            var bp = audio.createBiquadFilter();
+            var subGain = audio.createGain();
+            var lp = audio.createBiquadFilter();
 
-            // Resonant wooden clack tone
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(860, t0);
-            osc.frequency.exponentialRampToValueAtTime(320, t0 + 0.022);
+            // Pure sine, mellow pitch drop (320 Hz -> 190 Hz)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(320, t0);
+            osc.frequency.exponentialRampToValueAtTime(190, t0 + 0.035);
 
-            // Bandpass filter isolates warm wooden body
-            bp.type = 'bandpass';
-            bp.frequency.setValueAtTime(880, t0);
-            bp.Q.setValueAtTime(3.0, t0);
+            // Grounding sub-body (150 Hz -> 85 Hz)
+            subOsc.type = 'sine';
+            subOsc.frequency.setValueAtTime(150, t0);
+            subOsc.frequency.exponentialRampToValueAtTime(85, t0 + 0.025);
 
-            // 2ms smooth attack (NO clicks on eardrum) + crisp 22ms decay
+            // Strict lowpass filter at 550 Hz — cuts ALL harsh frequencies
+            lp.type = 'lowpass';
+            lp.frequency.setValueAtTime(550, t0);
+
+            // Cushion envelope: 5ms smooth fade-in (NO pop/click) + 38ms gentle decay
             gain.gain.setValueAtTime(0.0001, t0);
-            gain.gain.linearRampToValueAtTime(0.24, t0 + 0.002);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.024);
+            gain.gain.linearRampToValueAtTime(0.22, t0 + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.042);
 
-            osc.connect(bp);
-            bp.connect(gain);
-            gain.connect(masterGain);
+            subGain.gain.setValueAtTime(0.0001, t0);
+            subGain.gain.linearRampToValueAtTime(0.08, t0 + 0.004);
+            subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
+
+            osc.connect(gain);
+            subOsc.connect(subGain);
+            gain.connect(lp);
+            subGain.connect(lp);
+            lp.connect(masterGain);
 
             osc.start(t0);
-            osc.stop(t0 + 0.028);
+            subOsc.start(t0);
+            osc.stop(t0 + 0.046);
+            subOsc.stop(t0 + 0.035);
         } catch (e) {}
     }
 
