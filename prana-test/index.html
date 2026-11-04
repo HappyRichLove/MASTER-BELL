@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#000000">
+    <title>MASTER PRANA TEST</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --bg: #000000;
+            --surface: #121214;
+            --surface-card: #18181b;
+            --text: #ffffff;
+            --accent: #9ca3af;
+            --gold: #d4af37;
+            --gold-light: #fef08a;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --border: rgba(212, 175, 55, 0.2);
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            margin: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* HEADER */
+        .header-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: max(24px, 4vh);
+            width: 100%;
+        }
+
+        .master-title {
+            font-size: clamp(1.8rem, 7vw, 2.8rem);
+            font-weight: 100;
+            letter-spacing: 0.35em;
+            text-indent: 0.35em;
+            color: var(--text);
+            text-transform: uppercase;
+            text-align: center;
+            margin: 0;
+            opacity: 0.95;
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+        }
+
+        .badge-test {
+            margin-top: 6px;
+            font-size: 0.62rem;
+            letter-spacing: 0.25em;
+            text-indent: 0.25em;
+            color: var(--gold);
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid var(--border);
+        }
+
+        /* MAIN HUB CONTAINER */
+        .hub-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 440px;
+            padding: 0 24px;
+            gap: 28px;
+            margin: auto 0;
+        }
+
+        /* DUOLINGO GOLD COUNTER */
+        .duo-counter-card {
+            width: 100%;
+            background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.14) 0%, rgba(18, 18, 20, 0.9) 70%);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 55, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .duo-label-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .duo-sparkle {
+            color: var(--gold);
+            font-size: 0.9rem;
+            animation: pulseSparkle 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseSparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .duo-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .duo-time-value {
+            font-size: clamp(2.4rem, 9vw, 3.4rem);
+            font-weight: 200;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.02em;
+            color: #ffffff;
+            text-shadow: 0 0 25px var(--gold-glow);
+            line-height: 1.1;
+        }
+
+        .duo-sub-badge {
+            margin-top: 10px;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .duo-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+        }
+
+        /* ACTIONS HUB */
+        .actions-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 16px;
+        }
+
+        /* PRIMARY LOTUS BUTTON (PRANAYAMA) */
+        .btn-lotus-main {
+            width: 100%;
+            background: linear-gradient(135deg, #2a220d 0%, #151410 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 26px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.18);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-lotus-main:active {
+            transform: scale(0.97);
+            box-shadow: 0 5px 18px rgba(212, 175, 55, 0.25);
+        }
+
+        .lotus-left-content {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .lotus-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .lotus-text-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .lotus-btn-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .lotus-btn-sub {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            margin-top: 3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lotus-arrow {
+            color: var(--gold);
+            opacity: 0.8;
+            font-size: 1.4rem;
+            font-weight: 300;
+        }
+
+        /* SECONDARY ROW: METRONOME & RESET */
+        .secondary-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .btn-metro-sub {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 22px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-metro-sub:active {
+            transform: scale(0.97);
+            background: #1c1c20;
+        }
+
+        .metro-icon {
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .metro-text-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .metro-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .metro-sub {
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .btn-reset-round {
+            width: 58px;
+            height: 58px;
+            border-radius: 22px;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-reset-round:active {
+            transform: scale(0.92);
+            color: #ffffff;
+            border-color: var(--border);
+        }
+
+        /* FOOTER */
+        .footer-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: max(20px, 3vh);
+            gap: 4px;
+        }
+
+        .version-tag {
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            opacity: 0.5;
+            text-transform: uppercase;
+        }
+
+        /* PIN MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 99999;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .pin-card {
+            background: #141416;
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 30px 24px 26px;
+            width: 100%;
+            max-width: 330px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(212, 175, 55, 0.12);
+            animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .pin-close-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px;
+            line-height: 1;
+        }
+
+        .pin-lotus-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+
+        .pin-title {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .pin-desc {
+            font-size: 0.68rem;
+            color: var(--accent);
+            margin: 6px 0 20px;
+            letter-spacing: 0.05em;
+        }
+
+        /* PIN SLOTS */
+        .pin-slots {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            background: transparent;
+            transition: all 0.15s ease;
+        }
+
+        .pin-dot.filled {
+            background: var(--gold);
+            border-color: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+            transform: scale(1.15);
+        }
+
+        .pin-dot.error {
+            border-color: var(--danger);
+            background: var(--danger);
+        }
+
+        /* KEYPAD */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .key-btn {
+            background: #1f1f23;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            height: 52px;
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key-btn:active {
+            transform: scale(0.92);
+            background: var(--gold);
+            color: #000000;
+        }
+
+        .key-btn.action-key {
+            font-size: 1rem;
+            color: var(--accent);
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .key-btn.action-key:active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        /* SHAKE ANIMATION */
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            background: rgba(24, 24, 27, 0.95);
+            border: 1px solid var(--border);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            transform: translateY(10px);
+            z-index: 100000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- HEADER -->
+    <header class="header-area">
+        <h1 class="master-title">МАСТЕР</h1>
+        <div class="badge-test">PRANA TEST</div>
+    </header>
+
+    <!-- HUB CONTENT -->
+    <main class="hub-container">
+
+        <!-- DUOLINGO MOTIVATION TIMER (mb_total) -->
+        <section class="duo-counter-card">
+            <div class="duo-label-row">
+                <span class="duo-sparkle">✦</span>
+                <span class="duo-label">ОБЩЕЕ ВРЕМЯ ПРАКТИКИ</span>
+                <span class="duo-sparkle">✦</span>
+            </div>
+            <div class="duo-time-value" id="duoTotalDisplay">00:00:00</div>
+            <div class="duo-sub-badge">
+                <span class="duo-dot"></span>
+                <span>НЕПРЕРЫВНЫЙ РОСТ И ОСОЗНАННОСТЬ</span>
+            </div>
+        </section>
+
+        <!-- BUTTONS HUB -->
+        <section class="actions-grid">
+            
+            <!-- LOTUS BUTTON (PRANAYAMA) -->
+            <div class="btn-lotus-main" onclick="handleLotusClick()">
+                <div class="lotus-left-content">
+                    <div class="lotus-icon-wrapper">
+                        <!-- Sacred Lotus SVG -->
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3c-1.5 3-4 6.5-7 8 2.5 1 5.5 1 7-2 1.5 3 4.5 3 7 2-3-1.5-5.5-5-7-8z"></path>
+                            <path d="M12 9c-2 2.5-5 4.5-9 5 2.5 2 6 2.5 9-1 3 3.5 6.5 3 9 1-4-.5-7-2.5-9-5z"></path>
+                            <path d="M12 14c-2 2-5 3-8 3 2 2 5.5 2.5 8 0 2.5 2.5 6 2 8 0-3 0-6-1-8-3z"></path>
+                            <path d="M12 17v4"></path>
+                        </svg>
+                    </div>
+                    <div class="lotus-text-col">
+                        <span class="lotus-btn-title">ПРАНАЯМА</span>
+                        <span class="lotus-btn-sub" id="pranaAccessStatus">5 ПРАКТИК ДЫХАНИЯ</span>
+                    </div>
+                </div>
+                <div class="lotus-arrow">›</div>
+            </div>
+
+            <!-- SECONDARY ROW: METRONOME & RESET -->
+            <div class="secondary-row">
+                <div class="btn-metro-sub" onclick="window.location.href='metronome.html'">
+                    <div class="metro-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20"></path>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="metro-text-col">
+                        <span class="metro-title">МЕТРОНОМ</span>
+                        <span class="metro-sub">РИТМ И СЧЕТ</span>
+                    </div>
+                </div>
+
+                <div class="btn-reset-round" onclick="handleSoftReset()" title="Сбросить состояние сессии">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer-area">
+        <div class="version-tag">MASTER PRANA TEST v1.0.0</div>
+    </footer>
+
+    <!-- PIN CODE MODAL (888 / 3 DAYS) -->
+    <div class="modal-overlay" id="pinModal" onclick="closePinModal(event)">
+        <div class="pin-card" onclick="event.stopPropagation()">
+            <button class="pin-close-btn" onclick="closePinModal()">✕</button>
+
+            <div class="pin-lotus-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3c-1.5 3-4 6.5-7 8 2.5 1 5.5 1 7-2 1.5 3 4.5 3 7 2-3-1.5-5.5-5-7-8z"></path>
+                    <path d="M12 9c-2 2.5-5 4.5-9 5 2.5 2 6 2.5 9-1 3 3.5 6.5 3 9 1-4-.5-7-2.5-9-5z"></path>
+                    <path d="M12 17v4"></path>
+                </svg>
+            </div>
+
+            <h2 class="pin-title">ДОСТУП К ПРАКТИКЕ</h2>
+            <p class="pin-desc">Введите пароль для открытия на 3 дня</p>
+
+            <div class="pin-slots" id="pinSlots">
+                <div class="pin-dot" id="dot0"></div>
+                <div class="pin-dot" id="dot1"></div>
+                <div class="pin-dot" id="dot2"></div>
+            </div>
+
+            <div class="keypad-grid">
+                <button class="key-btn" onclick="pressPin('1')">1</button>
+                <button class="key-btn" onclick="pressPin('2')">2</button>
+                <button class="key-btn" onclick="pressPin('3')">3</button>
+                <button class="key-btn" onclick="pressPin('4')">4</button>
+                <button class="key-btn" onclick="pressPin('5')">5</button>
+                <button class="key-btn" onclick="pressPin('6')">6</button>
+                <button class="key-btn" onclick="pressPin('7')">7</button>
+                <button class="key-btn" onclick="pressPin('8')">8</button>
+                <button class="key-btn" onclick="pressPin('9')">9</button>
+                <button class="key-btn action-key" onclick="clearPin()">C</button>
+                <button class="key-btn" onclick="pressPin('0')">0</button>
+                <button class="key-btn action-key" onclick="backspacePin()">⌫</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+<script>
+    /* =====================================================
+       LIFETIME DUOLINGO COUNTER (mb_total)
+       ===================================================== */
+    function formatTotalTime(totalSeconds) {
+        var s = Math.max(0, parseInt(totalSeconds, 10) || 0);
+        var hrs = Math.floor(s / 3600);
+        var rem = s % 3600;
+        var mins = Math.floor(rem / 60);
+        var secs = rem % 60;
+
+        var hStr = hrs < 10 ? '0' + hrs : '' + hrs;
+        var mStr = mins < 10 ? '0' + mins : '' + mins;
+        var sStr = secs < 10 ? '0' + secs : '' + secs;
+        return hStr + ':' + mStr + ':' + sStr;
+    }
+
+    function renderTotalTimer() {
+        var rawTotal = localStorage.getItem('mb_total') || '0';
+        var el = document.getElementById('duoTotalDisplay');
+        if (el) {
+            el.textContent = formatTotalTime(rawTotal);
+        }
+    }
+
+    /* =====================================================
+       PIN ACCESS (888 / 72 HOURS VALIDITY)
+       ===================================================== */
+    var UNLOCK_KEY = 'prana_unlocked_until';
+    var THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000; // 72 hours
+    var enteredPin = '';
+
+    function isPranaUnlocked() {
+        try {
+            var rawUntil = localStorage.getItem(UNLOCK_KEY);
+            if (!rawUntil) return false;
+            var until = parseInt(rawUntil, 10);
+            if (isNaN(until)) return false;
+            return Date.now() < until;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    function updateAccessStatus() {
+        var statusEl = document.getElementById('pranaAccessStatus');
+        if (!statusEl) return;
+        if (isPranaUnlocked()) {
+            var rawUntil = parseInt(localStorage.getItem(UNLOCK_KEY), 10);
+            var msLeft = rawUntil - Date.now();
+            var hoursLeft = Math.max(1, Math.round(msLeft / (3600 * 1000)));
+            statusEl.textContent = 'ДОСТУП ОТКРЫТ (еще ' + hoursLeft + ' ч)';
+            statusEl.style.color = 'var(--gold)';
+        } else {
+            statusEl.textContent = '🔒 ВВЕСТИ КОД ДОСТУПА';
+            statusEl.style.color = 'var(--accent)';
+        }
+    }
+
+    function handleLotusClick() {
+        if (isPranaUnlocked()) {
+            window.location.href = 'pranayama.html';
+        } else {
+            openPinModal();
+        }
+    }
+
+    function openPinModal() {
+        enteredPin = '';
+        renderPinDots();
+        var modal = document.getElementById('pinModal');
+        if (modal) modal.classList.add('open');
+    }
+
+    function closePinModal(e) {
+        if (e && e.target !== e.currentTarget && !e.target.classList.contains('pin-close-btn')) return;
+        var modal = document.getElementById('pinModal');
+        if (modal) modal.classList.remove('open');
+        enteredPin = '';
+    }
+
+    function pressPin(digit) {
+        if (enteredPin.length >= 3) return;
+        enteredPin += digit;
+        renderPinDots();
+
+        if (enteredPin.length === 3) {
+            setTimeout(checkPin, 120);
+        }
+    }
+
+    function backspacePin() {
+        if (enteredPin.length > 0) {
+            enteredPin = enteredPin.slice(0, -1);
+            renderPinDots();
+        }
+    }
+
+    function clearPin() {
+        enteredPin = '';
+        renderPinDots();
+    }
+
+    function renderPinDots() {
+        for (var i = 0; i < 3; i++) {
+            var dot = document.getElementById('dot' + i);
+            if (dot) {
+                if (i < enteredPin.length) {
+                    dot.classList.add('filled');
+                    dot.classList.remove('error');
+                } else {
+                    dot.classList.remove('filled', 'error');
+                }
+            }
+        }
+    }
+
+    function checkPin() {
+        if (enteredPin === '888') {
+            // Success: save unlock timestamp for exactly 3 days
+            var unlockUntil = Date.now() + THREE_DAYS_MS;
+            localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
+            showToast('Доступ открыт на 3 дня ✨');
+            updateAccessStatus();
+
+            setTimeout(function() {
+                var modal = document.getElementById('pinModal');
+                if (modal) modal.classList.remove('open');
+                window.location.href = 'pranayama.html';
+            }, 300);
+        } else {
+            // Wrong code: shake and clear
+            for (var i = 0; i < 3; i++) {
+                var dot = document.getElementById('dot' + i);
+                if (dot) dot.classList.add('error');
+            }
+            var card = document.querySelector('.pin-card');
+            if (card) {
+                card.classList.add('shake');
+                setTimeout(function() {
+                    card.classList.remove('shake');
+                    clearPin();
+                }, 400);
+            }
+        }
+    }
+
+    // Support keyboard input
+    window.addEventListener('keydown', function(e) {
+        var modal = document.getElementById('pinModal');
+        if (!modal || !modal.classList.contains('open')) return;
+        if (e.key >= '0' && e.key <= '9') {
+            pressPin(e.key);
+        } else if (e.key === 'Backspace') {
+            backspacePin();
+        } else if (e.key === 'Escape') {
+            closePinModal();
+        }
+    });
+
+    /* =====================================================
+       SOFT RESET (CLEANS LOCAL SESSIONS, PRESERVES mb_total)
+       ===================================================== */
+    function handleSoftReset() {
+        showToast('Сессия обновлена');
+        renderTotalTimer();
+        updateAccessStatus();
+    }
+
+    function showToast(msg) {
+        var t = document.getElementById('toast');
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(function() { t.classList.remove('show'); }, 1800);
+    }
+
+    /* =====================================================
+       LIFECYCLE & SERVICE WORKER
+       ===================================================== */
+    window.addEventListener('pageshow', function() {
+        renderTotalTimer();
+        updateAccessStatus();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderTotalTimer();
+        updateAccessStatus();
+    });
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(function(reg) {
+            reg.update();
+        }).catch(function(){});
+    }
+</script>
+</body>
+</html>

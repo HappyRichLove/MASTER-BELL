@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.22.3 (Prana Enhanced) */
-var CACHE_NAME = 'master-v20.22.3';
+/* Service Worker — MASTER v20.23 (Stable) */
+var CACHE_NAME = 'master-v20.23';
 var ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,6 @@ var ASSETS = [
   './icon-512.png',
   './manifest.json',
   './metronome.html',
-  './pranayama.html',
   './suncalc.min.js',
   './img/ios-step1.jpeg',
   './img/ios-step2.jpeg',
