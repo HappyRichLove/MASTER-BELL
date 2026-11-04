@@ -48,15 +48,17 @@
             touch-action: manipulation;
         }
 
-        /* HEADER AREA — PERFECT VERTICAL CENTERING */
+        /* HEADER AREA — MATHEMATICALLY CENTERED BETWEEN TOP OF SCREEN AND TIMER */
         .header-area {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-top: max(28px, 6vh);
-            padding-bottom: max(16px, 3vh);
+            flex: 1;
+            min-height: 20vh;
             width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         .master-title {
@@ -73,15 +75,20 @@
             line-height: 1.1;
         }
 
-        .sub-brand {
-            margin-top: 8px;
-            font-size: 0.72rem;
-            letter-spacing: 0.32em;
-            text-indent: 0.32em;
+        /* ELEGANT GOLD OUTLINE BADGE (RETURNED AS REQUESTED) */
+        .badge-brand {
+            margin-top: 10px;
+            font-size: 0.65rem;
+            letter-spacing: 0.28em;
+            text-indent: 0.28em;
             color: var(--gold);
             text-transform: uppercase;
-            font-weight: 600;
-            opacity: 0.85;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
         }
 
         /* MAIN HUB CONTAINER */
@@ -207,20 +214,11 @@
         }
 
         .btn-primary-title {
-            font-size: 1.15rem;
+            font-size: clamp(1.2rem, 4.5vw, 1.45rem);
             font-weight: 700;
-            letter-spacing: 0.14em;
+            letter-spacing: 0.16em;
             color: #ffffff;
             text-transform: uppercase;
-        }
-
-        .btn-primary-sub {
-            font-size: 0.65rem;
-            letter-spacing: 0.1em;
-            color: var(--gold);
-            margin-top: 3px;
-            text-transform: uppercase;
-            opacity: 0.9;
         }
 
         .btn-arrow {
@@ -478,7 +476,7 @@
     <!-- HEADER (CENTERED BETWEEN TOP AND TIMER) -->
     <header class="header-area">
         <h1 class="master-title">МАСТЕР</h1>
-        <div class="sub-brand">PRANA</div>
+        <div class="badge-brand">PRANA</div>
     </header>
 
     <!-- HUB CONTENT -->
@@ -511,7 +509,6 @@
                     </div>
                     <div class="btn-text-col">
                         <span class="btn-primary-title">ПРАНАЯМА</span>
-                        <span class="btn-primary-sub">5 ПРАКТИК ДЫХАНИЯ</span>
                     </div>
                 </div>
                 <div class="btn-arrow">›</div>
@@ -528,7 +525,6 @@
                     </div>
                     <div class="btn-text-col">
                         <span class="btn-primary-title">МЕТРОНОМ</span>
-                        <span class="btn-primary-sub">РИТМ И СЧЕТ</span>
                     </div>
                 </div>
                 <div class="btn-arrow">›</div>

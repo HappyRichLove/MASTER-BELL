@@ -45,17 +45,19 @@
         }
 
         .master-title {
-            font-size: clamp(1.25rem, 7vw, 3rem);
+            font-size: clamp(2rem, 7.5vw, 3.2rem);
             font-weight: 100;
             letter-spacing: 0.35em;
             text-indent: 0.35em;
             color: var(--text);
-            opacity: 0.85;
-            margin: 0 0 20px 0;
+            opacity: 0.9;
+            margin: 0;
             text-transform: uppercase;
             text-align: center;
             white-space: nowrap;
-            transform: translateY(-10vh);
+            line-height: 1;
+            padding-top: max(20px, 4vh);
+            padding-bottom: max(20px, 4vh);
         }
 
         .back-btn {
@@ -235,31 +237,33 @@
 
     function playTick() {
         if (!audio) return;
-        var t = audio.currentTime;
+        var t0 = audio.currentTime;
+
         var osc = audio.createOscillator();
         var gain = audio.createGain();
-        var filter = audio.createBiquadFilter();
+        var bp = audio.createBiquadFilter();
 
-        // Warm wooden tone: 240 Hz dropping to 120 Hz
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(240, t);
-        osc.frequency.exponentialRampToValueAtTime(120, t + 0.04);
+        // Resonant wooden clack tone
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(860, t0);
+        osc.frequency.exponentialRampToValueAtTime(320, t0 + 0.022);
 
-        // Lowpass filter softens any harsh treble
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(750, t);
+        // Bandpass filter isolates warm wooden body
+        bp.type = 'bandpass';
+        bp.frequency.setValueAtTime(880, t0);
+        bp.Q.setValueAtTime(3.0, t0);
 
-        // 4ms smooth fade-in completely eliminates DC pop / harsh punch on eardrums!
-        gain.gain.setValueAtTime(0.0001, t);
-        gain.gain.linearRampToValueAtTime(0.08, t + 0.004);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+        // 2ms smooth attack (NO clicks on eardrum) + crisp 22ms decay
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.linearRampToValueAtTime(0.24, t0 + 0.002);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.024);
 
-        osc.connect(filter);
-        filter.connect(gain);
+        osc.connect(bp);
+        bp.connect(gain);
         gain.connect(audio.destination);
 
-        osc.start(t);
-        osc.stop(t + 0.05);
+        osc.start(t0);
+        osc.stop(t0 + 0.028);
     }
 
     function engine(now) {

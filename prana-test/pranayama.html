@@ -69,19 +69,31 @@
             transform: scale(0.92);
         }
 
-        /* MASTER TITLE — EXACT METRONOME SPEC */
+        /* TOP HEADER ZONE — MATHEMATICALLY CENTERED BETWEEN SCREEN TOP AND PRACTICE */
+        .top-header-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+            min-height: 16vh;
+            max-height: 22vh;
+            margin: 0;
+            padding: 0;
+        }
+
         .master-title {
-            font-size: clamp(1.25rem, 7vw, 3rem);
+            font-size: clamp(2rem, 7.5vw, 3.2rem);
             font-weight: 100;
             letter-spacing: 0.35em;
             text-indent: 0.35em;
             color: var(--text);
-            opacity: 0.85;
+            opacity: 0.9;
             margin: 0;
             text-transform: uppercase;
             text-align: center;
             white-space: nowrap;
-            transform: translateY(-10vh);
+            line-height: 1;
             pointer-events: none;
         }
 
@@ -92,8 +104,8 @@
             align-items: center;
             justify-content: center;
             height: 52px;
-            margin-top: -6vh;
-            margin-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 12px;
             width: 100%;
         }
 
@@ -485,8 +497,10 @@
         </svg>
     </div>
 
-    <!-- MASTER TITLE -->
-    <div class="master-title">МАСТЕР</div>
+    <!-- MASTER TITLE (MATHEMATICALLY CENTERED VERTICALLY BETWEEN TOP AND PRACTICE) -->
+    <div class="top-header-zone">
+        <div class="master-title">МАСТЕР</div>
+    </div>
 
     <!-- PRACTICE HEADER -->
     <div class="practice-header">
@@ -856,12 +870,14 @@
     }
 
     /* =====================================================
-       AUTHENTIC SOFT SOUND ENGINE (ZERO CRACKLE / WARM TIBETAN)
-       Singing Bowls (432 Hz) + Deep Temple Gong (108 Hz) + Velvet Tick
+       AUTHENTIC MASTER SOUND ENGINE (OPTIMIZED / ZERO LAG)
+       Authentic Singing Bowl + Original Mega Gong (196 Hz) + Wooden Tick
        ===================================================== */
     var audio = null;
     var masterGain = null;
     var masterCompressor = null;
+    var reverbNode = null;
+    var strikeNoiseBuffer = null;
     var audioUnlocked = false;
 
     function initAudio() {
@@ -872,13 +888,13 @@
                 masterGain = audio.createGain();
                 masterGain.gain.value = 0.85;
 
-                // Soft Limiter: prevents digital clipping without harsh distortion
+                // Soft Limiter: prevents clipping while keeping sounds rich and warm
                 masterCompressor = audio.createDynamicsCompressor();
-                masterCompressor.threshold.setValueAtTime(-3, audio.currentTime);
-                masterCompressor.knee.setValueAtTime(6, audio.currentTime);
-                masterCompressor.ratio.setValueAtTime(4, audio.currentTime);
-                masterCompressor.attack.setValueAtTime(0.010, audio.currentTime);
-                masterCompressor.release.setValueAtTime(0.15, audio.currentTime);
+                masterCompressor.threshold.setValueAtTime(-4, audio.currentTime);
+                masterCompressor.knee.setValueAtTime(8, audio.currentTime);
+                masterCompressor.ratio.setValueAtTime(6, audio.currentTime);
+                masterCompressor.attack.setValueAtTime(0.005, audio.currentTime);
+                masterCompressor.release.setValueAtTime(0.20, audio.currentTime);
 
                 masterGain.connect(masterCompressor);
                 masterCompressor.connect(audio.destination);
@@ -907,108 +923,145 @@
         }
     }
 
-    /* PURE TIBETAN SINGING BOWL (432 HZ + SACRED BEATING) — NO HEAVY CONVOLVER */
+    /* LIGHTWEIGHT COMPACT REVERB (0.35s BUFFER — ZERO MOBILE CPU LAG) */
+    function ensureReverb() {
+        if (reverbNode || !audio) return;
+        var len = Math.floor(audio.sampleRate * 0.35);
+        var buf = audio.createBuffer(2, len, audio.sampleRate);
+        for (var ch = 0; ch < 2; ch++) {
+            var data = buf.getChannelData(ch);
+            for (var i = 0; i < len; i++) {
+                var p = 1 - i / len;
+                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.8);
+            }
+        }
+        reverbNode = audio.createConvolver();
+        reverbNode.buffer = buf;
+        reverbNode.connect(masterGain);
+    }
+
+    function playStrikeNoise(dest, volume, duration) {
+        if (!audio) return;
+        var now = audio.currentTime;
+        var bufLen = Math.floor(audio.sampleRate * duration);
+        if (bufLen < 1) return;
+        if (!strikeNoiseBuffer) {
+            strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate);
+            var data = strikeNoiseBuffer.getChannelData(0);
+            for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audio.sampleRate * 0.008));
+        }
+        var noise = audio.createBufferSource();
+        noise.buffer = strikeNoiseBuffer;
+        var bp = audio.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 2500;
+        bp.Q.value = 0.8;
+        var g = audio.createGain();
+        g.gain.setValueAtTime(volume, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        noise.connect(bp);
+        bp.connect(g);
+        g.connect(dest);
+        noise.start(now);
+        noise.stop(now + duration);
+    }
+
+    /* EXACT ORIGINAL PLAYBOWL ENGINE FROM MAIN APPLICATION */
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
+        if (!audio) return;
+        var vol = volumeMult || 1;
+        var now = audio.currentTime;
+        ensureReverb();
+
+        var dry = audio.createGain();
+        var wet = audio.createGain();
+        dry.gain.value = dryVal;
+        wet.gain.value = wetVal;
+        dry.connect(masterGain);
+        wet.connect(reverbNode || masterGain);
+
+        var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
+        for (var i = 0; i < harmonics.length; i++) {
+            var h = harmonics[i];
+            var decay = h[2] + decayExtra;
+            var hVol = h[1] * vol;
+
+            var osc = audio.createOscillator();
+            var g = audio.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now);
+
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.linearRampToValueAtTime(hVol, now + 0.015);
+            g.gain.exponentialRampToValueAtTime(Math.max(0.0001, hVol * 0.4), now + decay * 0.3);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+            var lfo = audio.createOscillator();
+            var lfoG = audio.createGain();
+            lfo.frequency.value = 3 + Math.random() * 2;
+            lfoG.gain.value = h[0] > 3 ? 1.2 : 0.4;
+            lfo.connect(lfoG);
+            lfoG.connect(osc.frequency);
+            lfo.start(now);
+
+            osc.connect(g);
+            g.connect(dry);
+            g.connect(wet);
+
+            osc.start(now);
+            osc.stop(now + decay + 0.2);
+            lfo.stop(now + decay + 0.2);
+        }
+        playStrikeNoise(dry, strikeVol, 0.05);
+    }
+
+    /* PRACTICE TRANSITION BELL (COMFORTABLE HARMONIOUS VOLUME) */
     function playBell() {
         try {
             initAudio();
-            var t0 = audio.currentTime;
-
-            // Pure additive synthesis: perfectly light for mobile CPUs, zero crackle
-            var partials = [
-                { f: 432.0,  g: 0.20, d: 4.2 }, // Fundamental 432 Hz
-                { f: 433.2,  g: 0.15, d: 4.0 }, // Organic 1.2 Hz shimmer / chorus
-                { f: 1190.0, g: 0.05, d: 2.5 }, // 2nd overtone
-                { f: 2334.0, g: 0.02, d: 1.4 }  // Subtle high shimmer
-            ];
-
-            partials.forEach(function(p) {
-                var osc = audio.createOscillator();
-                var gain = audio.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(p.f, t0);
-
-                // Gentle fade-in (12ms) prevents any initial DC pop/click
-                gain.gain.setValueAtTime(0.0001, t0);
-                gain.gain.linearRampToValueAtTime(p.g, t0 + 0.012);
-                gain.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
-
-                osc.connect(gain);
-                gain.connect(masterGain);
-
-                osc.start(t0);
-                osc.stop(t0 + p.d);
-            });
+            playBowl(440, 0, 0.7, 0.3, 0.025, 0.9);
         } catch(e) {}
     }
 
-    /* DEEP SACRED TEMPLE GONG (108 HZ + 0.6 HZ THETA BEATING) — NOBLE & WARM */
+    /* FINAL SACRED MEGA GONG (EXACT SOUND FROM END OF BREATHING TRIANGLE IN MAIN APP) */
     function playMegaGong() {
         try {
             initAudio();
-            var t0 = audio.currentTime;
-
-            // Warm low-pass filter to soften bronze highs
-            var gongFilter = audio.createBiquadFilter();
-            gongFilter.type = 'lowpass';
-            gongFilter.frequency.setValueAtTime(1200, t0);
-            gongFilter.connect(masterGain);
-
-            var partials = [
-                { f: 108.0, g: 0.26, d: 7.5 }, // Sacred 108 Hz base
-                { f: 108.6, g: 0.18, d: 7.2 }, // 0.6 Hz theta relaxation beat
-                { f: 216.0, g: 0.12, d: 5.5 }, // 1st octave
-                { f: 324.0, g: 0.05, d: 4.0 }  // Warm 3rd harmonic
-            ];
-
-            partials.forEach(function(p) {
-                var osc = audio.createOscillator();
-                var gain = audio.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(p.f, t0);
-
-                // Soft mallet strike: 28ms smooth attack
-                gain.gain.setValueAtTime(0.0001, t0);
-                gain.gain.linearRampToValueAtTime(p.g, t0 + 0.028);
-                gain.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
-
-                osc.connect(gain);
-                gain.connect(gongFilter);
-
-                osc.start(t0);
-                osc.stop(t0 + p.d);
-            });
+            playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2);
         } catch(e) {}
     }
 
-    /* SOFT VELVET METRONOME TICK — GENTLE ON EARDRUMS, NO CLICKS */
+    /* WARM WOODEN TEMPLE TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
     function playTick() {
         try {
             if (!audio) return;
-            var t = audio.currentTime;
+            var t0 = audio.currentTime;
+
             var osc = audio.createOscillator();
             var gain = audio.createGain();
-            var filter = audio.createBiquadFilter();
+            var bp = audio.createBiquadFilter();
 
-            // Warm wooden tone: 240 Hz dropping to 120 Hz
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(240, t);
-            osc.frequency.exponentialRampToValueAtTime(120, t + 0.04);
+            // Resonant wooden clack tone
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(860, t0);
+            osc.frequency.exponentialRampToValueAtTime(320, t0 + 0.022);
 
-            // Lowpass filter softens any harsh treble
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(750, t);
+            // Bandpass filter isolates warm wooden body
+            bp.type = 'bandpass';
+            bp.frequency.setValueAtTime(880, t0);
+            bp.Q.setValueAtTime(3.0, t0);
 
-            // 4ms smooth fade-in completely eliminates DC pop / harsh punch on eardrums!
-            gain.gain.setValueAtTime(0.0001, t);
-            gain.gain.linearRampToValueAtTime(0.08, t + 0.004);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+            // 2ms smooth attack (NO clicks on eardrum) + crisp 22ms decay
+            gain.gain.setValueAtTime(0.0001, t0);
+            gain.gain.linearRampToValueAtTime(0.24, t0 + 0.002);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.024);
 
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(audio.destination);
+            osc.connect(bp);
+            bp.connect(gain);
+            gain.connect(masterGain);
 
-            osc.start(t);
-            osc.stop(t + 0.05);
+            osc.start(t0);
+            osc.stop(t0 + 0.028);
         } catch (e) {}
     }
 
