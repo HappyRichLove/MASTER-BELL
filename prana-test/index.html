@@ -540,7 +540,7 @@
 
     <!-- FOOTER -->
     <footer class="footer-area">
-        <div class="version-tag">MASTER PRANA v1.0.0</div>
+        <div class="version-tag">MASTER PRANA v1.0.3</div>
     </footer>
 
     <!-- PIN CODE MODAL (888 / 3 DAYS) -->
@@ -750,7 +750,7 @@
     });
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.3').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }

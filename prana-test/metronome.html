@@ -358,7 +358,7 @@
     } catch(e){}
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.3').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
