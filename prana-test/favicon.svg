@@ -1,52 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Background Lamp Glow -->
-    <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.28"/>
-      <stop offset="35%" stop-color="#d4af37" stop-opacity="0.20"/>
-      <stop offset="70%" stop-color="#9a7b1c" stop-opacity="0.08"/>
-      <stop offset="100%" stop-color="#0e0d0a" stop-opacity="0"/>
+    <radialGradient id="bgGlow" cx="50%" cy="48%" r="65%">
+      <stop offset="0%" stop-color="#2a1e08" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#18130a" stop-opacity="1"/>
+      <stop offset="70%" stop-color="#0e0d0c" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#070708" stop-opacity="1"/>
     </radialGradient>
-
-    <!-- Golden Filament Gradient -->
-    <linearGradient id="goldFilament" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="30%" stop-color="#fef08a"/>
-      <stop offset="70%" stop-color="#f5d565"/>
-      <stop offset="100%" stop-color="#d4af37"/>
-    </linearGradient>
-
-    <!-- Bloom and Glow Filters -->
-    <filter id="wideBloom" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="22"/>
-    </filter>
-    <filter id="auraGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="8"/>
+    <radialGradient id="lampHalo" cx="50%" cy="48%" r="50%">
+      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#d4af37" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="b1"/>
+      <feGaussianBlur stdDeviation="6" result="b2"/>
+      <feMerge>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
 
-  <!-- Dark Warm Obsidian Canvas -->
-  <rect width="512" height="512" rx="112" fill="#0e0d0a"/>
+  <!-- Background with warm ambient lamp glow -->
+  <rect width="512" height="512" fill="url(#bgGlow)"/>
+  <rect width="512" height="512" fill="url(#lampHalo)"/>
 
-  <!-- Ambient Light from Lamp -->
-  <circle cx="256" cy="256" r="240" fill="url(#lampGlow)"/>
+  <!-- Glowing aura behind the letter -->
+  <text x="256" y="366" 
+        text-anchor="middle" 
+        font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif" 
+        font-size="310" 
+        font-weight="300" 
+        fill="#d4af37" 
+        opacity="0.8" 
+        filter="url(#softGlow)">М</text>
 
-  <!-- Thin Luminous Letter M (Filament Vector Path) -->
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Layer 1: Wide Golden Bloom -->
-    <polyline points="136,370 136,142 256,296 376,142 376,370"
-              stroke="#d4af37" stroke-width="30" opacity="0.65" filter="url(#wideBloom)"/>
+  <!-- Golden warm body from the exact font of the header -->
+  <text x="256" y="366" 
+        text-anchor="middle" 
+        font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif" 
+        font-size="310" 
+        font-weight="300" 
+        fill="#f5d77f">М</text>
 
-    <!-- Layer 2: Warm Aura -->
-    <polyline points="136,370 136,142 256,296 376,142 376,370"
-              stroke="#f5d565" stroke-width="18" opacity="0.85" filter="url(#auraGlow)"/>
-
-    <!-- Layer 3: Thin Core Golden Filament -->
-    <polyline points="136,370 136,142 256,296 376,142 376,370"
-              stroke="url(#goldFilament)" stroke-width="10"/>
-
-    <!-- Layer 4: Hot White Highlight Wire -->
-    <polyline points="136,370 136,142 256,296 376,142 376,370"
-              stroke="#ffffff" stroke-width="3.5" opacity="0.9"/>
-  </g>
+  <!-- Incandescent filament center highlights -->
+  <text x="256" y="366" 
+        text-anchor="middle" 
+        font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif" 
+        font-size="310" 
+        font-weight="300" 
+        fill="#fff8e7" 
+        opacity="0.85">М</text>
 </svg>

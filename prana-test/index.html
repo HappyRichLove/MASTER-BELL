@@ -58,7 +58,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: calc(env(safe-area-inset-top, 16px) + 8px);
+            padding-top: max(48px, calc(env(safe-area-inset-top, 44px) + 20px));
             padding-bottom: 6px;
             flex-shrink: 0;
         }
@@ -96,33 +96,6 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             pointer-events: none;
-        }
-
-        /* SETTINGS GEAR BUTTON (TOP-RIGHT) */
-        .settings-gear-btn {
-            position: absolute;
-            top: calc(env(safe-area-inset-top, 16px) + 6px);
-            right: max(16px, env(safe-area-inset-right, 16px));
-            z-index: 100;
-            color: var(--accent);
-            opacity: 0.85;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            transition: opacity 0.2s, transform 0.15s, background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-        }
-        .settings-gear-btn:active {
-            opacity: 1;
-            transform: scale(0.92);
-            background: rgba(212, 175, 55, 0.15);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -281,6 +254,17 @@
             border-color: var(--border);
         }
 
+        /* BOTTOM UNIFIED ZONE (INDICATORS + CAPSULE + FOOTER) */
+        .bottom-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding-bottom: max(14px, calc(env(safe-area-inset-bottom, 12px) + 6px));
+            flex-shrink: 0;
+        }
+
         /* STAGE INDICATOR ZONE */
         .stage-indicator-zone {
             display: flex;
@@ -355,7 +339,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 4px);
             flex-shrink: 0;
         }
         .version-tag {
@@ -699,14 +682,6 @@
     <header class="header-area">
         <h1 class="master-title">МАСТЕР</h1>
         <div class="badge-brand">PRANA</div>
-
-        <!-- SETTINGS GEAR BUTTON -->
-        <div class="settings-gear-btn" onclick="openSettingsModal()" title="Настройки практик">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-        </div>
     </header>
 
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
@@ -732,6 +707,12 @@
                         <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                     </svg>
                 </button>
+                <button class="icon-btn" onclick="openSettingsModal()" title="Настройки практик">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
                 <button class="icon-btn" onclick="skipStage()" title="Пропустить этап">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="5 4 15 12 5 20 5 4"></polygon>
@@ -742,28 +723,30 @@
         </div>
     </main>
 
-    <!-- STAGE INDICATORS & CURRENT SESSION -->
-    <section class="stage-indicator-zone">
-        <div class="dots-row">
-            <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
-            <div class="stage-dot" id="dot1" title="Капалабхати"></div>
-            <div class="stage-dot" id="dot2" title="Замки (Бандхи)"></div>
-            <div class="stage-dot" id="dot3" title="Уджайи"></div>
-            <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
+    <!-- BOTTOM UNIFIED ZONE (INDICATORS, LIFETIME PRACTICE, VERSION) -->
+    <div class="bottom-zone">
+        <section class="stage-indicator-zone">
+            <div class="dots-row">
+                <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
+                <div class="stage-dot" id="dot1" title="Капалабхати"></div>
+                <div class="stage-dot" id="dot2" title="Замки (Бандхи)"></div>
+                <div class="stage-dot" id="dot3" title="Уджайи"></div>
+                <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
+            </div>
+            <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~30 МИН</div>
+        </section>
+
+        <!-- REFINED LIFETIME ACCUMULATED PRACTICE CAPSULE -->
+        <div class="bottom-lifetime-capsule">
+            <span class="lifetime-caption">В ПРАКТИКЕ</span>
+            <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
-        <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~30 МИН</div>
-    </section>
 
-    <!-- REFINED LIFETIME ACCUMULATED PRACTICE CAPSULE -->
-    <div class="bottom-lifetime-capsule">
-        <span class="lifetime-caption">НАКОПЛЕНО В ПРАКТИКЕ</span>
-        <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
+        <!-- FOOTER -->
+        <footer class="footer-area">
+            <div class="version-tag">MASTER PRANA v1.1.1</div>
+        </footer>
     </div>
-
-    <!-- FOOTER -->
-    <footer class="footer-area">
-        <div class="version-tag">MASTER PRANA v1.1.0</div>
-    </footer>
 
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
@@ -867,7 +850,7 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.1.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.1.1</div>
             </div>
         </div>
     </div>
@@ -1223,58 +1206,38 @@
     }
 
     /* =====================================================
-       AUTHENTIC MASTER SOUND ENGINE
-       Celestial Singing Bowl (432 Hz) + Original Mega Gong (196 Hz) + Temple Wood Tick
+       AUTHENTIC MASTER SOUND ENGINE (PURE / ANTI-CRACKLE / WARM)
+       Celestial Singing Bowl + Original Mega Gong (196 Hz) + Warm Temple Tick
        ===================================================== */
     var audio = null;
     var masterGain = null;
     var masterCompressor = null;
     var reverbNode = null;
+    var strikeNoiseBuffer = null;
     var activeBellGains = [];
 
     function initAudio() {
         if (!audio) {
-            var AudioContext = window.AudioContext || window.webkitAudioContext;
-            audio = new AudioContext();
+            var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                audio = new AudioContextClass();
+                masterGain = audio.createGain();
+                masterGain.gain.value = 0.85;
 
-            masterCompressor = audio.createDynamicsCompressor();
-            masterCompressor.threshold.setValueAtTime(-2, audio.currentTime);
-            masterCompressor.knee.setValueAtTime(40, audio.currentTime);
-            masterCompressor.ratio.setValueAtTime(10, audio.currentTime);
-            masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
-            masterCompressor.release.setValueAtTime(0.25, audio.currentTime);
+                masterCompressor = audio.createDynamicsCompressor();
+                masterCompressor.threshold.setValueAtTime(-2, audio.currentTime);
+                masterCompressor.knee.setValueAtTime(6, audio.currentTime);
+                masterCompressor.ratio.setValueAtTime(10, audio.currentTime);
+                masterCompressor.attack.setValueAtTime(0.003, audio.currentTime);
+                masterCompressor.release.setValueAtTime(0.15, audio.currentTime);
 
-            masterGain = audio.createGain();
-            masterGain.gain.setValueAtTime(0.85, audio.currentTime);
-
-            masterGain.connect(masterCompressor);
-            masterCompressor.connect(audio.destination);
-
-            initReverb();
+                masterGain.connect(masterCompressor);
+                masterCompressor.connect(audio.destination);
+            }
         }
-        if (audio.state === 'suspended') {
-            audio.resume();
+        if (audio && audio.state === 'suspended') {
+            audio.resume().catch(function(){});
         }
-    }
-
-    function initReverb() {
-        if (!audio) return;
-        var dur = 2.5;
-        var rate = audio.sampleRate;
-        var length = Math.floor(rate * dur);
-        var impulse = audio.createBuffer(2, length, rate);
-        var left = impulse.getChannelData(0);
-        var right = impulse.getChannelData(1);
-
-        for (var i = 0; i < length; i++) {
-            var n = i / length;
-            var decay = Math.exp(-3.5 * n);
-            left[i] = (Math.random() * 2 - 1) * decay;
-            right[i] = (Math.random() * 2 - 1) * decay;
-        }
-
-        reverbNode = audio.createConvolver();
-        reverbNode.buffer = impulse;
     }
 
     function unlockAudioSession() {
@@ -1282,11 +1245,11 @@
     }
 
     function stopActiveBells() {
-        if (!audio || !activeBellGains.length) return;
+        if (!audio) return;
         var now = audio.currentTime;
         for (var i = 0; i < activeBellGains.length; i++) {
-            var g = activeBellGains[i];
             try {
+                var g = activeBellGains[i];
                 g.gain.cancelScheduledValues(now);
                 g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), now);
                 g.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
@@ -1295,102 +1258,188 @@
         activeBellGains = [];
     }
 
-    function playBowl(freq, dur, gainVal, lfoRate, lfoDepth, overtoneShift) {
-        if (!audio) return;
-        var t0 = audio.currentTime;
-        var dryGain = audio.createGain();
-        var wetGain = audio.createGain();
-
-        dryGain.gain.setValueAtTime(0.85, t0);
-        wetGain.gain.setValueAtTime(0.35, t0);
-
-        dryGain.connect(masterGain);
-        if (reverbNode) {
-            wetGain.connect(reverbNode);
-            reverbNode.connect(masterGain);
-        } else {
-            wetGain.connect(masterGain);
+    function ensureReverb() {
+        if (reverbNode || !audio) return;
+        var len = Math.floor(audio.sampleRate * 1.5);
+        var buf = audio.createBuffer(2, len, audio.sampleRate);
+        for (var ch = 0; ch < 2; ch++) {
+            var data = buf.getChannelData(ch);
+            for (var i = 0; i < len; i++) {
+                var p = 1 - i / len;
+                data[i] = (Math.random() * 2 - 1) * Math.pow(p, 2.5);
+            }
         }
+        reverbNode = audio.createConvolver();
+        reverbNode.buffer = buf;
+        reverbNode.connect(masterGain);
+    }
 
-        activeBellGains.push(dryGain);
-        activeBellGains.push(wetGain);
-
-        var osc = audio.createOscillator();
-        var oscGain = audio.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t0);
-
-        var lfo = audio.createOscillator();
-        var lfoGain = audio.createGain();
-        lfo.type = 'sine';
-        lfo.frequency.setValueAtTime(lfoRate || 4.0, t0);
-        lfoGain.gain.setValueAtTime(freq * (lfoDepth || 0.02), t0);
-        lfo.connect(osc.frequency);
-        lfo.start(t0);
-        lfo.stop(t0 + dur);
-
-        oscGain.gain.setValueAtTime(0.0001, t0);
-        oscGain.gain.linearRampToValueAtTime(gainVal || 0.45, t0 + 0.08);
-        oscGain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-
-        osc.connect(oscGain);
-        oscGain.connect(dryGain);
-        oscGain.connect(wetGain);
-        osc.start(t0);
-        osc.stop(t0 + dur);
-
-        // Overtone
-        var otShift = overtoneShift || 2.71;
-        var otOsc = audio.createOscillator();
-        var otGain = audio.createGain();
-        otOsc.type = 'sine';
-        otOsc.frequency.setValueAtTime(freq * otShift, t0);
-
-        otGain.gain.setValueAtTime(0.0001, t0);
-        otGain.gain.linearRampToValueAtTime((gainVal || 0.45) * 0.35, t0 + 0.04);
-        otGain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.65);
-
-        otOsc.connect(otGain);
-        otGain.connect(dryGain);
-        otGain.connect(wetGain);
-        otOsc.start(t0);
-        otOsc.stop(t0 + dur * 0.65);
-
-        osc.onended = function() {
-            try {
-                var idxDry = activeBellGains.indexOf(dryGain);
-                if (idxDry !== -1) activeBellGains.splice(idxDry, 1);
-                var idxWet = activeBellGains.indexOf(wetGain);
-                if (idxWet !== -1) activeBellGains.splice(idxWet, 1);
-                osc.disconnect();
-                oscGain.disconnect();
-                lfo.disconnect();
-                lfoGain.disconnect();
-                otOsc.disconnect();
-                otGain.disconnect();
-                dryGain.disconnect();
-                wetGain.disconnect();
-            } catch(e) {}
+    function playStrikeNoise(dest, volume, duration) {
+        if (!audio) return;
+        var now = audio.currentTime;
+        var bufLen = Math.floor(audio.sampleRate * duration);
+        if (bufLen < 1) return;
+        if (!strikeNoiseBuffer) {
+            strikeNoiseBuffer = audio.createBuffer(1, bufLen, audio.sampleRate);
+            var data = strikeNoiseBuffer.getChannelData(0);
+            for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audio.sampleRate * 0.008));
+        }
+        var noise = audio.createBufferSource();
+        noise.buffer = strikeNoiseBuffer;
+        var bp = audio.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 1800;
+        bp.Q.value = 0.8;
+        var g = audio.createGain();
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(volume, now + 0.003);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        noise.connect(bp);
+        bp.connect(g);
+        g.connect(dest);
+        noise.start(now);
+        noise.stop(now + duration + 0.01);
+        noise.onended = function() {
+            try { noise.disconnect(); bp.disconnect(); g.disconnect(); } catch(e){}
         };
     }
 
+    /* EXACT ORIGINAL PLAYBOWL ENGINE FROM MAIN APPLICATION (USED FOR SACRED MEGA GONG) */
+    function playBowl(baseFreq, decayExtra, dryVal, wetVal, strikeVol, volumeMult) {
+        if (!audio) return;
+        var vol = volumeMult || 1;
+        var now = audio.currentTime;
+        ensureReverb();
+
+        var dry = audio.createGain();
+        var wet = audio.createGain();
+        dry.gain.value = dryVal;
+        wet.gain.value = wetVal;
+        dry.connect(masterGain);
+        wet.connect(reverbNode || masterGain);
+
+        activeBellGains.push(dry);
+        activeBellGains.push(wet);
+
+        var harmonics = [[1, 0.12, 4.5, 0], [2.71, 0.05, 3.0, 0.5], [5.43, 0.02, 1.8, 1]];
+        for (var i = 0; i < harmonics.length; i++) {
+            (function(h) {
+                var decay = h[2] + decayExtra;
+                var hVol = h[1] * vol;
+
+                var osc = audio.createOscillator();
+                var g = audio.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(baseFreq * h[0] + h[3], now);
+
+                g.gain.setValueAtTime(0.0001, now);
+                g.gain.linearRampToValueAtTime(hVol, now + 0.015);
+                g.gain.exponentialRampToValueAtTime(Math.max(0.0001, hVol * 0.4), now + decay * 0.3);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+                var lfo = audio.createOscillator();
+                var lfoG = audio.createGain();
+                lfo.frequency.value = 3 + Math.random() * 2;
+                lfoG.gain.value = h[0] > 3 ? 1.2 : 0.4;
+                lfo.connect(lfoG);
+                lfoG.connect(osc.frequency);
+                lfo.start(now);
+
+                osc.connect(g);
+                g.connect(dry);
+                g.connect(wet);
+
+                osc.start(now);
+                osc.stop(now + decay + 0.2);
+                lfo.stop(now + decay + 0.2);
+
+                osc.onended = function() {
+                    try {
+                        osc.disconnect();
+                        g.disconnect();
+                        lfo.disconnect();
+                        lfoG.disconnect();
+                    } catch(e){}
+                };
+            })(harmonics[i]);
+        }
+        playStrikeNoise(dry, strikeVol, 0.05);
+    }
+
+    /* PRACTICE TRANSITION BELL — PURE CELESTIAL TIBETAN BOWL (432 HZ / ZERO POP / ZERO CRACKLE) */
     function playBell() {
         try {
             initAudio();
+            if (!audio) return;
             stopActiveBells();
-            playBowl(432.00, 3.5, 0.40, 3.5, 0.015, 2.0);
+
+            var now = audio.currentTime;
+            var bellMaster = audio.createGain();
+            bellMaster.gain.setValueAtTime(1.0, now);
+            bellMaster.connect(masterGain);
+            activeBellGains.push(bellMaster);
+
+            // Pure Tibetan singing bowl harmonics (432 Hz Solfeggio / Verdi serenity)
+            var partials = [
+                [1.0,   0.22, 3.5], // 432 Hz fundamental
+                [2.0,   0.07, 2.5], // 864 Hz octave
+                [3.01,  0.03, 1.6]  // 1300 Hz ethereal sparkle
+            ];
+
+            partials.forEach(function(p) {
+                var osc = audio.createOscillator();
+                var g = audio.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(432.0 * p[0], now);
+
+                g.gain.setValueAtTime(0.0001, now);
+                g.gain.linearRampToValueAtTime(p[1], now + 0.012);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + p[2]);
+
+                osc.connect(g);
+                g.connect(bellMaster);
+
+                osc.start(now);
+                osc.stop(now + p[2] + 0.05);
+
+                osc.onended = function() {
+                    try { osc.disconnect(); g.disconnect(); } catch(e){}
+                };
+            });
+
+            // Soft felt mallet strike (warm sine pulse, zero scratch noise)
+            var mallet = audio.createOscillator();
+            var mGain = audio.createGain();
+            mallet.type = 'sine';
+            mallet.frequency.setValueAtTime(360, now);
+            mallet.frequency.exponentialRampToValueAtTime(160, now + 0.016);
+
+            mGain.gain.setValueAtTime(0.0001, now);
+            mGain.gain.linearRampToValueAtTime(0.04, now + 0.002);
+            mGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.020);
+
+            mallet.connect(mGain);
+            mGain.connect(bellMaster);
+
+            mallet.start(now);
+            mallet.stop(now + 0.025);
+
+            mallet.onended = function() {
+                try { mallet.disconnect(); mGain.disconnect(); } catch(e){}
+            };
         } catch(e) {}
     }
 
+    /* FINAL SACRED MEGA GONG (EXACT SOUND FROM MAIN APP) */
     function playMegaGong() {
         try {
             initAudio();
             stopActiveBells();
-            playBowl(196.00, 6.0, 0.55, 4.5, 0.04, 1.2);
+            playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2);
         } catch(e) {}
     }
 
-    /* CRISP ORGANIC TEMPLE WOOD / BAMBOO TICK (820->520 Hz + 380->240 Hz, LP 1600 Hz Q=1.2) */
+    /* WARM ORGANIC TEMPLE WOOD TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
     function playTick(volScale) {
         try {
             if (!audio) return;
@@ -1403,28 +1452,31 @@
             var subGain = audio.createGain();
             var lp = audio.createBiquadFilter();
 
+            // Warm resonant tone: 520 Hz -> 220 Hz rapid sweep (26ms)
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(820, t0);
-            osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.024);
+            osc.frequency.setValueAtTime(520, t0);
+            osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.026);
 
+            // Sub-body: 260 Hz -> 120 Hz body (22ms)
             subOsc.type = 'sine';
-            subOsc.frequency.setValueAtTime(380, t0);
-            subOsc.frequency.exponentialRampToValueAtTime(240, t0 + 0.024);
+            subOsc.frequency.setValueAtTime(260, t0);
+            subOsc.frequency.exponentialRampToValueAtTime(120, t0 + 0.022);
 
+            // Lowpass filter at 1100 Hz (Q=1.0) — eliminates treble click, silky smooth
             lp.type = 'lowpass';
-            lp.frequency.setValueAtTime(1600, t0);
-            lp.Q.setValueAtTime(1.2, t0);
+            lp.frequency.setValueAtTime(1100, t0);
+            lp.Q.setValueAtTime(1.0, t0);
 
-            var peakMain = 0.22 * scale;
+            var peakMain = 0.20 * scale;
             var peakSub = 0.08 * scale;
 
             gain.gain.setValueAtTime(0.0001, t0);
-            gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.0018);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.040);
+            gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.002);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.038);
 
             subGain.gain.setValueAtTime(0.0001, t0);
             subGain.gain.linearRampToValueAtTime(peakSub, t0 + 0.002);
-            subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
+            subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.028);
 
             osc.connect(gain);
             subOsc.connect(subGain);
@@ -1434,8 +1486,8 @@
 
             osc.start(t0);
             subOsc.start(t0);
-            osc.stop(t0 + 0.045);
-            subOsc.stop(t0 + 0.035);
+            osc.stop(t0 + 0.042);
+            subOsc.stop(t0 + 0.032);
 
             osc.onended = function() {
                 try {
@@ -1821,7 +1873,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.1.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.1.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
