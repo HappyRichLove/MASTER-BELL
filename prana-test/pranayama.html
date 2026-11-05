@@ -559,7 +559,7 @@
             <div class="stage-dot" id="dot3" title="Уджайи"></div>
             <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
         </div>
-        <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
+        <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~30 МИН</div>
         <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.6</div>
     </div>
 
@@ -723,6 +723,8 @@
             } catch (e) {}
         }
     }
+    window.addEventListener('beforeunload', flushGlobalPracticeTime);
+    window.addEventListener('pagehide', flushGlobalPracticeTime);
 
     /* =====================================================
        PRACTICE SETTINGS (WITH MAKS SPECS)
@@ -755,6 +757,9 @@
             // Strict override for fixed durations: 40s standard (Maks spec)
             settings.zamkiHoldTime = 40;
             settings.ujjayiHoldTime = 40;
+            if (parsed.zamkiHoldTime !== 40 || parsed.ujjayiHoldTime !== 40) {
+                try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
+            }
         }
     } catch (e) {
         console.warn('Could not load settings:', e);
@@ -1318,6 +1323,11 @@
        ===================================================== */
     function togglePlay() {
         unlockAudioSession();
+        if (els.startBtn.textContent === 'ЗАНОВО' || stageSecRemaining <= 0) {
+            handleFullReset();
+            startTimer();
+            return;
+        }
         if (isRunning) {
             pauseTimer();
         } else {
