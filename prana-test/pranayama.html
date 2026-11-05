@@ -560,7 +560,7 @@
             <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
         </div>
         <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
-        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.5</div>
+        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.6</div>
     </div>
 
     <!-- SETTINGS MODAL -->
@@ -626,32 +626,32 @@
 
                 <!-- ПРИМЕЧАНИЕ ПО ТЗ МАКСА: ПОСЛЕ КАПАЛАБХАТИ ОТДЫХ УБРАН! СРАЗУ ЗАМКИ! -->
 
-                <!-- 3. ЗАМКИ (БАНДХИ) — ЖЕСТКО 30 СЕК, НАСТРАИВАЮТСЯ ТОЛЬКО ПОВТОРЫ -->
+                <!-- 3. ЗАМКИ (БАНДХИ) — 40 СЕК / ЦИКЛ, ОБЩЕЕ ВРЕМЯ = ПОВТОРЫ * 40 С -->
                 <div class="setting-card">
                     <div class="setting-card-title">3. ЗАМКИ (БАНДХИ)</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Повторы:</span>
+                        <span class="stepper-label">Повторы (по 40 с):</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('zamkiReps', -1)">−</button>
                             <span class="step-value" id="val_zamkiReps">7</span>
                             <button class="step-btn" onclick="stepChange('zamkiReps', 1)">+</button>
                         </div>
                     </div>
-                    <div class="fixed-time-note">Время удержания: 30 с (фикс.)</div>
+                    <div class="fixed-time-note" id="note_zamkiTotal">Общее время: 4:40 (7 × 40 с)</div>
                 </div>
 
-                <!-- 4. УДЖАЙИ — ЖЕСТКО 25 СЕК, НАСТРАИВАЮТСЯ ТОЛЬКО ПОВТОРЫ -->
+                <!-- 4. УДЖАЙИ — 40 СЕК / ЦИКЛ, ОБЩЕЕ ВРЕМЯ = ПОВТОРЫ * 40 С -->
                 <div class="setting-card">
                     <div class="setting-card-title">4. УДЖАЙИ</div>
                     <div class="stepper-row">
-                        <span class="stepper-label">Повторы:</span>
+                        <span class="stepper-label">Повторы (по 40 с):</span>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('ujjayiReps', -1)">−</button>
                             <span class="step-value" id="val_ujjayiReps">5</span>
                             <button class="step-btn" onclick="stepChange('ujjayiReps', 1)">+</button>
                         </div>
                     </div>
-                    <div class="fixed-time-note">Время удержания: 25 с (фикс.)</div>
+                    <div class="fixed-time-note" id="note_ujjayiTotal">Общее время: 3:20 (5 × 40 с)</div>
                 </div>
 
                 <!-- 5. АНУЛОМ-ВИЛОМ -->
@@ -667,7 +667,7 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.0.5</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.0.6</div>
             </div>
         </div>
     </div>
@@ -735,9 +735,9 @@
         kapalaCycleTime: 120, // 2:00
         kapalaRestSec: 60,  // 60s rest between cycles
         zamkiReps: 7,       // 7 reps
-        zamkiHoldTime: 30,  // STRICT 30s (non-editable by Maks spec)
+        zamkiHoldTime: 40,  // STRICT 40s (Maks spec)
         ujjayiReps: 5,      // 5 reps
-        ujjayiHoldTime: 25, // STRICT 25s (non-editable by Maks spec)
+        ujjayiHoldTime: 40, // STRICT 40s (Maks spec)
         anulomTime: 600     // 10:00
     };
 
@@ -752,9 +752,9 @@
                     settings[k] = parsed[k];
                 }
             }
-            // Strict override for fixed durations
-            settings.zamkiHoldTime = 30;
-            settings.ujjayiHoldTime = 25;
+            // Strict override for fixed durations: 40s standard (Maks spec)
+            settings.zamkiHoldTime = 40;
+            settings.ujjayiHoldTime = 40;
         }
     } catch (e) {
         console.warn('Could not load settings:', e);
@@ -762,8 +762,8 @@
 
     function saveSettings() {
         try {
-            settings.zamkiHoldTime = 30;
-            settings.ujjayiHoldTime = 25;
+            settings.zamkiHoldTime = 40;
+            settings.ujjayiHoldTime = 40;
             localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
         } catch (e) {}
         updateBottomTotalLabel();
@@ -832,33 +832,35 @@
             }
         }
 
-        // 3. ЗАМКИ (БАНДХИ): жестко 30 сек, метроном стучит БЕЗ колоколов, бесшовный переход в Уджайи
+        // 3. ЗАМКИ (БАНДХИ): общее время = повторы * 40 с (стандарт Макса 40 с), метроном без звонков
         var zReps = Math.max(1, settings.zamkiReps);
-        for (var z = 1; z <= zReps; z++) {
-            list.push({
-                id: 'zamki_' + z, mainIndex: 2,
-                title: '3. ЗАМКИ (БАНДХИ)',
-                sub: 'ПОДХОД ' + z + ' ИЗ ' + zReps + ' (30 СЕК)',
-                duration: 30, // СТРОГО 30 СЕК
-                hasTick: true,
-                bellAtEnd: false, // БЕЗ звонков между подходами и в конце!
-                isRest: false
-            });
-        }
+        list.push({
+            id: 'zamki', mainIndex: 2,
+            title: '3. ЗАМКИ (БАНДХИ)',
+            sub: 'ПОДХОД 1 ИЗ ' + zReps + ' • 40 С',
+            duration: zReps * 40,
+            reps: zReps,
+            cycleSec: 40,
+            hasTick: true,
+            bellAtEnd: false, // БЕЗ звонков
+            isRest: false,
+            isMultiCycle: true
+        });
 
-        // 4. УДЖАЙИ: жестко 25 сек, метроном стучит БЕЗ колоколов, бесшовный переход в Анулом
+        // 4. УДЖАЙИ: общее время = повторы * 40 с (стандарт Макса 40 с), метроном без звонков, бесшовный переход в Анулом
         var uReps = Math.max(1, settings.ujjayiReps);
-        for (var u = 1; u <= uReps; u++) {
-            list.push({
-                id: 'ujjayi_' + u, mainIndex: 3,
-                title: '4. УДЖАЙИ',
-                sub: 'ПОДХОД ' + u + ' ИЗ ' + uReps + ' (25 СЕК)',
-                duration: 25, // СТРОГО 25 СЕК
-                hasTick: true,
-                bellAtEnd: false, // БЕЗ звонков между подходами и в конце!
-                isRest: false
-            });
-        }
+        list.push({
+            id: 'ujjayi', mainIndex: 3,
+            title: '4. УДЖАЙИ',
+            sub: 'ПОДХОД 1 ИЗ ' + uReps + ' • 40 С',
+            duration: uReps * 40,
+            reps: uReps,
+            cycleSec: 40,
+            hasTick: true,
+            bellAtEnd: false, // БЕЗ звонков
+            isRest: false,
+            isMultiCycle: true
+        });
 
         // 5. АНУЛОМ-ВИЛОМ: метроном стучит тише на 70% (30% громкости для глубокой медитации), завершается тибетским гонгом 196 Гц
         list.push({
@@ -1212,7 +1214,11 @@
         } else {
             els.practiceTitle.classList.remove('is-rest');
         }
-        els.practiceSubtitle.textContent = stage.sub || '';
+        if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
+            els.practiceSubtitle.textContent = 'ПОДХОД 1 ИЗ ' + stage.reps + ' • ' + stage.cycleSec + ' С';
+        } else {
+            els.practiceSubtitle.textContent = stage.sub || '';
+        }
         els.display.textContent = formatTime(stageSecRemaining);
         updateProgress();
         updateDots(stage.mainIndex);
@@ -1363,6 +1369,17 @@
         var now = Date.now();
         stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
         els.display.textContent = formatTime(stageSecRemaining);
+
+        // Multi-cycle stages (Zamki and Ujjayi): dynamically update subtitle with current approach & cycle countdown
+        if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
+            var elapsed = stage.duration - stageSecRemaining;
+            var currentRep = Math.min(stage.reps, Math.floor(elapsed / stage.cycleSec) + 1);
+            var secIntoRep = elapsed % stage.cycleSec;
+            var secInRepLeft = stage.cycleSec - secIntoRep;
+            if (stageSecRemaining <= 0) secInRepLeft = 0;
+            els.practiceSubtitle.textContent = 'ПОДХОД ' + currentRep + ' ИЗ ' + stage.reps + ' • ' + secInRepLeft + ' С';
+        }
+
         updateProgress();
 
         if (stageSecRemaining <= 0) {
@@ -1484,6 +1501,11 @@
         setValText('val_zamkiReps', settings.zamkiReps);
         setValText('val_ujjayiReps', settings.ujjayiReps);
         setValText('val_anulomTime', formatMMSS(settings.anulomTime));
+
+        var zSec = settings.zamkiReps * 40;
+        setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + settings.zamkiReps + ' × 40 с)');
+        var uSec = settings.ujjayiReps * 40;
+        setValText('note_ujjayiTotal', 'Общее время: ' + formatMMSS(uSec) + ' (' + settings.ujjayiReps + ' × 40 с)');
     }
 
     function formatMMSS(s) {
@@ -1509,7 +1531,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.0.5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.6').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }

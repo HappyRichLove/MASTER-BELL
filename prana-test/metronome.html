@@ -383,7 +383,7 @@
     } catch(e){}
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.0.5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.6').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
