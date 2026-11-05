@@ -476,6 +476,7 @@
             gap: 10px;
         }
         .step-btn {
+            position: relative;
             width: 30px;
             height: 30px;
             border-radius: 50%;
@@ -489,6 +490,11 @@
             justify-content: center;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+        }
+        .step-btn::before {
+            content: '';
+            position: absolute;
+            top: -7px; bottom: -7px; left: -7px; right: -7px;
         }
         .step-btn:active {
             transform: scale(0.9);
@@ -1003,8 +1009,10 @@
         if (!modal || !modal.classList.contains('open')) return;
         if (e.key >= '0' && e.key <= '9') {
             pressPin(e.key);
-        } else if (e.key === 'Backspace') {
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
             backspacePin();
+        } else if (e.key === 'Escape') {
+            clearPin();
         }
     });
 
@@ -1802,6 +1810,7 @@
     // Background sync on visibility change
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden && isRunning) {
+            requestScreenLock();
             var now = Date.now();
             stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
             els.display.textContent = formatTime(stageSecRemaining);
