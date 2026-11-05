@@ -355,6 +355,7 @@
             padding: 12px 18px max(24px, calc(14px + env(safe-area-inset-bottom, 0px)));
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -1094,7 +1095,7 @@
     function playTick(volScale) {
         try {
             if (!audio) return;
-            var scale = (typeof volScale === 'number') ? volScale : 1.0;
+            var scale = (typeof volScale === 'number' && isFinite(volScale) && volScale > 0) ? volScale : 1.0;
             var t0 = audio.currentTime;
 
             var osc = audio.createOscillator();
@@ -1140,6 +1141,16 @@
             subOsc.start(t0);
             osc.stop(t0 + 0.045);
             subOsc.stop(t0 + 0.035);
+
+            osc.onended = function() {
+                try {
+                    osc.disconnect();
+                    subOsc.disconnect();
+                    gain.disconnect();
+                    subGain.disconnect();
+                    lp.disconnect();
+                } catch(e){}
+            };
         } catch (e) {}
     }
 

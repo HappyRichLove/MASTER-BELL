@@ -220,8 +220,6 @@
 <script>
     document.addEventListener('touchstart', function(e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-    var lastTouchEnd = 0;
-    document.addEventListener('touchend', function(e) { var now = Date.now(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, { passive: false });
 
     var els = {
         display: document.getElementById('display'),
@@ -260,58 +258,74 @@
     }
 
     function playTick(volScale) {
-        if (!audio) return;
-        var scale = (typeof volScale === 'number') ? volScale : 1.0;
-        var t0 = audio.currentTime;
+        try {
+            if (!audio) return;
+            var scale = (typeof volScale === 'number' && isFinite(volScale) && volScale > 0) ? volScale : 1.0;
+            var t0 = audio.currentTime;
 
-        // Crisp, organic temple wood / bamboo click (warm, distinct, non-fatiguing)
-        var osc = audio.createOscillator();
-        var subOsc = audio.createOscillator();
-        var gain = audio.createGain();
-        var subGain = audio.createGain();
-        var lp = audio.createBiquadFilter();
+            // Crisp, organic temple wood / bamboo click (warm, distinct, non-fatiguing)
+            var osc = audio.createOscillator();
+            var subOsc = audio.createOscillator();
+            var gain = audio.createGain();
+            var subGain = audio.createGain();
+            var lp = audio.createBiquadFilter();
 
-        // Primary wooden resonant tone: 820 Hz -> 520 Hz rapid drop (24ms)
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(820, t0);
-        osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.024);
+            // Primary wooden resonant tone: 820 Hz -> 520 Hz rapid drop (24ms)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(820, t0);
+            osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.024);
 
-        // Acoustic chamber warmth: 380 Hz -> 240 Hz rapid drop (24ms)
-        subOsc.type = 'sine';
-        subOsc.frequency.setValueAtTime(380, t0);
-        subOsc.frequency.exponentialRampToValueAtTime(240, t0 + 0.024);
+            // Acoustic chamber warmth: 380 Hz -> 240 Hz rapid drop (24ms)
+            subOsc.type = 'sine';
+            subOsc.frequency.setValueAtTime(380, t0);
+            subOsc.frequency.exponentialRampToValueAtTime(240, t0 + 0.024);
 
-        // Resonant lowpass filter at 1600 Hz (Q=1.2) — cuts harsh 2-5 kHz treble spikes, 100% gentle on ears
-        lp.type = 'lowpass';
-        lp.frequency.setValueAtTime(1600, t0);
-        lp.Q.setValueAtTime(1.2, t0);
+            // Resonant lowpass filter at 1600 Hz (Q=1.2) — cuts harsh 2-5 kHz treble spikes, 100% gentle on ears
+            lp.type = 'lowpass';
+            lp.frequency.setValueAtTime(1600, t0);
+            lp.Q.setValueAtTime(1.2, t0);
 
-        // Envelopes: snappy 1.8ms attack (no digital click) + organic exponential decay
-        var peakMain = 0.22 * scale;
-        var peakSub = 0.08 * scale;
+            // Envelopes: snappy 1.8ms attack (no digital click) + organic exponential decay
+            var peakMain = 0.22 * scale;
+            var peakSub = 0.08 * scale;
 
-        gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.0018);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.040);
+            gain.gain.setValueAtTime(0.0001, t0);
+            gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.0018);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.040);
 
-        subGain.gain.setValueAtTime(0.0001, t0);
-        subGain.gain.linearRampToValueAtTime(peakSub, t0 + 0.002);
-        subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
+            subGain.gain.setValueAtTime(0.0001, t0);
+            subGain.gain.linearRampToValueAtTime(peakSub, t0 + 0.002);
+            subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
 
-        osc.connect(gain);
-        subOsc.connect(subGain);
-        gain.connect(lp);
-        subGain.connect(lp);
-        lp.connect(masterGain || audio.destination);
+            osc.connect(gain);
+            subOsc.connect(subGain);
+            gain.connect(lp);
+            subGain.connect(lp);
+            lp.connect(masterGain || audio.destination);
 
-        osc.start(t0);
-        subOsc.start(t0);
-        osc.stop(t0 + 0.045);
-        subOsc.stop(t0 + 0.035);
+            osc.start(t0);
+            subOsc.start(t0);
+            osc.stop(t0 + 0.045);
+            subOsc.stop(t0 + 0.035);
+
+            osc.onended = function() {
+                try {
+                    osc.disconnect();
+                    subOsc.disconnect();
+                    gain.disconnect();
+                    subGain.disconnect();
+                    lp.disconnect();
+                } catch(e){}
+            };
+        } catch (e) {}
     }
 
     function engine(now) {
         if (!state.running) return;
+        if (now - state.nextTick > 2000) {
+            // Skipped while in background — catch up without machine-gun stutter
+            state.nextTick = now;
+        }
         if (now >= state.nextTick) {
             state.sec++;
             state.totalGlobalSec++;
