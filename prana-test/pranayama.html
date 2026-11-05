@@ -559,7 +559,7 @@
             <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
         </div>
         <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~25 МИН</div>
-        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.4</div>
+        <div class="version-tag" style="font-size:0.52rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding-top:2px;">MASTER PRANA v1.0.5</div>
     </div>
 
     <!-- SETTINGS MODAL -->
@@ -666,7 +666,7 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.0.4</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.0.5</div>
             </div>
         </div>
     </div>
@@ -859,12 +859,13 @@
             });
         }
 
-        // 5. АНУЛОМ-ВИЛОМ: метроном стучит, завершается финальным тибетским гонгом 196 Гц
+        // 5. АНУЛОМ-ВИЛОМ: метроном стучит тише на 70% (30% громкости для глубокой медитации), завершается тибетским гонгом 196 Гц
         list.push({
             id: 'anulom', mainIndex: 4,
             title: '5. АНУЛОМ-ВИЛОМ', sub: 'ПОПЕРЕМЕННОЕ ДЫХАНИЕ',
             duration: settings.anulomTime,
             hasTick: true,
+            tickVolume: 0.30, // 70% тише базового уровня (для утонченного дыхания)
             bellAtEnd: false, // финальный гонг звучит на finishSession
             isRest: false,
             isLast: true
@@ -1089,10 +1090,11 @@
         } catch(e) {}
     }
 
-    /* WARM ORGANIC TEMPLE WOOD / BAMBOO TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
-    function playTick() {
+    /* CRISP ORGANIC TEMPLE WOOD / BAMBOO TICK — AUDIBLE, CRISP, GENTLE ON EARDRUMS */
+    function playTick(volScale) {
         try {
             if (!audio) return;
+            var scale = (typeof volScale === 'number') ? volScale : 1.0;
             var t0 = audio.currentTime;
 
             var osc = audio.createOscillator();
@@ -1101,27 +1103,31 @@
             var subGain = audio.createGain();
             var lp = audio.createBiquadFilter();
 
-            // Pure sine, mellow pitch drop (320 Hz -> 190 Hz)
+            // Primary wooden resonant tone: 820 Hz -> 520 Hz rapid drop (24ms)
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(320, t0);
-            osc.frequency.exponentialRampToValueAtTime(190, t0 + 0.035);
+            osc.frequency.setValueAtTime(820, t0);
+            osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.024);
 
-            // Grounding sub-body (150 Hz -> 85 Hz)
+            // Acoustic chamber warmth: 380 Hz -> 240 Hz rapid drop (24ms)
             subOsc.type = 'sine';
-            subOsc.frequency.setValueAtTime(150, t0);
-            subOsc.frequency.exponentialRampToValueAtTime(85, t0 + 0.025);
+            subOsc.frequency.setValueAtTime(380, t0);
+            subOsc.frequency.exponentialRampToValueAtTime(240, t0 + 0.024);
 
-            // Strict lowpass filter at 550 Hz — cuts ALL harsh frequencies
+            // Resonant lowpass filter at 1600 Hz (Q=1.2) — cuts harsh 2-5 kHz treble spikes, 100% gentle on ears
             lp.type = 'lowpass';
-            lp.frequency.setValueAtTime(550, t0);
+            lp.frequency.setValueAtTime(1600, t0);
+            lp.Q.setValueAtTime(1.2, t0);
 
-            // Cushion envelope: 5ms smooth fade-in (NO pop/click) + 38ms gentle decay
+            // Envelopes: snappy 1.8ms attack (no digital click) + organic exponential decay
+            var peakMain = 0.22 * scale;
+            var peakSub = 0.08 * scale;
+
             gain.gain.setValueAtTime(0.0001, t0);
-            gain.gain.linearRampToValueAtTime(0.22, t0 + 0.005);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.042);
+            gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.0018);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.040);
 
             subGain.gain.setValueAtTime(0.0001, t0);
-            subGain.gain.linearRampToValueAtTime(0.08, t0 + 0.004);
+            subGain.gain.linearRampToValueAtTime(peakSub, t0 + 0.002);
             subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
 
             osc.connect(gain);
@@ -1132,7 +1138,7 @@
 
             osc.start(t0);
             subOsc.start(t0);
-            osc.stop(t0 + 0.046);
+            osc.stop(t0 + 0.045);
             subOsc.stop(t0 + 0.035);
         } catch (e) {}
     }
@@ -1334,9 +1340,10 @@
         els.display.classList.add('pulse');
         setTimeout(function() { els.display.classList.remove('pulse'); }, 180);
 
-        // Metronome tick
+        // Metronome tick (with per-stage volume scaling, e.g. 70% quieter on Anulom-Vilom)
         if (stage.hasTick) {
-            playTick();
+            var volScale = (typeof stage.tickVolume === 'number') ? stage.tickVolume : 1.0;
+            playTick(volScale);
         }
 
         // Add to lifetime counter
@@ -1491,7 +1498,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.0.4').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.5').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }

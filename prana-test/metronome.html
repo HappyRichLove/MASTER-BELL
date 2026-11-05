@@ -259,38 +259,43 @@
         if (audio.state === 'suspended') audio.resume(); 
     }
 
-    function playTick() {
+    function playTick(volScale) {
         if (!audio) return;
+        var scale = (typeof volScale === 'number') ? volScale : 1.0;
         var t0 = audio.currentTime;
 
-        // Warm organic temple wood / bamboo tap
+        // Crisp, organic temple wood / bamboo click (warm, distinct, non-fatiguing)
         var osc = audio.createOscillator();
         var subOsc = audio.createOscillator();
         var gain = audio.createGain();
         var subGain = audio.createGain();
         var lp = audio.createBiquadFilter();
 
-        // Pure sine, mellow pitch drop (320 Hz -> 190 Hz)
+        // Primary wooden resonant tone: 820 Hz -> 520 Hz rapid drop (24ms)
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(320, t0);
-        osc.frequency.exponentialRampToValueAtTime(190, t0 + 0.035);
+        osc.frequency.setValueAtTime(820, t0);
+        osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.024);
 
-        // Grounding sub-body (150 Hz -> 85 Hz) for acoustic tactile solidity
+        // Acoustic chamber warmth: 380 Hz -> 240 Hz rapid drop (24ms)
         subOsc.type = 'sine';
-        subOsc.frequency.setValueAtTime(150, t0);
-        subOsc.frequency.exponentialRampToValueAtTime(85, t0 + 0.025);
+        subOsc.frequency.setValueAtTime(380, t0);
+        subOsc.frequency.exponentialRampToValueAtTime(240, t0 + 0.024);
 
-        // Strict lowpass filter at 550 Hz — cuts ALL harsh high frequencies, 100% gentle on eardrums
+        // Resonant lowpass filter at 1600 Hz (Q=1.2) — cuts harsh 2-5 kHz treble spikes, 100% gentle on ears
         lp.type = 'lowpass';
-        lp.frequency.setValueAtTime(550, t0);
+        lp.frequency.setValueAtTime(1600, t0);
+        lp.Q.setValueAtTime(1.2, t0);
 
-        // Cushion envelope: 5ms smooth fade-in (NO pop/click) + 38ms gentle decay
+        // Envelopes: snappy 1.8ms attack (no digital click) + organic exponential decay
+        var peakMain = 0.22 * scale;
+        var peakSub = 0.08 * scale;
+
         gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.linearRampToValueAtTime(0.22, t0 + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.042);
+        gain.gain.linearRampToValueAtTime(peakMain, t0 + 0.0018);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.040);
 
         subGain.gain.setValueAtTime(0.0001, t0);
-        subGain.gain.linearRampToValueAtTime(0.08, t0 + 0.004);
+        subGain.gain.linearRampToValueAtTime(peakSub, t0 + 0.002);
         subGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.030);
 
         osc.connect(gain);
@@ -301,7 +306,7 @@
 
         osc.start(t0);
         subOsc.start(t0);
-        osc.stop(t0 + 0.046);
+        osc.stop(t0 + 0.045);
         subOsc.stop(t0 + 0.035);
     }
 
@@ -364,7 +369,7 @@
     } catch(e){}
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.0.4').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.0.5').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
