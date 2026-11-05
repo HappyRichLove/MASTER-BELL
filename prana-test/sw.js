@@ -1,10 +1,8 @@
-/* Service Worker — MASTER PRANA v1.0.6 */
-var CACHE_NAME = 'master-prana-v1.0.6';
+/* Service Worker — MASTER PRANA v1.1.0 */
+var CACHE_NAME = 'master-prana-v1.1.0';
 var ASSETS = [
   './',
   './index.html',
-  './pranayama.html',
-  './metronome.html',
   './manifest.json',
   './favicon.svg',
   './apple-touch-icon.png',
