@@ -17,7 +17,7 @@
     <!-- DESIGN LIBRARIES & TYPOGRAPHY -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600;800&family=Montserrat:wght@200;400;600;800&family=Oswald:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;500;700;800&family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 
 
     <style>
@@ -844,8 +844,37 @@
         }
         .theme-name-toast.show { opacity: 1; }
 
+        /* SUMMARY TOTAL CONFIGURED TIME BANNER IN SETTINGS */
+        .settings-total-banner {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-align: center;
+        }
+        .settings-total-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+        .settings-total-value {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
         /* =====================================================
-           DESIGN STYLES OVERRIDES & ARCHITECTURE
+           DESIGN STYLES OVERRIDES & ARCHITECTURE (17 LAYOUTS)
            ===================================================== */
         /* 1. APPLE HIG / iOS SYSTEM (Liquid Glassmorphism) */
         body[data-design="apple"] {
@@ -1073,6 +1102,349 @@
             border: 1px solid var(--border);
         }
 
+    
+        /* -----------------------------------------------------
+           8. DYNAMIC DOCK (Bottom Sheet Controller Flow)
+           ----------------------------------------------------- */
+        body[data-design="dock"] {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            justify-content: flex-start;
+        }
+        body[data-design="dock"] .header-area {
+            order: 1;
+            padding-top: max(56px, calc(env(safe-area-inset-top, 44px) + 24px));
+            padding-bottom: 2px;
+        }
+        body[data-design="dock"] .center-stage {
+            order: 2;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        body[data-design="dock"] .timer-display {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: clamp(4.5rem, 16vw, 6.2rem);
+            font-weight: 800;
+        }
+        body[data-design="dock"] .controls-area {
+            background: rgba(20, 20, 24, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 36px;
+            padding: 16px 20px;
+            width: min(92vw, 360px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        body[data-design="dock"] .btn-main {
+            width: 170px;
+            height: 52px;
+            border-radius: 26px;
+        }
+        body[data-design="dock"] .bottom-zone {
+            order: 3;
+            padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 12px) + 8px));
+        }
+
+        /* -----------------------------------------------------
+           9. RADIAL ZEN POD (Orbital Concentric Dial)
+           ----------------------------------------------------- */
+        body[data-design="radial"] .center-stage {
+            width: min(88vw, 340px);
+            height: min(88vw, 340px);
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, rgba(0,0,0,0.8) 75%);
+            box-shadow: 0 0 35px var(--gold-glow), inset 0 0 25px rgba(0,0,0,0.9);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        body[data-design="radial"] .practice-header {
+            position: absolute;
+            top: 22px;
+            min-height: auto;
+        }
+        body[data-design="radial"] .timer-display {
+            margin-bottom: 0;
+            font-size: clamp(3.8rem, 13vw, 5.2rem);
+        }
+        body[data-design="radial"] .progress-wrapper {
+            position: absolute;
+            bottom: 30px;
+            width: 140px;
+            margin-bottom: 0;
+        }
+        body[data-design="radial"] .controls-area {
+            margin-top: 16px;
+        }
+
+        /* -----------------------------------------------------
+           10. SWISS RETRO HOROLOGY (Precision Dial)
+           ----------------------------------------------------- */
+        body[data-design="swiss"] {
+            font-family: "Oswald", sans-serif;
+            letter-spacing: 0.05em;
+        }
+        body[data-design="swiss"] .master-title {
+            font-family: "Oswald", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.35em;
+        }
+        body[data-design="swiss"] .practice-title {
+            font-family: "Oswald", sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            border-top: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            padding: 4px 18px;
+        }
+        body[data-design="swiss"] .timer-display {
+            font-family: "Oswald", sans-serif;
+            font-weight: 700;
+            font-size: clamp(4.6rem, 18vw, 6.4rem);
+        }
+        body[data-design="swiss"] .btn-main {
+            border-radius: 4px;
+            font-family: "Oswald", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        body[data-design="swiss"] .icon-btn {
+            border-radius: 4px;
+        }
+
+        /* -----------------------------------------------------
+           11. SMARTWATCH SPORT (Athletic High-Visibility HUD)
+           ----------------------------------------------------- */
+        body[data-design="sport"] {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 800;
+        }
+        body[data-design="sport"] .practice-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            background: var(--gold);
+            color: #000000;
+            padding: 4px 18px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px var(--gold-glow);
+        }
+        body[data-design="sport"] .timer-display {
+            font-weight: 900;
+            font-size: clamp(4.8rem, 18vw, 6.8rem);
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+        body[data-design="sport"] .progress-wrapper {
+            height: 8px;
+            border-radius: 4px;
+            width: min(84vw, 340px);
+        }
+        body[data-design="sport"] .btn-main {
+            height: 62px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            border-radius: 18px;
+        }
+
+        /* -----------------------------------------------------
+           12. INVERTED FLIP (Buttons Top, Dial Center)
+           ----------------------------------------------------- */
+        body[data-design="inverted"] {
+            display: flex;
+            flex-direction: column;
+        }
+        body[data-design="inverted"] .header-area {
+            order: 1;
+            padding-bottom: 2px;
+        }
+        body[data-design="inverted"] .controls-area {
+            order: 2;
+            margin-top: 6px;
+            margin-bottom: 12px;
+        }
+        body[data-design="inverted"] .center-stage {
+            order: 3;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        body[data-design="inverted"] .bottom-zone {
+            order: 4;
+        }
+
+        /* -----------------------------------------------------
+           13. KANBAN COMPACT CARD (Widget Capsule)
+           ----------------------------------------------------- */
+        body[data-design="kanban"] .center-stage {
+            background: #18181c;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 22px 18px;
+            width: min(92vw, 360px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+        }
+        body[data-design="kanban"] .practice-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 8px 14px;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        body[data-design="kanban"] .timer-display {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 18px;
+            width: 100%;
+            height: 100px;
+            margin-bottom: 16px;
+        }
+
+        /* -----------------------------------------------------
+           14. NEO-BRUTALISM (Bold Pop-Art Stark Shadows)
+           ----------------------------------------------------- */
+        body[data-design="brutalism"] {
+            font-family: "Syncopate", "Inter", sans-serif;
+            background-color: #0d0d0d;
+        }
+        body[data-design="brutalism"] .center-stage {
+            border: 3px solid var(--gold);
+            border-radius: 0;
+            background: #000000;
+            box-shadow: 8px 8px 0px var(--gold);
+            padding: 24px 18px;
+            width: min(90vw, 360px);
+        }
+        body[data-design="brutalism"] .timer-display {
+            font-weight: 800;
+            text-shadow: none;
+            color: #ffffff;
+        }
+        body[data-design="brutalism"] .btn-main {
+            border-radius: 0;
+            border: 3px solid #ffffff;
+            box-shadow: 6px 6px 0px #ffffff;
+            font-weight: 800;
+            color: #000000;
+        }
+        body[data-design="brutalism"] .icon-btn {
+            border-radius: 0;
+            border: 2px solid #ffffff;
+            box-shadow: 4px 4px 0px #ffffff;
+        }
+
+        /* -----------------------------------------------------
+           15. MONOLITH HERO DIAL (Maximalist Screen Digits)
+           ----------------------------------------------------- */
+        body[data-design="monolith"] .master-title {
+            font-size: 1.1rem;
+            letter-spacing: 0.4em;
+            opacity: 0.6;
+        }
+        body[data-design="monolith"] .badge-brand {
+            display: none;
+        }
+        body[data-design="monolith"] .center-stage {
+            flex-grow: 1;
+            justify-content: center;
+        }
+        body[data-design="monolith"] .timer-display {
+            font-size: clamp(5.8rem, 23vw, 8.2rem);
+            font-weight: 200;
+            letter-spacing: -0.05em;
+            height: auto;
+            margin-bottom: 6px;
+        }
+        body[data-design="monolith"] .practice-title {
+            font-size: 0.85rem;
+            letter-spacing: 0.35em;
+            opacity: 0.75;
+        }
+        body[data-design="monolith"] .btn-main {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* -----------------------------------------------------
+           16. AURORA GRADIENT CHILL (Dreamy Soft Neon Glow)
+           ----------------------------------------------------- */
+        body[data-design="aurora"] {
+            background: linear-gradient(180deg, #090914 0%, #120e22 50%, #050508 100%);
+        }
+        body[data-design="aurora"] .center-stage {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 40px;
+            padding: 28px 20px;
+            width: min(92vw, 360px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 50px rgba(130, 80, 250, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+        body[data-design="aurora"] .timer-display {
+            color: #ffffff;
+            text-shadow: 0 0 25px rgba(212, 175, 55, 0.6), 0 0 50px rgba(120, 80, 250, 0.4);
+        }
+        body[data-design="aurora"] .btn-main {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff8a65 100%);
+            border-radius: 30px;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(255, 138, 101, 0.4);
+        }
+
+        /* -----------------------------------------------------
+           17. MATRIX TECHNO CODE (Cyber Terminal Grid)
+           ----------------------------------------------------- */
+        body[data-design="matrix"] {
+            font-family: "JetBrains Mono", monospace;
+            background-color: #030804;
+        }
+        body[data-design="matrix"] .master-title {
+            font-family: "JetBrains Mono", monospace;
+            color: #22c55e;
+            text-shadow: 0 0 12px #22c55e;
+            font-size: 1.5rem;
+        }
+        body[data-design="matrix"] .badge-brand {
+            border-radius: 2px;
+            border-color: #22c55e;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.12);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+        }
+        body[data-design="matrix"] .center-stage {
+            border: 1px dashed #22c55e;
+            background: rgba(0, 15, 5, 0.85);
+            border-radius: 4px;
+            padding: 22px;
+            width: min(92vw, 360px);
+        }
+        body[data-design="matrix"] .timer-display {
+            font-family: "JetBrains Mono", monospace;
+            color: #4ade80;
+            text-shadow: 0 0 16px #22c55e;
+        }
+        body[data-design="matrix"] .btn-main {
+            border-radius: 2px;
+            border: 1px solid #22c55e;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            font-family: "JetBrains Mono", monospace;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+        }
+        body[data-design="matrix"] .icon-btn {
+            border-radius: 2px;
+            border-color: #22c55e;
+            color: #4ade80;
+        }
+
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -1139,9 +1511,10 @@
         </div>
     </main>
 
-    <!-- BOTTOM UNIFIED ZONE (INDICATORS, LIFETIME PRACTICE, VERSION) -->
+    <!-- BOTTOM UNIFIED ZONE (INDICATORS, LIFETIME DIGITS, VERSION) -->
     <div class="bottom-zone">
         <section class="stage-indicator-zone">
+            <div class="bottom-time-label" id="bottomLabel" style="display:none;"></div>
             <div class="dots-row">
                 <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
                 <div class="stage-dot" id="dot1" title="Капалабхати"></div>
@@ -1149,14 +1522,16 @@
                 <div class="stage-dot" id="dot3" title="Уджайи"></div>
                 <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
             </div>
-            <div class="bottom-time-label" id="bottomLabel" style="display:none;"></div>
         </section>
 
-        <!-- LIFETIME CAPSULE MOVED TO SETTINGS -->
+        <!-- CLEAN LIFETIME STATS ON MAIN (DIGITS ONLY, NO WORDS) -->
+        <div class="bottom-lifetime-capsule" title="Накопленное время практик">
+            <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
+        </div>
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.3.0</div>
+            <div class="version-tag">MASTER PRANA v1.4.0</div>
         </footer>
     </div>
 
@@ -1262,14 +1637,13 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; padding:10px 0 4px;">
-                    <div class="bottom-lifetime-capsule" style="display:inline-flex; margin:0 auto;">
-                        <span class="lifetime-caption">В ПРАКТИКЕ</span>
-                        <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
-                    </div>
+                <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
+                <div class="settings-total-banner">
+                    <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
+                    <div class="settings-total-value" id="settingsTotalVal">~28 МИНУТ (1680 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.3.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.4.0</div>
             </div>
         </div>
     </div>
@@ -2027,7 +2401,11 @@
         var pl = buildPipeline();
         pl.forEach(function(st) { totalSec += st.duration; });
         var totalMin = Math.round(totalSec / 60);
-        els.bottomLabel.textContent = 'ОБЩЕЕ ВРЕМЯ ~' + totalMin + ' МИН';
+        if (els.bottomLabel) els.bottomLabel.textContent = 'ОБЩЕЕ ВРЕМЯ ~' + totalMin + ' МИН';
+        var bannerVal = document.getElementById('settingsTotalVal');
+        if (bannerVal) {
+            bannerVal.textContent = '~' + totalMin + ' МИНУТ (' + totalSec + ' С)';
+        }
     }
 
     function requestScreenLock() {
@@ -2305,13 +2683,23 @@
     var THEME_KEY = 'mp_theme_idx';
 
     var designStyles = [
-        { id: 'zen', name: 'Медитативный Дзен', desc: 'Оригинальный минимализм, чистый фокус и золотые акценты' },
-        { id: 'apple', name: 'Apple iOS (Glass)', desc: 'Стекло Liquid Glassmorphism, мягкие радиусы, шрифты SF Pro' },
-        { id: 'google', name: 'Google Material 3', desc: 'Выразительные карточки, мягкие формы, шрифт Google Sans' },
-        { id: 'meta', name: 'Meta Flow', desc: 'Современный чистый дизайн, шрифт Inter, структурированные блоки' },
-        { id: 'notion', name: 'Notion Mono', desc: 'Строгий моноширинный редакторский стиль JetBrains Mono' },
-        { id: 'cyberpunk', name: 'Cyberpunk HUD', desc: 'Неоновый голографический интерфейс, футуристичный шрифт' },
-        { id: 'luxury', name: 'Vogue Luxury', desc: 'Королевская антиква Cinzel и Playfair, благородный стиль' }
+        { id: 'zen', name: '1. Дзен Минимализм', desc: 'Оригинальный благородный фокус без лишних рамок' },
+        { id: 'apple', name: '2. Apple Liquid Glass', desc: 'Стеклянная парящая капсула, размытие 25px, SF Pro' },
+        { id: 'google', name: '3. Google Material 3', desc: 'Мягкие формы 32px, шрифт Google Sans, полноразмерная кнопка' },
+        { id: 'meta', name: '4. Meta Modern Flow', desc: 'Структура от края до края, шрифт Inter, разделители' },
+        { id: 'notion', name: '5. Notion Mono Tech', desc: 'Строгий моноширинный редакторский стиль JetBrains Mono' },
+        { id: 'cyberpunk', name: '6. Cyberpunk HUD', desc: 'Неоновый голографический терминал, скошенные кнопки' },
+        { id: 'luxury', name: '7. Vogue Luxury Gold', desc: 'Королевская антиква Cinzel и Playfair, ювелирные рамки' },
+        { id: 'dock', name: '8. Dynamic Bottom Dock', desc: 'Контроллеры в парящем нижнем доке, крупный таймер' },
+        { id: 'radial', name: '9. Radial Zen Pod', desc: 'Круглый концентрический сферический циферблат' },
+        { id: 'swiss', name: '10. Swiss Horology', desc: 'Швейцарский прецизионный хронометр, шрифт Oswald' },
+        { id: 'sport', name: '11. Sport Smartwatch', desc: 'Спортивный высококонтрастный бейдж, жирный шрифт' },
+        { id: 'inverted', name: '12. Inverted Controls', desc: 'Кнопки сверху, циферблат в центре, обратная иерархия' },
+        { id: 'kanban', name: '13. Kanban Widget Pod', desc: 'Модульный виджет с отдельными блоками статуса' },
+        { id: 'brutalism', name: '14. Neo-Brutalism', desc: 'Контрастные жесткие тени со смещением, поп-арт' },
+        { id: 'monolith', name: '15. Hero Monolith', desc: 'Гигантские цифры на весь экран, круглая кнопка' },
+        { id: 'aurora', name: '16. Aurora Gradient', desc: 'Мягкий градиентный фон и неоновое сияние заката' },
+        { id: 'matrix', name: '17. Matrix Terminal', desc: 'Кибернетический терминал с зеленым матричным светом' }
     ];
 
     var themes = [
