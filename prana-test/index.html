@@ -143,6 +143,7 @@
             margin-top: 4px;
             opacity: 0.85;
             text-align: center;
+            display: none;
         }
 
         /* TIMER DISPLAY */
@@ -674,9 +675,57 @@
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
+
+        /* THEME SWITCHER BUTTON (TEMPORARY FOR DESIGN TESTING) */
+        .theme-switch-btn {
+            position: fixed;
+            top: max(12px, env(safe-area-inset-top, 12px));
+            right: 12px;
+            z-index: 900;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s;
+        }
+        .theme-switch-btn:active { transform: scale(0.88); }
+        .theme-name-toast {
+            position: fixed;
+            top: max(50px, calc(env(safe-area-inset-top, 12px) + 38px));
+            right: 12px;
+            z-index: 901;
+            background: rgba(30,30,30,0.92);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .theme-name-toast.show { opacity: 1; }
     </style>
 </head>
 <body oncontextmenu="return false;">
+
+    <!-- THEME SWITCHER (TEMPORARY FOR MAKS TESTING) -->
+    <button class="theme-switch-btn" id="themeSwitchBtn" onclick="cycleTheme()" title="Переключить палитру">🎨</button>
+    <div class="theme-name-toast" id="themeNameToast"></div>
 
     <!-- TOP HEADER ZONE -->
     <header class="header-area">
@@ -687,7 +736,7 @@
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
     <main class="center-stage">
         <div class="practice-header">
-            <div class="practice-title" id="stageTitle">1. БХАСТРИКА</div>
+            <div class="practice-title" id="stageTitle">БХАСТРИКА</div>
             <div class="practice-subtitle" id="stageSubtitle">ДЫХАНИЕ ОГНЯ</div>
         </div>
 
@@ -713,12 +762,6 @@
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                     </svg>
                 </button>
-                <button class="icon-btn" onclick="skipStage()" title="Пропустить этап">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                        <line x1="19" y1="5" x2="19" y2="19"></line>
-                    </svg>
-                </button>
             </div>
         </div>
     </main>
@@ -729,22 +772,18 @@
             <div class="dots-row">
                 <div class="stage-dot active" id="dot0" title="Бхастрика"></div>
                 <div class="stage-dot" id="dot1" title="Капалабхати"></div>
-                <div class="stage-dot" id="dot2" title="Замки (Бандхи)"></div>
+                <div class="stage-dot" id="dot2" title="Замки"></div>
                 <div class="stage-dot" id="dot3" title="Уджайи"></div>
                 <div class="stage-dot" id="dot4" title="Анулом-Вилом"></div>
             </div>
-            <div class="bottom-time-label" id="bottomLabel">ОБЩЕЕ ВРЕМЯ ~30 МИН</div>
+            <div class="bottom-time-label" id="bottomLabel" style="display:none;"></div>
         </section>
 
-        <!-- REFINED LIFETIME ACCUMULATED PRACTICE CAPSULE -->
-        <div class="bottom-lifetime-capsule">
-            <span class="lifetime-caption">В ПРАКТИКЕ</span>
-            <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
-        </div>
+        <!-- LIFETIME CAPSULE MOVED TO SETTINGS -->
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.1.1</div>
+            <div class="version-tag">MASTER PRANA v1.2.0</div>
         </footer>
     </div>
 
@@ -759,7 +798,7 @@
             <div class="modal-scroll">
                 <!-- 1. БХАСТРИКА -->
                 <div class="setting-card">
-                    <div class="setting-card-title">1. БХАСТРИКА</div>
+                    <div class="setting-card-title">БХАСТРИКА</div>
                     <div class="stepper-row">
                         <span class="stepper-label">Время дыхания:</span>
                         <div class="stepper-ctrls">
@@ -782,7 +821,7 @@
 
                 <!-- 2. КАПАЛАБХАТИ -->
                 <div class="setting-card">
-                    <div class="setting-card-title">2. КАПАЛАБХАТИ</div>
+                    <div class="setting-card-title">КАПАЛАБХАТИ</div>
                     <div class="stepper-row">
                         <span class="stepper-label">Количество циклов:</span>
                         <div class="stepper-ctrls">
@@ -811,7 +850,7 @@
 
                 <!-- 3. ЗАМКИ (БАНДХИ) — 40 СЕК / ЦИКЛ, ОБЩЕЕ ВРЕМЯ = ПОВТОРЫ * 40 С -->
                 <div class="setting-card">
-                    <div class="setting-card-title">3. ЗАМКИ (БАНДХИ)</div>
+                    <div class="setting-card-title">ЗАМКИ</div>
                     <div class="stepper-row">
                         <span class="stepper-label">Повторы (по 40 с):</span>
                         <div class="stepper-ctrls">
@@ -825,7 +864,7 @@
 
                 <!-- 4. УДЖАЙИ — 40 СЕК / ЦИКЛ, ОБЩЕЕ ВРЕМЯ = ПОВТОРЫ * 40 С -->
                 <div class="setting-card">
-                    <div class="setting-card-title">4. УДЖАЙИ</div>
+                    <div class="setting-card-title">УДЖАЙИ</div>
                     <div class="stepper-row">
                         <span class="stepper-label">Повторы (по 40 с):</span>
                         <div class="stepper-ctrls">
@@ -839,7 +878,7 @@
 
                 <!-- 5. АНУЛОМ-ВИЛОМ -->
                 <div class="setting-card">
-                    <div class="setting-card-title">5. АНУЛОМ-ВИЛОМ</div>
+                    <div class="setting-card-title">АНУЛОМ-ВИЛОМ</div>
                     <div class="stepper-row">
                         <span class="stepper-label">Время дыхания:</span>
                         <div class="stepper-ctrls">
@@ -850,7 +889,14 @@
                     </div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.1.1</div>
+                <div style="text-align:center; padding:10px 0 4px;">
+                    <div class="bottom-lifetime-capsule" style="display:inline-flex; margin:0 auto;">
+                        <span class="lifetime-caption">В ПРАКТИКЕ</span>
+                        <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
+                    </div>
+                </div>
+
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.2.0</div>
             </div>
         </div>
     </div>
@@ -1113,7 +1159,7 @@
         // 1. БХАСТРИКА: в конце цикла звучит колокол начала отдыха
         list.push({
             id: 'bhastrika', mainIndex: 0,
-            title: '1. БХАСТРИКА', sub: 'ДЫХАНИЕ',
+            title: 'БХАСТРИКА', sub: 'ДЫХАНИЕ',
             duration: settings.bhastrikaTime,
             hasTick: true,
             bellAtEnd: true,
@@ -1138,8 +1184,8 @@
             var isLastKapala = (c === kCycles);
             list.push({
                 id: 'kapala_' + c, mainIndex: 1,
-                title: '2. КАПАЛАБХАТИ',
-                sub: 'ЦИКЛ ' + c + ' ИЗ ' + kCycles,
+                title: 'КАПАЛАБХАТИ',
+                sub: '',
                 duration: settings.kapalaCycleTime,
                 hasTick: true,
                 bellAtEnd: true,
@@ -1151,7 +1197,7 @@
                 list.push({
                     id: 'kapala_rest_' + c, mainIndex: 1,
                     title: 'ОТДЫХ',
-                    sub: 'МЕЖДУ ЦИКЛАМИ (' + c + '/' + (kCycles - 1) + ')',
+                    sub: '',
                     duration: settings.kapalaRestSec,
                     hasTick: false,
                     bellAtEnd: true,
@@ -1164,7 +1210,7 @@
         var zReps = Math.max(1, settings.zamkiReps);
         list.push({
             id: 'zamki', mainIndex: 2,
-            title: '3. ЗАМКИ (БАНДХИ)',
+            title: 'ЗАМКИ',
             sub: 'ПОДХОД 1 ИЗ ' + zReps + ' • 40 С',
             duration: zReps * 40,
             reps: zReps,
@@ -1179,7 +1225,7 @@
         var uReps = Math.max(1, settings.ujjayiReps);
         list.push({
             id: 'ujjayi', mainIndex: 3,
-            title: '4. УДЖАЙИ',
+            title: 'УДЖАЙИ',
             sub: 'ПОДХОД 1 ИЗ ' + uReps + ' • 40 С',
             duration: uReps * 40,
             reps: uReps,
@@ -1193,7 +1239,7 @@
         // 5. АНУЛОМ-ВИЛОМ: метроном стучит тише на 70% (30% громкости для глубокой медитации), завершается тибетским гонгом 196 Гц
         list.push({
             id: 'anulom', mainIndex: 4,
-            title: '5. АНУЛОМ-ВИЛОМ', sub: 'ПОПЕРЕМЕННОЕ ДЫХАНИЕ',
+            title: 'АНУЛОМ-ВИЛОМ', sub: '',
             duration: settings.anulomTime,
             hasTick: true,
             tickVolume: 0.30,
@@ -1435,7 +1481,7 @@
         try {
             initAudio();
             stopActiveBells();
-            playBowl(196.00, 2, 0.55, 0.45, 0.04, 1.2);
+            playBowl(196.00, 2, 0.55, 0.45, 0.04, 0.24);
         } catch(e) {}
     }
 
@@ -1566,7 +1612,7 @@
         }
 
         if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
-            els.practiceSubtitle.textContent = 'ПОДХОД 1 ИЗ ' + stage.reps + ' • ' + stage.cycleSec + ' С';
+            els.practiceSubtitle.textContent = '';
         } else {
             els.practiceSubtitle.textContent = stage.sub || '';
         }
@@ -1704,12 +1750,7 @@
 
         // Multi-cycle stages (Zamki and Ujjayi)
         if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
-            var elapsed = stage.duration - stageSecRemaining;
-            var currentRep = Math.min(stage.reps, Math.floor(elapsed / stage.cycleSec) + 1);
-            var secIntoRep = elapsed % stage.cycleSec;
-            var secInRepLeft = stage.cycleSec - secIntoRep;
-            if (stageSecRemaining <= 0) secInRepLeft = 0;
-            els.practiceSubtitle.textContent = 'ПОДХОД ' + currentRep + ' ИЗ ' + stage.reps + ' • ' + secInRepLeft + ' С';
+            // Subtitle hidden — no cycle display
         }
 
         updateProgress();
@@ -1873,7 +1914,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.1.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.2.0').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -1883,6 +1924,99 @@
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initApp();
     }
+
+    /* =====================================================
+       20 COLOR PALETTES FOR MAKS TESTING (TEMPORARY)
+       ===================================================== */
+    var THEME_KEY = 'mp_theme_idx';
+    var themes = [
+        { name: '1. Золото (оригинал)',   bg:'#000000', surface:'#121214', gold:'#d4af37', text:'#ffffff', accent:'#8e8e93', rest:'#38bdf8', border:'rgba(212,175,55,0.22)', goldGlow:'rgba(212,175,55,0.45)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(212,175,55,0.12)', badgeBorder:'rgba(212,175,55,0.45)' },
+        { name: '2. Лунный серебро',       bg:'#0a0a0f', surface:'#14141a', gold:'#c0c0c0', text:'#e8e8ee', accent:'#7a7a88', rest:'#60a5fa', border:'rgba(192,192,192,0.20)', goldGlow:'rgba(192,192,192,0.35)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(192,192,192,0.10)', badgeBorder:'rgba(192,192,192,0.35)' },
+        { name: '3. Глубокий индиго',      bg:'#060612', surface:'#0e0e1e', gold:'#818cf8', text:'#e0e0f0', accent:'#6366a0', rest:'#34d399', border:'rgba(129,140,248,0.22)', goldGlow:'rgba(129,140,248,0.40)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(129,140,248,0.12)', badgeBorder:'rgba(129,140,248,0.40)' },
+        { name: '4. Изумруд',              bg:'#020e08', surface:'#0a1a12', gold:'#34d399', text:'#d0f0e0', accent:'#4a7a60', rest:'#fbbf24', border:'rgba(52,211,153,0.22)', goldGlow:'rgba(52,211,153,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(52,211,153,0.12)', badgeBorder:'rgba(52,211,153,0.40)' },
+        { name: '5. Рассвет (медь)',       bg:'#0c0806', surface:'#161010', gold:'#c2724e', text:'#f0e0d4', accent:'#8a6a5a', rest:'#60a5fa', border:'rgba(194,114,78,0.22)', goldGlow:'rgba(194,114,78,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(194,114,78,0.12)', badgeBorder:'rgba(194,114,78,0.40)' },
+        { name: '6. Роза кварц',           bg:'#0e0608', surface:'#180e12', gold:'#f472b6', text:'#f8e0ea', accent:'#9a6a7a', rest:'#a78bfa', border:'rgba(244,114,182,0.22)', goldGlow:'rgba(244,114,182,0.35)', restGlow:'rgba(167,139,250,0.35)', badgeBg:'rgba(244,114,182,0.10)', badgeBorder:'rgba(244,114,182,0.35)' },
+        { name: '7. Аметист',              bg:'#0a060e', surface:'#140e18', gold:'#a78bfa', text:'#e8daf0', accent:'#7a6a90', rest:'#38bdf8', border:'rgba(167,139,250,0.22)', goldGlow:'rgba(167,139,250,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(167,139,250,0.12)', badgeBorder:'rgba(167,139,250,0.40)' },
+        { name: '8. Арктический лёд',      bg:'#040810', surface:'#0c1018', gold:'#38bdf8', text:'#d0e8f8', accent:'#5a7a90', rest:'#fbbf24', border:'rgba(56,189,248,0.22)', goldGlow:'rgba(56,189,248,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(56,189,248,0.12)', badgeBorder:'rgba(56,189,248,0.40)' },
+        { name: '9. Шафран',               bg:'#0c0804', surface:'#16120a', gold:'#f59e0b', text:'#f8ecd0', accent:'#8a7a50', rest:'#60a5fa', border:'rgba(245,158,11,0.22)', goldGlow:'rgba(245,158,11,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(245,158,11,0.12)', badgeBorder:'rgba(245,158,11,0.40)' },
+        { name: '10. Рубин',               bg:'#0c0404', surface:'#160a0a', gold:'#ef4444', text:'#f8d4d4', accent:'#9a5a5a', rest:'#38bdf8', border:'rgba(239,68,68,0.22)', goldGlow:'rgba(239,68,68,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(239,68,68,0.10)', badgeBorder:'rgba(239,68,68,0.35)' },
+        { name: '11. Бирюза',              bg:'#040a0c', surface:'#0a1416', gold:'#2dd4bf', text:'#d0f0ea', accent:'#5a8a80', rest:'#f472b6', border:'rgba(45,212,191,0.22)', goldGlow:'rgba(45,212,191,0.40)', restGlow:'rgba(244,114,182,0.35)', badgeBg:'rgba(45,212,191,0.12)', badgeBorder:'rgba(45,212,191,0.40)' },
+        { name: '12. Лаванда',             bg:'#0a0810', surface:'#141018', gold:'#c4b5fd', text:'#e8e0f8', accent:'#8a80a0', rest:'#34d399', border:'rgba(196,181,253,0.22)', goldGlow:'rgba(196,181,253,0.35)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(196,181,253,0.10)', badgeBorder:'rgba(196,181,253,0.35)' },
+        { name: '13. Полночный синий',     bg:'#02060e', surface:'#0a0e18', gold:'#3b82f6', text:'#d0daf8', accent:'#5a6a90', rest:'#fbbf24', border:'rgba(59,130,246,0.22)', goldGlow:'rgba(59,130,246,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(59,130,246,0.12)', badgeBorder:'rgba(59,130,246,0.40)' },
+        { name: '14. Янтарь',              bg:'#0c0a04', surface:'#161406', gold:'#fbbf24', text:'#f8f0d0', accent:'#8a8050', rest:'#38bdf8', border:'rgba(251,191,36,0.22)', goldGlow:'rgba(251,191,36,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(251,191,36,0.10)', badgeBorder:'rgba(251,191,36,0.35)' },
+        { name: '15. Нефрит',              bg:'#040c06', surface:'#0a160e', gold:'#22c55e', text:'#d0f0da', accent:'#4a8a5a', rest:'#f472b6', border:'rgba(34,197,94,0.22)', goldGlow:'rgba(34,197,94,0.40)', restGlow:'rgba(244,114,182,0.35)', badgeBg:'rgba(34,197,94,0.12)', badgeBorder:'rgba(34,197,94,0.40)' },
+        { name: '16. Тёплый песок',        bg:'#0c0a08', surface:'#161410', gold:'#d4a574', text:'#f0e8dc', accent:'#8a7a6a', rest:'#60a5fa', border:'rgba(212,165,116,0.22)', goldGlow:'rgba(212,165,116,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(212,165,116,0.12)', badgeBorder:'rgba(212,165,116,0.40)' },
+        { name: '17. Космос (пурпур)',     bg:'#08040c', surface:'#100a14', gold:'#d946ef', text:'#f0d8f8', accent:'#8a5a9a', rest:'#34d399', border:'rgba(217,70,239,0.22)', goldGlow:'rgba(217,70,239,0.40)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(217,70,239,0.10)', badgeBorder:'rgba(217,70,239,0.35)' },
+        { name: '18. Платина',             bg:'#080808', surface:'#121212', gold:'#a3a3a3', text:'#e0e0e0', accent:'#6a6a6a', rest:'#38bdf8', border:'rgba(163,163,163,0.20)', goldGlow:'rgba(163,163,163,0.30)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(163,163,163,0.08)', badgeBorder:'rgba(163,163,163,0.30)' },
+        { name: '19. Мятный бриз',         bg:'#040c0a', surface:'#0a1614', gold:'#6ee7b7', text:'#d4f4e8', accent:'#5a9a80', rest:'#a78bfa', border:'rgba(110,231,183,0.22)', goldGlow:'rgba(110,231,183,0.35)', restGlow:'rgba(167,139,250,0.35)', badgeBg:'rgba(110,231,183,0.10)', badgeBorder:'rgba(110,231,183,0.35)' },
+        { name: '20. Белоснежный',         bg:'#f4f2ee', surface:'#ffffff', gold:'#8b7355', text:'#1a1a1a', accent:'#6a6a6a', rest:'#2563eb', border:'rgba(139,115,85,0.25)', goldGlow:'rgba(139,115,85,0.25)', restGlow:'rgba(37,99,235,0.30)', badgeBg:'rgba(139,115,85,0.10)', badgeBorder:'rgba(139,115,85,0.35)' }
+    ];
+
+    var currentThemeIdx = 0;
+    try {
+        var savedIdx = parseInt(localStorage.getItem(THEME_KEY), 10);
+        if (!isNaN(savedIdx) && savedIdx >= 0 && savedIdx < themes.length) {
+            currentThemeIdx = savedIdx;
+        }
+    } catch(e) {}
+
+    function applyTheme(idx) {
+        var t = themes[idx];
+        if (!t) return;
+        var r = document.documentElement.style;
+        r.setProperty('--bg', t.bg);
+        r.setProperty('--surface', t.surface);
+        r.setProperty('--surface-elevated', t.surface);
+        r.setProperty('--gold', t.gold);
+        r.setProperty('--text', t.text);
+        r.setProperty('--accent', t.accent);
+        r.setProperty('--rest-color', t.rest);
+        r.setProperty('--border', t.border);
+        r.setProperty('--gold-glow', t.goldGlow);
+        r.setProperty('--rest-glow', t.restGlow);
+        document.body.style.backgroundColor = t.bg;
+
+        // Update badge
+        var badge = document.querySelector('.badge-brand');
+        if (badge) {
+            badge.style.color = t.gold;
+            badge.style.background = t.badgeBg;
+            badge.style.borderColor = t.badgeBorder;
+            badge.style.boxShadow = '0 0 16px ' + t.goldGlow + ', inset 0 0 10px ' + t.badgeBg;
+            badge.style.textShadow = '0 0 12px ' + t.goldGlow;
+        }
+
+        // Update btn-main
+        var btn = document.querySelector('.btn-main');
+        if (btn) {
+            btn.style.background = t.gold;
+            btn.style.boxShadow = '0 8px 25px ' + t.goldGlow;
+            btn.style.color = (idx === 19) ? '#ffffff' : '#000000';
+        }
+    }
+
+    function cycleTheme() {
+        currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+        applyTheme(currentThemeIdx);
+        try { localStorage.setItem(THEME_KEY, currentThemeIdx.toString()); } catch(e) {}
+        var tn = document.getElementById('themeNameToast');
+        if (tn) {
+            tn.textContent = themes[currentThemeIdx].name;
+            tn.classList.add('show');
+            clearTimeout(tn._tid);
+            tn._tid = setTimeout(function() { tn.classList.remove('show'); }, 1800);
+        }
+    }
+
+    // Apply saved theme on load
+    if (currentThemeIdx > 0) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() { applyTheme(currentThemeIdx); });
+        } else {
+            applyTheme(currentThemeIdx);
+        }
+    }
+
 </script>
 </body>
 </html>
