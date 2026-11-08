@@ -17,7 +17,7 @@
     <!-- DESIGN LIBRARIES & TYPOGRAPHY -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600;800&family=Montserrat:wght@200;400;600;800&family=Oswald:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;500;700;800&family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 
     <style>
@@ -681,170 +681,84 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        
         /* =====================================================
-           DESIGN SYSTEM SWITCHER (MULTI-STYLE INTERFACES)
+           MASTER PRANA v1.5.0 — SPORT SMARTWATCH DESIGN SYSTEM
+           (Selected: Variant 11 with Default Gold Palette)
+           Backup of other favorites: Variant 12 (Inverted), Variant 1 (Zen)
+           stored in _PROJECT_CORE/DESIGN_CATALOG.md
            ===================================================== */
-        .design-switch-bar {
-            position: fixed;
-            top: max(16px, calc(env(safe-area-inset-top, 20px) + 6px));
-            right: 16px;
-            z-index: 1200;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .design-btn {
-            background: rgba(30, 30, 35, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 20px;
-            padding: 6px 12px;
-            color: #ffffff;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            cursor: pointer;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .design-btn:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .design-sheet-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.82);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 2500;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        .design-sheet-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .design-sheet {
-            background: #141416;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            width: 100%;
-            max-width: 480px;
-            max-height: 80vh;
-            padding: 18px 20px max(24px, calc(16px + env(safe-area-inset-bottom, 0px)));
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
-            transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .design-sheet-overlay.open .design-sheet {
-            transform: translateY(0);
-        }
-
-        .design-sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .design-sheet-title {
-            font-size: 0.95rem;
+        body {
+            font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-weight: 800;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #fff;
         }
 
-        .design-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            overflow-y: auto;
-            max-height: 60vh;
-            padding-right: 4px;
-        }
-
-        .design-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-        }
-        .design-card:active {
-            transform: scale(0.96);
-        }
-        .design-card.active {
-            border-color: var(--gold);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 14px var(--gold-glow);
-        }
-        .design-card-name {
-            font-size: 0.82rem;
+        .master-title {
+            font-family: "Montserrat", -apple-system, sans-serif;
             font-weight: 700;
-            color: #fff;
-        }
-        .design-card-desc {
-            font-size: 0.65rem;
-            color: #8e8e93;
-            line-height: 1.25;
-        }
-        .design-card-preview {
-            display: flex;
-            gap: 5px;
-            margin-top: 6px;
-        }
-        .design-color-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.2);
+            letter-spacing: 0.32em;
+            text-indent: 0.32em;
         }
 
-        .theme-name-toast {
-            position: fixed;
-            top: max(60px, calc(env(safe-area-inset-top, 20px) + 48px));
-            right: 16px;
-            z-index: 1201;
-            background: rgba(20, 20, 24, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+        .badge-brand {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.28em;
+            text-indent: 0.28em;
+        }
+
+        .practice-title {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            font-size: clamp(1.1rem, 4.2vw, 1.45rem);
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            background: var(--gold);
+            color: #000000;
+            padding: 5px 22px;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px var(--gold-glow);
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .practice-title.is-rest {
+            background: var(--rest-color);
+            color: #000000;
+            box-shadow: 0 4px 18px var(--rest-glow);
+        }
+
+        .timer-display {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            font-weight: 900;
+            font-size: clamp(4.6rem, 17vw, 6.5rem);
             color: #ffffff;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.68rem;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-            white-space: nowrap;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            letter-spacing: -0.02em;
         }
-        .theme-name-toast.show { opacity: 1; }
 
-        /* SUMMARY TOTAL CONFIGURED TIME BANNER IN SETTINGS */
+        .progress-wrapper {
+            height: 7px;
+            border-radius: 4px;
+            width: min(84vw, 340px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .progress-bar {
+            border-radius: 4px;
+        }
+
+        .btn-main {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            height: 60px;
+            font-size: 1.25rem;
+            font-weight: 900;
+            border-radius: 18px;
+            letter-spacing: 0.14em;
+        }
+
+        .icon-btn {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            border-radius: 16px;
+        }
+
         .settings-total-banner {
             background: rgba(212, 175, 55, 0.08);
             border: 1px solid var(--border);
@@ -860,617 +774,21 @@
         }
         .settings-total-label {
             font-size: 0.62rem;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.15em;
             color: var(--accent);
             text-transform: uppercase;
         }
         .settings-total-value {
             font-size: 1.05rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--gold);
             letter-spacing: 0.06em;
             text-shadow: 0 0 10px var(--gold-glow);
         }
-
-        /* =====================================================
-           DESIGN STYLES OVERRIDES & ARCHITECTURE (17 LAYOUTS)
-           ===================================================== */
-        /* 1. APPLE HIG / iOS SYSTEM (Liquid Glassmorphism) */
-        body[data-design="apple"] {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-        }
-        body[data-design="apple"] .master-title {
-            font-weight: 300;
-            letter-spacing: 0.22em;
-        }
-        body[data-design="apple"] .center-stage {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 36px;
-            padding: 24px 20px;
-            width: min(92vw, 380px);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-        }
-        body[data-design="apple"] .timer-display {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-            font-weight: 200;
-            letter-spacing: -0.03em;
-        }
-        body[data-design="apple"] .btn-main {
-            border-radius: 28px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        /* 2. GOOGLE MATERIAL 3 (Expressive & Pill Cards) */
-        body[data-design="google"] {
-            font-family: "Google Sans", "Roboto", sans-serif;
-        }
-        body[data-design="google"] .master-title {
-            font-weight: 400;
-            letter-spacing: 0.12em;
-        }
-        body[data-design="google"] .badge-brand {
-            border-radius: 8px;
-            font-weight: 700;
-        }
-        body[data-design="google"] .center-stage {
-            background: var(--surface);
-            border-radius: 32px;
-            padding: 26px 20px;
-            width: min(90vw, 360px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--border);
-        }
-        body[data-design="google"] .timer-display {
-            font-family: "Google Sans", sans-serif;
-            font-weight: 400;
-        }
-        body[data-design="google"] .btn-main {
-            border-radius: 16px;
-            font-weight: 700;
-            height: 54px;
-            width: 100%;
-            max-width: 280px;
-        }
-        body[data-design="google"] .icon-btn {
-            border-radius: 16px;
-        }
-
-        /* 3. META / FACEBOOK (Connected Clean Flow) */
-        body[data-design="meta"] {
-            font-family: "Inter", -apple-system, sans-serif;
-        }
-        body[data-design="meta"] .master-title {
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: none;
-        }
-        body[data-design="meta"] .badge-brand {
-            border-radius: 6px;
-            padding: 3px 10px;
-        }
-        body[data-design="meta"] .center-stage {
-            width: 100%;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            padding: 24px 16px;
-            background: rgba(255, 255, 255, 0.015);
-        }
-        body[data-design="meta"] .btn-main {
-            border-radius: 12px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            height: 50px;
-        }
-        body[data-design="meta"] .icon-btn {
-            border-radius: 12px;
-        }
-
-        /* 4. NOTION / MINIMALIST MONO (Editor Cleanliness) */
-        body[data-design="notion"] {
-            font-family: "JetBrains Mono", monospace;
-        }
-        body[data-design="notion"] .master-title {
-            font-family: "JetBrains Mono", monospace;
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            font-size: 1.6rem;
-        }
-        body[data-design="notion"] .badge-brand {
-            font-family: "JetBrains Mono", monospace;
-            border-radius: 4px;
-            border: 1px solid #333;
-            background: #111;
-            box-shadow: none;
-            text-shadow: none;
-        }
-        body[data-design="notion"] .practice-title {
-            font-family: "JetBrains Mono", monospace;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-        }
-        body[data-design="notion"] .timer-display {
-            font-family: "JetBrains Mono", monospace;
-            font-weight: 300;
-            text-shadow: none;
-        }
-        body[data-design="notion"] .progress-wrapper {
-            border-radius: 0;
-            height: 2px;
-        }
-        body[data-design="notion"] .progress-bar {
-            box-shadow: none;
-            border-radius: 0;
-        }
-        body[data-design="notion"] .btn-main {
-            border-radius: 6px;
-            font-family: "JetBrains Mono", monospace;
-            font-weight: 600;
-            box-shadow: none;
-            border: 1px solid var(--border);
-        }
-        body[data-design="notion"] .icon-btn {
-            border-radius: 6px;
-            box-shadow: none;
-        }
-        body[data-design="notion"] .stage-dot {
-            border-radius: 2px;
-        }
-
-        /* 5. CYBERPUNK NEO-TOKYO (HUD Tech Glow) */
-        body[data-design="cyberpunk"] {
-            font-family: "Space Grotesk", sans-serif;
-        }
-        body[data-design="cyberpunk"] .master-title {
-            font-family: "Space Grotesk", sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-            text-shadow: 0 0 20px var(--gold), 0 0 40px var(--gold);
-        }
-        body[data-design="cyberpunk"] .center-stage {
-            border: 1px solid var(--gold);
-            box-shadow: 0 0 25px var(--gold-glow), inset 0 0 15px rgba(0, 240, 255, 0.1);
-            background: rgba(0, 0, 0, 0.85);
-            padding: 24px;
-            border-radius: 4px;
-            width: min(92vw, 370px);
-            position: relative;
-        }
-        body[data-design="cyberpunk"] .timer-display {
-            font-family: "Space Grotesk", sans-serif;
-            font-weight: 700;
-            text-shadow: 0 0 20px var(--gold), 0 0 40px var(--gold);
-        }
-        body[data-design="cyberpunk"] .btn-main {
-            border-radius: 0;
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            box-shadow: 0 0 20px var(--gold-glow);
-        }
-        body[data-design="cyberpunk"] .icon-btn {
-            border-radius: 2px;
-            border-color: var(--gold);
-        }
-
-        /* 6. VOGUE / LUXURY SERIF (Haute Horlogerie Elegance) */
-        body[data-design="luxury"] {
-            font-family: "Cinzel", "Playfair Display", serif;
-        }
-        body[data-design="luxury"] .master-title {
-            font-family: "Cinzel", serif;
-            font-weight: 600;
-            letter-spacing: 0.45em;
-            text-indent: 0.45em;
-        }
-        body[data-design="luxury"] .badge-brand {
-            font-family: "Cinzel", serif;
-            letter-spacing: 0.35em;
-            border-radius: 0;
-            border: 1px solid var(--gold);
-            background: transparent;
-        }
-        body[data-design="luxury"] .practice-title {
-            font-family: "Cinzel", serif;
-            letter-spacing: 0.35em;
-            font-weight: 600;
-        }
-        body[data-design="luxury"] .timer-display {
-            font-family: "Playfair Display", serif;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            font-style: italic;
-        }
-        body[data-design="luxury"] .btn-main {
-            border-radius: 0;
-            border: 1px solid var(--gold);
-            font-family: "Cinzel", serif;
-            font-weight: 600;
-            letter-spacing: 0.25em;
-            background: transparent;
-            color: var(--gold);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-        }
-        body[data-design="luxury"] .icon-btn {
-            border-radius: 0;
-            border: 1px solid var(--border);
-        }
-
-    
-        /* -----------------------------------------------------
-           8. DYNAMIC DOCK (Bottom Sheet Controller Flow)
-           ----------------------------------------------------- */
-        body[data-design="dock"] {
-            font-family: "Plus Jakarta Sans", sans-serif;
-            justify-content: flex-start;
-        }
-        body[data-design="dock"] .header-area {
-            order: 1;
-            padding-top: max(56px, calc(env(safe-area-inset-top, 44px) + 24px));
-            padding-bottom: 2px;
-        }
-        body[data-design="dock"] .center-stage {
-            order: 2;
-            flex-grow: 1;
-            justify-content: center;
-        }
-        body[data-design="dock"] .timer-display {
-            font-family: "Plus Jakarta Sans", sans-serif;
-            font-size: clamp(4.5rem, 16vw, 6.2rem);
-            font-weight: 800;
-        }
-        body[data-design="dock"] .controls-area {
-            background: rgba(20, 20, 24, 0.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 36px;
-            padding: 16px 20px;
-            width: min(92vw, 360px);
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-            flex-direction: row;
-            justify-content: space-between;
-        }
-        body[data-design="dock"] .btn-main {
-            width: 170px;
-            height: 52px;
-            border-radius: 26px;
-        }
-        body[data-design="dock"] .bottom-zone {
-            order: 3;
-            padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 12px) + 8px));
-        }
-
-        /* -----------------------------------------------------
-           9. RADIAL ZEN POD (Orbital Concentric Dial)
-           ----------------------------------------------------- */
-        body[data-design="radial"] .center-stage {
-            width: min(88vw, 340px);
-            height: min(88vw, 340px);
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, rgba(0,0,0,0.8) 75%);
-            box-shadow: 0 0 35px var(--gold-glow), inset 0 0 25px rgba(0,0,0,0.9);
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        body[data-design="radial"] .practice-header {
-            position: absolute;
-            top: 22px;
-            min-height: auto;
-        }
-        body[data-design="radial"] .timer-display {
-            margin-bottom: 0;
-            font-size: clamp(3.8rem, 13vw, 5.2rem);
-        }
-        body[data-design="radial"] .progress-wrapper {
-            position: absolute;
-            bottom: 30px;
-            width: 140px;
-            margin-bottom: 0;
-        }
-        body[data-design="radial"] .controls-area {
-            margin-top: 16px;
-        }
-
-        /* -----------------------------------------------------
-           10. SWISS RETRO HOROLOGY (Precision Dial)
-           ----------------------------------------------------- */
-        body[data-design="swiss"] {
-            font-family: "Oswald", sans-serif;
-            letter-spacing: 0.05em;
-        }
-        body[data-design="swiss"] .master-title {
-            font-family: "Oswald", sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-        }
-        body[data-design="swiss"] .practice-title {
-            font-family: "Oswald", sans-serif;
-            font-weight: 500;
-            letter-spacing: 0.28em;
-            border-top: 2px solid var(--gold);
-            border-bottom: 2px solid var(--gold);
-            padding: 4px 18px;
-        }
-        body[data-design="swiss"] .timer-display {
-            font-family: "Oswald", sans-serif;
-            font-weight: 700;
-            font-size: clamp(4.6rem, 18vw, 6.4rem);
-        }
-        body[data-design="swiss"] .btn-main {
-            border-radius: 4px;
-            font-family: "Oswald", sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }
-        body[data-design="swiss"] .icon-btn {
-            border-radius: 4px;
-        }
-
-        /* -----------------------------------------------------
-           11. SMARTWATCH SPORT (Athletic High-Visibility HUD)
-           ----------------------------------------------------- */
-        body[data-design="sport"] {
-            font-family: "Montserrat", sans-serif;
-            font-weight: 800;
-        }
-        body[data-design="sport"] .practice-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #ffffff;
-            background: var(--gold);
-            color: #000000;
-            padding: 4px 18px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px var(--gold-glow);
-        }
-        body[data-design="sport"] .timer-display {
-            font-weight: 900;
-            font-size: clamp(4.8rem, 18vw, 6.8rem);
-            color: #ffffff;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-        }
-        body[data-design="sport"] .progress-wrapper {
-            height: 8px;
-            border-radius: 4px;
-            width: min(84vw, 340px);
-        }
-        body[data-design="sport"] .btn-main {
-            height: 62px;
-            font-size: 1.3rem;
-            font-weight: 900;
-            border-radius: 18px;
-        }
-
-        /* -----------------------------------------------------
-           12. INVERTED FLIP (Buttons Top, Dial Center)
-           ----------------------------------------------------- */
-        body[data-design="inverted"] {
-            display: flex;
-            flex-direction: column;
-        }
-        body[data-design="inverted"] .header-area {
-            order: 1;
-            padding-bottom: 2px;
-        }
-        body[data-design="inverted"] .controls-area {
-            order: 2;
-            margin-top: 6px;
-            margin-bottom: 12px;
-        }
-        body[data-design="inverted"] .center-stage {
-            order: 3;
-            flex-grow: 1;
-            justify-content: center;
-        }
-        body[data-design="inverted"] .bottom-zone {
-            order: 4;
-        }
-
-        /* -----------------------------------------------------
-           13. KANBAN COMPACT CARD (Widget Capsule)
-           ----------------------------------------------------- */
-        body[data-design="kanban"] .center-stage {
-            background: #18181c;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 22px 18px;
-            width: min(92vw, 360px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-        }
-        body[data-design="kanban"] .practice-header {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 8px 14px;
-            width: 100%;
-            margin-bottom: 14px;
-        }
-        body[data-design="kanban"] .timer-display {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 18px;
-            width: 100%;
-            height: 100px;
-            margin-bottom: 16px;
-        }
-
-        /* -----------------------------------------------------
-           14. NEO-BRUTALISM (Bold Pop-Art Stark Shadows)
-           ----------------------------------------------------- */
-        body[data-design="brutalism"] {
-            font-family: "Syncopate", "Inter", sans-serif;
-            background-color: #0d0d0d;
-        }
-        body[data-design="brutalism"] .center-stage {
-            border: 3px solid var(--gold);
-            border-radius: 0;
-            background: #000000;
-            box-shadow: 8px 8px 0px var(--gold);
-            padding: 24px 18px;
-            width: min(90vw, 360px);
-        }
-        body[data-design="brutalism"] .timer-display {
-            font-weight: 800;
-            text-shadow: none;
-            color: #ffffff;
-        }
-        body[data-design="brutalism"] .btn-main {
-            border-radius: 0;
-            border: 3px solid #ffffff;
-            box-shadow: 6px 6px 0px #ffffff;
-            font-weight: 800;
-            color: #000000;
-        }
-        body[data-design="brutalism"] .icon-btn {
-            border-radius: 0;
-            border: 2px solid #ffffff;
-            box-shadow: 4px 4px 0px #ffffff;
-        }
-
-        /* -----------------------------------------------------
-           15. MONOLITH HERO DIAL (Maximalist Screen Digits)
-           ----------------------------------------------------- */
-        body[data-design="monolith"] .master-title {
-            font-size: 1.1rem;
-            letter-spacing: 0.4em;
-            opacity: 0.6;
-        }
-        body[data-design="monolith"] .badge-brand {
-            display: none;
-        }
-        body[data-design="monolith"] .center-stage {
-            flex-grow: 1;
-            justify-content: center;
-        }
-        body[data-design="monolith"] .timer-display {
-            font-size: clamp(5.8rem, 23vw, 8.2rem);
-            font-weight: 200;
-            letter-spacing: -0.05em;
-            height: auto;
-            margin-bottom: 6px;
-        }
-        body[data-design="monolith"] .practice-title {
-            font-size: 0.85rem;
-            letter-spacing: 0.35em;
-            opacity: 0.75;
-        }
-        body[data-design="monolith"] .btn-main {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-        }
-
-        /* -----------------------------------------------------
-           16. AURORA GRADIENT CHILL (Dreamy Soft Neon Glow)
-           ----------------------------------------------------- */
-        body[data-design="aurora"] {
-            background: linear-gradient(180deg, #090914 0%, #120e22 50%, #050508 100%);
-        }
-        body[data-design="aurora"] .center-stage {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 40px;
-            padding: 28px 20px;
-            width: min(92vw, 360px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 50px rgba(130, 80, 250, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-        }
-        body[data-design="aurora"] .timer-display {
-            color: #ffffff;
-            text-shadow: 0 0 25px rgba(212, 175, 55, 0.6), 0 0 50px rgba(120, 80, 250, 0.4);
-        }
-        body[data-design="aurora"] .btn-main {
-            background: linear-gradient(135deg, var(--gold) 0%, #ff8a65 100%);
-            border-radius: 30px;
-            color: #ffffff;
-            box-shadow: 0 10px 30px rgba(255, 138, 101, 0.4);
-        }
-
-        /* -----------------------------------------------------
-           17. MATRIX TECHNO CODE (Cyber Terminal Grid)
-           ----------------------------------------------------- */
-        body[data-design="matrix"] {
-            font-family: "JetBrains Mono", monospace;
-            background-color: #030804;
-        }
-        body[data-design="matrix"] .master-title {
-            font-family: "JetBrains Mono", monospace;
-            color: #22c55e;
-            text-shadow: 0 0 12px #22c55e;
-            font-size: 1.5rem;
-        }
-        body[data-design="matrix"] .badge-brand {
-            border-radius: 2px;
-            border-color: #22c55e;
-            color: #22c55e;
-            background: rgba(34, 197, 94, 0.12);
-            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
-        }
-        body[data-design="matrix"] .center-stage {
-            border: 1px dashed #22c55e;
-            background: rgba(0, 15, 5, 0.85);
-            border-radius: 4px;
-            padding: 22px;
-            width: min(92vw, 360px);
-        }
-        body[data-design="matrix"] .timer-display {
-            font-family: "JetBrains Mono", monospace;
-            color: #4ade80;
-            text-shadow: 0 0 16px #22c55e;
-        }
-        body[data-design="matrix"] .btn-main {
-            border-radius: 2px;
-            border: 1px solid #22c55e;
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-            font-family: "JetBrains Mono", monospace;
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
-        }
-        body[data-design="matrix"] .icon-btn {
-            border-radius: 2px;
-            border-color: #22c55e;
-            color: #4ade80;
-        }
-
     </style>
 </head>
 <body oncontextmenu="return false;">
-
-    <!-- DESIGN & THEME SWITCHER -->
-    <div class="design-switch-bar">
-        <button class="design-btn" onclick="openDesignSheet()" title="Выбрать дизайн">
-            <span>🎨 ДИЗАЙН</span>
-        </button>
-        <button class="design-btn" onclick="cycleTheme()" title="Следующая палитра">
-            <span id="themeQuickLabel">1/20</span>
-        </button>
-    </div>
-    <div class="theme-name-toast" id="themeNameToast"></div>
-
-    <!-- DESIGN SELECTION SHEET -->
-    <div class="design-sheet-overlay" id="designSheet" onclick="closeDesignSheet(event)">
-        <div class="design-sheet" onclick="event.stopPropagation()">
-            <div class="design-sheet-header">
-                <div class="design-sheet-title">🎨 ДИЗАЙНЫ И ПАЛИТРЫ</div>
-                <button class="modal-close-btn" onclick="closeDesignSheet()">ГОТОВО</button>
-            </div>
-            <div style="font-size:0.68rem; color:#8e8e93; padding: 2px 0 6px;">Выберите стиль интерфейса и цветовую гармонию:</div>
-            <div class="design-grid" id="designGrid"></div>
-        </div>
-    </div>
 
     <!-- TOP HEADER ZONE -->
     <header class="header-area">
@@ -1531,7 +849,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.4.0</div>
+            <div class="version-tag">MASTER PRANA v1.5.0</div>
         </footer>
     </div>
 
@@ -1643,7 +961,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~28 МИНУТ (1680 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.4.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.5.0</div>
             </div>
         </div>
     </div>
@@ -2676,171 +1994,6 @@
         initApp();
     }
 
-    /* =====================================================
-       MULTI-STYLE DESIGN SYSTEMS & 20 COLOR PALETTES
-       ===================================================== */
-    var DESIGN_KEY = 'mp_design_style';
-    var THEME_KEY = 'mp_theme_idx';
-
-    var designStyles = [
-        { id: 'zen', name: '1. Дзен Минимализм', desc: 'Оригинальный благородный фокус без лишних рамок' },
-        { id: 'apple', name: '2. Apple Liquid Glass', desc: 'Стеклянная парящая капсула, размытие 25px, SF Pro' },
-        { id: 'google', name: '3. Google Material 3', desc: 'Мягкие формы 32px, шрифт Google Sans, полноразмерная кнопка' },
-        { id: 'meta', name: '4. Meta Modern Flow', desc: 'Структура от края до края, шрифт Inter, разделители' },
-        { id: 'notion', name: '5. Notion Mono Tech', desc: 'Строгий моноширинный редакторский стиль JetBrains Mono' },
-        { id: 'cyberpunk', name: '6. Cyberpunk HUD', desc: 'Неоновый голографический терминал, скошенные кнопки' },
-        { id: 'luxury', name: '7. Vogue Luxury Gold', desc: 'Королевская антиква Cinzel и Playfair, ювелирные рамки' },
-        { id: 'dock', name: '8. Dynamic Bottom Dock', desc: 'Контроллеры в парящем нижнем доке, крупный таймер' },
-        { id: 'radial', name: '9. Radial Zen Pod', desc: 'Круглый концентрический сферический циферблат' },
-        { id: 'swiss', name: '10. Swiss Horology', desc: 'Швейцарский прецизионный хронометр, шрифт Oswald' },
-        { id: 'sport', name: '11. Sport Smartwatch', desc: 'Спортивный высококонтрастный бейдж, жирный шрифт' },
-        { id: 'inverted', name: '12. Inverted Controls', desc: 'Кнопки сверху, циферблат в центре, обратная иерархия' },
-        { id: 'kanban', name: '13. Kanban Widget Pod', desc: 'Модульный виджет с отдельными блоками статуса' },
-        { id: 'brutalism', name: '14. Neo-Brutalism', desc: 'Контрастные жесткие тени со смещением, поп-арт' },
-        { id: 'monolith', name: '15. Hero Monolith', desc: 'Гигантские цифры на весь экран, круглая кнопка' },
-        { id: 'aurora', name: '16. Aurora Gradient', desc: 'Мягкий градиентный фон и неоновое сияние заката' },
-        { id: 'matrix', name: '17. Matrix Terminal', desc: 'Кибернетический терминал с зеленым матричным светом' }
-    ];
-
-    var themes = [
-        { name: '1. Золото (оригинал)',   bg:'#000000', surface:'#121214', gold:'#d4af37', text:'#ffffff', accent:'#8e8e93', rest:'#38bdf8', border:'rgba(212,175,55,0.22)', goldGlow:'rgba(212,175,55,0.45)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(212,175,55,0.12)', badgeBorder:'rgba(212,175,55,0.45)' },
-        { name: '2. Лунное серебро',      bg:'#0a0a0f', surface:'#14141a', gold:'#c0c0c0', text:'#e8e8ee', accent:'#7a7a88', rest:'#60a5fa', border:'rgba(192,192,192,0.20)', goldGlow:'rgba(192,192,192,0.35)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(192,192,192,0.10)', badgeBorder:'rgba(192,192,192,0.35)' },
-        { name: '3. Глубокий индиго',     bg:'#060612', surface:'#0e0e1e', gold:'#818cf8', text:'#e0e0f0', accent:'#6366a0', rest:'#34d399', border:'rgba(129,140,248,0.22)', goldGlow:'rgba(129,140,248,0.40)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(129,140,248,0.12)', badgeBorder:'rgba(129,140,248,0.40)' },
-        { name: '4. Изумруд',             bg:'#020e08', surface:'#0a1a12', gold:'#34d399', text:'#d0f0e0', accent:'#4a7a60', rest:'#fbbf24', border:'rgba(52,211,153,0.22)', goldGlow:'rgba(52,211,153,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(52,211,153,0.12)', badgeBorder:'rgba(52,211,153,0.40)' },
-        { name: '5. Рассвет (медь)',      bg:'#0c0806', surface:'#161010', gold:'#c2724e', text:'#f0e0d4', accent:'#8a6a5a', rest:'#60a5fa', border:'rgba(194,114,78,0.22)', goldGlow:'rgba(194,114,78,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(194,114,78,0.12)', badgeBorder:'rgba(194,114,78,0.40)' },
-        { name: '6. Роза кварц',          bg:'#0e0608', surface:'#180e12', gold:'#f472b6', text:'#f8e0ea', accent:'#9a6a7a', rest:'#a78bfa', border:'rgba(244,114,182,0.22)', goldGlow:'rgba(244,114,182,0.35)', restGlow:'rgba(167,139,250,0.35)', badgeBg:'rgba(244,114,182,0.10)', badgeBorder:'rgba(244,114,182,0.35)' },
-        { name: '7. Аметист',             bg:'#0a060e', surface:'#140e18', gold:'#a78bfa', text:'#e8daf0', accent:'#7a6a90', rest:'#38bdf8', border:'rgba(167,139,250,0.22)', goldGlow:'rgba(167,139,250,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(167,139,250,0.12)', badgeBorder:'rgba(167,139,250,0.40)' },
-        { name: '8. Арктический лёд',     bg:'#040810', surface:'#0c1018', gold:'#38bdf8', text:'#d0e8f8', accent:'#5a7a90', rest:'#fbbf24', border:'rgba(56,189,248,0.22)', goldGlow:'rgba(56,189,248,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(56,189,248,0.12)', badgeBorder:'rgba(56,189,248,0.40)' },
-        { name: '9. Шафран',              bg:'#0c0804', surface:'#16120a', gold:'#f59e0b', text:'#f8ecd0', accent:'#8a7a50', rest:'#60a5fa', border:'rgba(245,158,11,0.22)', goldGlow:'rgba(245,158,11,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(245,158,11,0.12)', badgeBorder:'rgba(245,158,11,0.40)' },
-        { name: '10. Рубин',              bg:'#0c0404', surface:'#160a0a', gold:'#ef4444', text:'#f8d4d4', accent:'#9a5a5a', rest:'#38bdf8', border:'rgba(239,68,68,0.22)', goldGlow:'rgba(239,68,68,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(239,68,68,0.10)', badgeBorder:'rgba(239,68,68,0.35)' },
-        { name: '11. Бирюза',             bg:'#040a0c', surface:'#0a1416', gold:'#2dd4bf', text:'#d0f0ea', accent:'#5a8a80', rest:'#f472b6', border:'rgba(45,212,191,0.22)', goldGlow:'rgba(45,212,191,0.40)', restGlow:'rgba(244,114,182,0.35)', badgeBg:'rgba(45,212,191,0.12)', badgeBorder:'rgba(45,212,191,0.40)' },
-        { name: '12. Лаванда',            bg:'#0a0810', surface:'#141018', gold:'#c4b5fd', text:'#e8e0f8', accent:'#8a80a0', rest:'#34d399', border:'rgba(196,181,253,0.22)', goldGlow:'rgba(196,181,253,0.35)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(196,181,253,0.10)', badgeBorder:'rgba(196,181,253,0.35)' },
-        { name: '13. Полночный синий',    bg:'#02060e', surface:'#0a0e18', gold:'#3b82f6', text:'#d0daf8', accent:'#5a6a90', rest:'#fbbf24', border:'rgba(59,130,246,0.22)', goldGlow:'rgba(59,130,246,0.40)', restGlow:'rgba(251,191,36,0.35)', badgeBg:'rgba(59,130,246,0.12)', badgeBorder:'rgba(59,130,246,0.40)' },
-        { name: '14. Янтарь',             bg:'#0c0a04', surface:'#161406', gold:'#fbbf24', text:'#f8f0d0', accent:'#8a8050', rest:'#38bdf8', border:'rgba(251,191,36,0.22)', goldGlow:'rgba(251,191,36,0.40)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(251,191,36,0.10)', badgeBorder:'rgba(251,191,36,0.35)' },
-        { name: '15. Нефрит',             bg:'#040c06', surface:'#0a160e', gold:'#22c55e', text:'#d0f0da', accent:'#4a8a5a', rest:'#f472b6', border:'rgba(34,197,94,0.22)', goldGlow:'rgba(34,197,94,0.40)', restGlow:'rgba(244,114,182,0.35)', badgeBg:'rgba(34,197,94,0.12)', badgeBorder:'rgba(34,197,94,0.40)' },
-        { name: '16. Тёплый песок',       bg:'#0c0a08', surface:'#161410', gold:'#d4a574', text:'#f0e8dc', accent:'#8a7a6a', rest:'#60a5fa', border:'rgba(212,165,116,0.22)', goldGlow:'rgba(212,165,116,0.40)', restGlow:'rgba(96,165,250,0.35)', badgeBg:'rgba(212,165,116,0.12)', badgeBorder:'rgba(212,165,116,0.40)' },
-        { name: '17. Космос (пурпур)',    bg:'#08040c', surface:'#100a14', gold:'#d946ef', text:'#f0d8f8', accent:'#8a5a9a', rest:'#34d399', border:'rgba(217,70,239,0.22)', goldGlow:'rgba(217,70,239,0.40)', restGlow:'rgba(52,211,153,0.35)', badgeBg:'rgba(217,70,239,0.10)', badgeBorder:'rgba(217,70,239,0.35)' },
-        { name: '18. Платина',            bg:'#080808', surface:'#121212', gold:'#a3a3a3', text:'#e0e0e0', accent:'#6a6a6a', rest:'#38bdf8', border:'rgba(163,163,163,0.20)', goldGlow:'rgba(163,163,163,0.30)', restGlow:'rgba(56,189,248,0.35)', badgeBg:'rgba(163,163,163,0.08)', badgeBorder:'rgba(163,163,163,0.30)' },
-        { name: '19. Мятный бриз',        bg:'#040c0a', surface:'#0a1614', gold:'#6ee7b7', text:'#d4f4e8', accent:'#5a9a80', rest:'#a78bfa', border:'rgba(110,231,183,0.22)', goldGlow:'rgba(110,231,183,0.35)', restGlow:'rgba(167,139,250,0.35)', badgeBg:'rgba(110,231,183,0.10)', badgeBorder:'rgba(110,231,183,0.35)' },
-        { name: '20. Белоснежный',        bg:'#f4f2ee', surface:'#ffffff', gold:'#8b7355', text:'#1a1a1a', accent:'#6a6a6a', rest:'#2563eb', border:'rgba(139,115,85,0.25)', goldGlow:'rgba(139,115,85,0.25)', restGlow:'rgba(37,99,235,0.30)', badgeBg:'rgba(139,115,85,0.10)', badgeBorder:'rgba(139,115,85,0.35)' }
-    ];
-
-    var currentDesign = 'zen';
-    var currentThemeIdx = 0;
-
-    try {
-        var savedDesign = localStorage.getItem(DESIGN_KEY);
-        if (savedDesign) currentDesign = savedDesign;
-        var savedIdx = parseInt(localStorage.getItem(THEME_KEY), 10);
-        if (!isNaN(savedIdx) && savedIdx >= 0 && savedIdx < themes.length) {
-            currentThemeIdx = savedIdx;
-        }
-    } catch(e) {}
-
-    function applyDesign(designId) {
-        currentDesign = designId || 'zen';
-        document.body.setAttribute('data-design', currentDesign);
-        try { localStorage.setItem(DESIGN_KEY, currentDesign); } catch(e) {}
-        renderDesignGrid();
-    }
-
-    function applyTheme(idx) {
-        var t = themes[idx];
-        if (!t) return;
-        var r = document.documentElement.style;
-        r.setProperty('--bg', t.bg);
-        r.setProperty('--surface', t.surface);
-        r.setProperty('--surface-elevated', t.surface);
-        r.setProperty('--gold', t.gold);
-        r.setProperty('--text', t.text);
-        r.setProperty('--accent', t.accent);
-        r.setProperty('--rest-color', t.rest);
-        r.setProperty('--border', t.border);
-        r.setProperty('--gold-glow', t.goldGlow);
-        r.setProperty('--rest-glow', t.restGlow);
-        document.body.style.backgroundColor = t.bg;
-
-        var badge = document.querySelector('.badge-brand');
-        if (badge) {
-            badge.style.color = t.gold;
-            badge.style.background = t.badgeBg;
-            badge.style.borderColor = t.badgeBorder;
-            badge.style.boxShadow = '0 0 16px ' + t.goldGlow + ', inset 0 0 10px ' + t.badgeBg;
-            badge.style.textShadow = '0 0 12px ' + t.goldGlow;
-        }
-
-        var btn = document.querySelector('.btn-main');
-        if (btn) {
-            btn.style.background = t.gold;
-            btn.style.boxShadow = '0 8px 25px ' + t.goldGlow;
-            btn.style.color = (idx === 19) ? '#ffffff' : '#000000';
-        }
-
-        var ql = document.getElementById('themeQuickLabel');
-        if (ql) ql.textContent = (idx + 1) + '/20';
-    }
-
-    function cycleTheme() {
-        currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-        applyTheme(currentThemeIdx);
-        try { localStorage.setItem(THEME_KEY, currentThemeIdx.toString()); } catch(e) {}
-        showThemeToast(themes[currentThemeIdx].name);
-        renderDesignGrid();
-    }
-
-    function showThemeToast(text) {
-        var tn = document.getElementById('themeNameToast');
-        if (tn) {
-            tn.textContent = text;
-            tn.classList.add('show');
-            clearTimeout(tn._tid);
-            tn._tid = setTimeout(function() { tn.classList.remove('show'); }, 1800);
-        }
-    }
-
-    function openDesignSheet() {
-        renderDesignGrid();
-        var sheet = document.getElementById('designSheet');
-        if (sheet) sheet.classList.add('open');
-    }
-
-    function closeDesignSheet(e) {
-        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn')) {
-            return;
-        }
-        var sheet = document.getElementById('designSheet');
-        if (sheet) sheet.classList.remove('open');
-    }
-
-    function renderDesignGrid() {
-        var grid = document.getElementById('designGrid');
-        if (!grid) return;
-        var html = '';
-        designStyles.forEach(function(ds) {
-            var isActive = (ds.id === currentDesign);
-            html += '<div class="design-card ' + (isActive ? 'active' : '') + '" onclick="selectDesign(\'' + ds.id + '\')">';
-            html += '<div class="design-card-name">' + ds.name + (isActive ? ' ✓' : '') + '</div>';
-            html += '<div class="design-card-desc">' + ds.desc + '</div>';
-            html += '<div class="design-card-preview">';
-            html += '<div class="design-color-dot" style="background:' + themes[currentThemeIdx].bg + '"></div>';
-            html += '<div class="design-color-dot" style="background:' + themes[currentThemeIdx].gold + '"></div>';
-            html += '<div class="design-color-dot" style="background:' + themes[currentThemeIdx].rest + '"></div>';
-            html += '</div></div>';
-        });
-        grid.innerHTML = html;
-    }
-
-    function selectDesign(id) {
-        applyDesign(id);
-        var cur = designStyles.find(function(d){ return d.id === id; });
-        if (cur) showThemeToast('Стиль: ' + cur.name);
-    }
-
-    // Initialize design and theme on load
-    applyDesign(currentDesign);
-    applyTheme(currentThemeIdx);
-
-
-</script>
+    </script>
 </body>
 </html>
