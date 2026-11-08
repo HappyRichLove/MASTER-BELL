@@ -106,7 +106,8 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+            /* Soft, deep yogic exhale: ~4.5 seconds gradual return */
+            transition: all 4.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* Expands touch target on mobile to 48px without changing visual appearance */
@@ -119,15 +120,15 @@
             right: -16px;
         }
 
-        /* Subtle organic breath glow: slightly brighter, gentle inhale and soft exhale back */
+        /* Deep, slow conscious inhale: ~3.2 seconds gentle swelling of light */
         .badge-brand.prana-breathe {
             color: #fff6d6;
-            background: rgba(212, 175, 55, 0.24);
+            background: rgba(212, 175, 55, 0.25);
             border-color: rgba(212, 175, 55, 0.75);
-            box-shadow: 0 0 24px rgba(212, 175, 55, 0.65), inset 0 0 14px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 0 26px rgba(212, 175, 55, 0.7), inset 0 0 15px rgba(212, 175, 55, 0.4);
             text-shadow: 0 0 16px rgba(212, 175, 55, 0.95), 0 0 28px rgba(255, 255, 255, 0.5);
-            transform: scale(1.035);
-            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(1.04);
+            transition: all 3.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -710,7 +711,7 @@
 
         
         /* =====================================================
-           MASTER PRANA v1.5.1 — SPORT SMARTWATCH DESIGN SYSTEM
+           MASTER PRANA v1.5.2 — SPORT SMARTWATCH DESIGN SYSTEM
            (Selected: Variant 11 with Default Gold Palette)
            Backup of other favorites: Variant 12 (Inverted), Variant 1 (Zen)
            stored in _PROJECT_CORE/DESIGN_CATALOG.md
@@ -876,7 +877,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.5.1</div>
+            <div class="version-tag">MASTER PRANA v1.5.2</div>
         </footer>
     </div>
 
@@ -988,7 +989,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~28 МИНУТ (1680 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.5.1</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.5.2</div>
             </div>
         </div>
     </div>
@@ -2030,20 +2031,20 @@
         var el = document.getElementById('badgePrana');
         if (!el) return;
         
-        // Haptic tap feedback if supported
+        // Gentle haptic tap feedback if supported
         if (navigator.vibrate) {
             try { navigator.vibrate(12); } catch(e){}
         }
 
-        // Apply smooth inhale
+        // Deep slow inhale: gradually blossoms over 3.2 seconds
         el.classList.add('prana-breathe');
         
         if (pranaBreathTimer) clearTimeout(pranaBreathTimer);
-        // Exhale smoothly back after gentle breath pause
+        // After deep full inhale and short pause (3400ms), smoothly and softly exhales back over 4.5 seconds
         pranaBreathTimer = setTimeout(function() {
             el.classList.remove('prana-breathe');
             pranaBreathTimer = null;
-        }, 550);
+        }, 3400);
     }
 
 </script>
