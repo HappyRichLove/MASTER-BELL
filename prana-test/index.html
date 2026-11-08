@@ -83,8 +83,9 @@
             pointer-events: none;
         }
 
-        /* LUMINESCENT GOLD BRAND BADGE (LAMP EFFECT) */
+        /* LUMINESCENT GOLD BRAND BADGE (LAMP EFFECT & GENTLE BREATH TOUCH) */
         .badge-brand {
+            position: relative;
             margin-top: 6px;
             font-size: 0.62rem;
             letter-spacing: 0.28em;
@@ -100,7 +101,33 @@
             text-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Expands touch target on mobile to 48px without changing visual appearance */
+        .badge-brand::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            bottom: -10px;
+            left: -16px;
+            right: -16px;
+        }
+
+        /* Subtle organic breath glow: slightly brighter, gentle inhale and soft exhale back */
+        .badge-brand.prana-breathe {
+            color: #fff6d6;
+            background: rgba(212, 175, 55, 0.24);
+            border-color: rgba(212, 175, 55, 0.75);
+            box-shadow: 0 0 24px rgba(212, 175, 55, 0.65), inset 0 0 14px rgba(212, 175, 55, 0.35);
+            text-shadow: 0 0 16px rgba(212, 175, 55, 0.95), 0 0 28px rgba(255, 255, 255, 0.5);
+            transform: scale(1.035);
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -683,7 +710,7 @@
 
         
         /* =====================================================
-           MASTER PRANA v1.5.0 — SPORT SMARTWATCH DESIGN SYSTEM
+           MASTER PRANA v1.5.1 — SPORT SMARTWATCH DESIGN SYSTEM
            (Selected: Variant 11 with Default Gold Palette)
            Backup of other favorites: Variant 12 (Inverted), Variant 1 (Zen)
            stored in _PROJECT_CORE/DESIGN_CATALOG.md
@@ -793,7 +820,7 @@
     <!-- TOP HEADER ZONE -->
     <header class="header-area">
         <h1 class="master-title">МАСТЕР</h1>
-        <div class="badge-brand">PRANA</div>
+        <div class="badge-brand" id="badgePrana" onclick="triggerPranaBreathe()" title="Дыхание Праны">PRANA</div>
     </header>
 
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
@@ -849,7 +876,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.5.0</div>
+            <div class="version-tag">MASTER PRANA v1.5.1</div>
         </footer>
     </div>
 
@@ -961,7 +988,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~28 МИНУТ (1680 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.5.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.5.1</div>
             </div>
         </div>
     </div>
@@ -1994,6 +2021,31 @@
         initApp();
     }
 
-    </script>
+        /* =====================================================
+       ORGANIC BREATH GLOW EFFECT ON "PRANA" TAP
+       Smooth gentle inhale glow, softly exhales back
+       ===================================================== */
+    var pranaBreathTimer = null;
+    function triggerPranaBreathe() {
+        var el = document.getElementById('badgePrana');
+        if (!el) return;
+        
+        // Haptic tap feedback if supported
+        if (navigator.vibrate) {
+            try { navigator.vibrate(12); } catch(e){}
+        }
+
+        // Apply smooth inhale
+        el.classList.add('prana-breathe');
+        
+        if (pranaBreathTimer) clearTimeout(pranaBreathTimer);
+        // Exhale smoothly back after gentle breath pause
+        pranaBreathTimer = setTimeout(function() {
+            el.classList.remove('prana-breathe');
+            pranaBreathTimer = null;
+        }, 550);
+    }
+
+</script>
 </body>
 </html>
