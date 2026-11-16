@@ -1,5 +1,5 @@
-/* Service Worker — MASTER PRANA v1.6.3 */
-var CACHE_NAME = 'master-prana-v1.6.3';
+/* Service Worker — MASTER PRANA v1.6.4 */
+var CACHE_NAME = 'master-prana-v1.6.4';
 var ASSETS = [
   './',
   './index.html',
@@ -31,6 +31,12 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
+self.addEventListener('message', function(e) {
+  if (e.data && e.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
 
@@ -41,10 +47,10 @@ self.addEventListener('fetch', function(e) {
     }
   }
 
-  /* HTML navigations: network-first, fallback to cache */
+  /* HTML navigations: network-first with no-cache, fallback to cache */
   if (e.request.mode === 'navigate' || url.endsWith('.html') || url.endsWith('/')) {
     e.respondWith(
-      fetch(e.request).then(function(resp) {
+      fetch(e.request, { cache: 'no-cache' }).then(function(resp) {
         if (resp && resp.status === 200) {
           var respClone = resp.clone();
           caches.open(CACHE_NAME).then(function(cache) {

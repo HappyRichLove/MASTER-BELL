@@ -10,6 +10,9 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-title" content="MASTER">
     <meta name="application-name" content="MASTER">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MASTER PRANA</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1009,7 +1012,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.6.3</div>
+            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.4 ↻</div>
         </footer>
     </div>
 
@@ -1035,7 +1038,7 @@
                 <div id="settingsCardsContainer" style="display:flex; flex-direction:column; gap:10px;">
                     <!-- АНУЛОМ -->
                     <div class="setting-card" id="cardAnulom">
-                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ • СТАРТ</div>
+                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Время дыхания:</span>
                             <div class="stepper-ctrls">
@@ -1110,7 +1113,7 @@
 
                     <!-- ЗАМКИ (БАНДХИ) -->
                     <div class="setting-card" id="cardZamki">
-                        <div class="setting-card-title" id="title_zamki">4. ЗАМКИ • ФИНАЛ</div>
+                        <div class="setting-card-title" id="title_zamki">4. ЗАМКИ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Повторы (по 25 с):</span>
                             <div class="stepper-ctrls">
@@ -1142,7 +1145,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.3</div>
+                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.4 ↻</div>
             </div>
         </div>
     </div>
@@ -1505,11 +1508,11 @@
 
         function applyOrderDOM() {
             if (currentVariant === 'v1') {
-                // Порядок Варианта 1: Анулом (Старт) -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки (Финал)
-                setValText('title_anulom', '1. АНУЛОМ • СТАРТ');
+                // Порядок Варианта 1: Анулом -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки
+                setValText('title_anulom', '1. АНУЛОМ');
                 setValText('title_bhastrika', '2. БХАСТРИКА');
                 setValText('title_kapala', '3. КАПАЛАБХАТИ');
-                setValText('title_zamki', '4. ЗАМКИ • ФИНАЛ');
+                setValText('title_zamki', '4. ЗАМКИ');
 
                 if (rowRestAnulom) rowRestAnulom.style.display = 'flex';
                 if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
@@ -1522,11 +1525,11 @@
                 container.appendChild(cardZamki);
 
             } else {
-                // Порядок Варианта 2: Бхастрика (Старт) -> Отдых -> Капалабхати -> Замки -> Анулом (Финал)
-                setValText('title_bhastrika', '1. БХАСТРИКА • СТАРТ');
+                // Порядок Варианта 2: Бхастрика -> Отдых -> Капалабхати -> Замки -> Анулом
+                setValText('title_bhastrika', '1. БХАСТРИКА');
                 setValText('title_kapala', '2. КАПАЛАБХАТИ');
                 setValText('title_zamki', '3. ЗАМКИ');
-                setValText('title_anulom', '4. АНУЛОМ • ФИНАЛ');
+                setValText('title_anulom', '4. АНУЛОМ');
 
                 if (rowRestAnulom) rowRestAnulom.style.display = 'none';
                 if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
@@ -2469,11 +2472,73 @@
         }
     });
 
-    // Service Worker
+    // PWA Auto-Update & Cache Busting Architecture (v1.6.4)
+    var CURRENT_APP_VERSION = '1.6.4';
+
+    function checkPwaVersionMigration() {
+        try {
+            var lastVer = localStorage.getItem('mb_prana_app_version');
+            if (lastVer && lastVer !== CURRENT_APP_VERSION) {
+                localStorage.setItem('mb_prana_app_version', CURRENT_APP_VERSION);
+                if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                        return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+                    }).then(function() {
+                        window.location.reload(true);
+                    });
+                }
+            } else {
+                localStorage.setItem('mb_prana_app_version', CURRENT_APP_VERSION);
+            }
+        } catch(e) {}
+    }
+    checkPwaVersionMigration();
+
+    function forcePwaUpdate() {
+        showToast('Очистка кэша и обновление PWA...');
+        if ('caches' in window) {
+            caches.keys().then(function(keys) {
+                return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+            }).then(function() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        var p = [];
+                        for (var i = 0; i < regs.length; i++) {
+                            p.push(regs[i].unregister());
+                        }
+                        Promise.all(p).then(function() {
+                            setTimeout(function() { window.location.reload(true); }, 300);
+                        });
+                    });
+                } else {
+                    setTimeout(function() { window.location.reload(true); }, 300);
+                }
+            });
+        } else {
+            window.location.reload(true);
+        }
+    }
+
+    // Service Worker registration with instant update listener
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.4_' + Date.now()).then(function(reg) {
             reg.update();
+            reg.onupdatefound = function() {
+                var installing = reg.installing;
+                if (installing) {
+                    installing.onstatechange = function() {
+                        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                            showToast('Обновление PWA установлено!');
+                            setTimeout(function() { window.location.reload(); }, 600);
+                        }
+                    };
+                }
+            };
         }).catch(function(){});
+
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+            window.location.reload();
+        });
     }
 
     // Initialize application
