@@ -1354,15 +1354,8 @@
         } catch(e) {}
         syncVariantUI();
 
-        pipeline = buildPipeline();
+        handleFullReset(true);
         updateBottomTotalLabel();
-
-        if (isRunning) {
-            handleFullReset();
-        } else {
-            currentStageIdx = 0;
-            loadStage(0, false);
-        }
         showToast(currentVariant === 'v1' ? 'Включен Вариант 1 (Анулом сначала)' : 'Включен Вариант 2 (Бхастрика сначала)');
     }
 
@@ -2091,41 +2084,58 @@
     }
 
     function onStageComplete(stage) {
+        var hadBell = false;
         if (stage.bellAtEnd) {
             playBell();
+            hadBell = true;
         }
 
         var nextIdx = currentStageIdx + 1;
         if (nextIdx < pipeline.length) {
             loadStage(nextIdx, true);
         } else {
-            finishSession();
+            finishSession(hadBell);
         }
     }
 
-    function finishSession() {
+    var finishGongTimer = null;
+    function finishSession(delayedGong) {
         pauseTimer();
         els.display.textContent = '00:00';
         els.practiceTitle.textContent = 'ПРАКТИКА ЗАВЕРШЕНА';
         els.practiceTitle.classList.remove('is-rest');
         els.practiceSubtitle.textContent = 'БЛАГОДАРИМ ЗА ПРАКТИКУ 🙏';
         els.progressBar.style.width = '100%';
-        playMegaGong();
         flushGlobalPracticeTime();
         els.startBtn.textContent = 'ЗАНОВО';
         els.startBtn.classList.remove('paused');
         currentStageIdx = 0;
+
+        if (finishGongTimer) clearTimeout(finishGongTimer);
+        if (delayedGong) {
+            // Allow 432 Hz Tibetan bowl 2.8s to fully resonate before deep 196 Hz sacred mega gong
+            finishGongTimer = setTimeout(function() {
+                playMegaGong();
+                finishGongTimer = null;
+            }, 2800);
+        } else {
+            playMegaGong();
+        }
     }
 
-    function handleFullReset() {
+    function handleFullReset(silent) {
         unlockAudioSession();
+        if (finishGongTimer) {
+            clearTimeout(finishGongTimer);
+            finishGongTimer = null;
+        }
         pauseTimer();
         currentStageIdx = 0;
         pipeline = buildPipeline();
         loadStage(0, false);
         els.startBtn.textContent = 'СТАРТ';
         els.startBtn.classList.remove('paused');
-        showToast('Сброшено в начало');
+        if (!silent) showToast('Сброшено в начало');
     }
 
     function skipStage() {
@@ -2133,14 +2143,18 @@
         var stage = pipeline[currentStageIdx];
         if (!stage) return;
 
-        if (stage.bellAtEnd) playBell();
+        var hadBell = false;
+        if (stage.bellAtEnd) {
+            playBell();
+            hadBell = true;
+        }
 
         if (currentStageIdx + 1 < pipeline.length) {
             currentStageIdx++;
             loadStage(currentStageIdx, isRunning);
             showToast('Следующий этап');
         } else {
-            finishSession();
+            finishSession(hadBell);
         }
     }
 
@@ -2166,7 +2180,7 @@
         pipeline = buildPipeline();
         updateBottomTotalLabel();
 
-        if (!isRunning) {
+        if (!isRunning && els.startBtn.textContent === 'СТАРТ') {
             loadStage(currentStageIdx, false);
         }
     }
