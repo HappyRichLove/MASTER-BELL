@@ -390,25 +390,30 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             display: flex;
             justify-content: center;
             align-items: flex-end;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.3s ease;
         }
         .modal-overlay.open {
             opacity: 1;
             pointer-events: auto;
         }
+        .modal-overlay.closing {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.26s ease;
+        }
 
         .modal-sheet {
-            background: #141416;
-            border-top: 1px solid var(--border);
+            background: rgba(18, 18, 22, 0.95);
+            border-top: 1px solid rgba(212, 175, 55, 0.28);
             border-top-left-radius: 28px;
             border-top-right-radius: 28px;
             width: 100%;
@@ -416,12 +421,17 @@
             max-height: 85vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 -14px 45px rgba(0, 0, 0, 0.9), 0 0 35px rgba(212, 175, 55, 0.08);
             transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.26s ease;
         }
         .modal-overlay.open .modal-sheet {
             transform: translateY(0);
+        }
+        .modal-overlay.closing .modal-sheet {
+            transform: translateY(35px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.24s ease;
         }
 
         .modal-header {
@@ -810,11 +820,78 @@
             transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* 9. LIFETIME MILESTONE GLOW */
-        body.zen-aura-on .lifetime-digits.milestone-glow {
-            color: var(--gold) !important;
-            text-shadow: 0 0 20px var(--gold-glow), 0 0 35px rgba(212, 175, 55, 0.6);
-            transition: all 1.2s ease;
+        /* 2. SILENT COLON BREATH */
+        .timer-colon {
+            display: inline-block;
+            transition: opacity 0.3s ease;
+        }
+        body.zen-aura-on .timer-colon {
+            animation: colonGentleBreath 2.0s ease-in-out infinite alternate;
+        }
+        @keyframes colonGentleBreath {
+            0% { opacity: 0.32; transform: scale(0.96); }
+            100% { opacity: 0.95; transform: scale(1.02); }
+        }
+
+        /* 3. STILLNESS MODE (FADE TO SERENITY ON 12s INACTIVITY) */
+        body.zen-aura-on.is-stillness .btn-icon-sub,
+        body.zen-aura-on.is-stillness .bottom-lifetime-capsule,
+        body.zen-aura-on.is-stillness .dots-row {
+            opacity: 0.15;
+            transition: opacity 1.4s ease;
+            pointer-events: none;
+        }
+        .btn-icon-sub, .bottom-lifetime-capsule, .dots-row {
+            transition: opacity 0.4s ease;
+        }
+
+        /* 5. REST PHASE LUNAR CRESCENT */
+        body.zen-aura-on .practice-title.is-rest::before {
+            content: '☽ ';
+            font-size: 0.82em;
+            margin-right: 4px;
+            color: #38bdf8;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7));
+            display: inline-block;
+            animation: lunarPulse 3.0s ease-in-out infinite alternate;
+        }
+        @keyframes lunarPulse {
+            0% { opacity: 0.6; transform: scale(0.94); }
+            100% { opacity: 1; transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.9)); }
+        }
+
+        /* 10. SOFT BELL RESONANT DOTS */
+        body.zen-aura-on .dots-row.dots-bell-resonate .stage-dot {
+            background: #fff8db !important;
+            box-shadow: 0 0 12px var(--gold), 0 0 24px rgba(212, 175, 55, 0.8) !important;
+            transform: scale(1.3);
+            transition: all 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        /* 11. MORNING GOLD RAY ON HEADER (ONE-TIME ON APP LOAD) */
+        .master-title.header-morning-ray {
+            position: relative;
+            overflow: hidden;
+        }
+        .master-title.header-morning-ray::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: -100%;
+            width: 60%;
+            background: linear-gradient(90deg, transparent, rgba(255, 248, 220, 0.45), rgba(212, 175, 55, 0.6), transparent);
+            animation: morningRaySlide 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            pointer-events: none;
+        }
+        @keyframes morningRaySlide {
+            0% { left: -70%; opacity: 0; }
+            20% { opacity: 1; }
+            100% { left: 140%; opacity: 0; }
+        }
+
+        /* 15. SUBTLE GYRO SHIMMER ON PRANA BADGE */
+        body.zen-aura-on .badge-brand {
+            box-shadow: var(--gyro-x, 0px) var(--gyro-y, 0px) 14px var(--gold-glow);
+            transition: box-shadow 0.18s ease-out;
         }
 
         /* PIN CODE MODAL (888 / 72 HOURS VALIDITY) */
@@ -1134,7 +1211,7 @@
             <div class="practice-subtitle" id="stageSubtitle"></div>
         </div>
 
-        <div class="timer-display" id="display" onclick="togglePlay()">10:00</div>
+        <div class="timer-display" id="display" onclick="togglePlay()">10<span class="timer-colon">:</span>00</div>
 
         <div class="progress-wrapper">
             <div class="progress-bar" id="progressBar"></div>
@@ -1179,7 +1256,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.7 ↻</div>
+            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.8 ↻</div>
         </footer>
     </div>
 
@@ -1309,7 +1386,7 @@
                     </div>
                 </div>
 
-                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.7 ↻</div>
+                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.8 ↻</div>
             </div>
         </div>
     </div>
@@ -1980,18 +2057,25 @@
         initAudio();
     }
 
-    function stopActiveBells() {
+    function stopActiveBells(fast) {
         if (!audio) return;
         var now = audio.currentTime;
+        var fadeTime = fast ? 0.04 : 0.45; // 450ms natural acoustic harmonic fade-out
         for (var i = 0; i < activeBellGains.length; i++) {
             try {
                 var g = activeBellGains[i];
                 g.gain.cancelScheduledValues(now);
                 g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), now);
-                g.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + fadeTime);
             } catch(e) {}
         }
+        var oldGains = activeBellGains;
         activeBellGains = [];
+        setTimeout(function() {
+            for (var j = 0; j < oldGains.length; j++) {
+                try { oldGains[j].disconnect(); } catch(e){}
+            }
+        }, Math.ceil(fadeTime * 1000) + 50);
     }
 
     function ensureReverb() {
@@ -2164,8 +2248,18 @@
                 try { mallet.disconnect(); mGain.disconnect(); } catch(e){}
             };
 
-
+            triggerDotsBellResonance();
         } catch(e) {}
+    }
+
+    function triggerDotsBellResonance() {
+        if (!isZenAuraActive) return;
+        var row = document.querySelector('.dots-row');
+        if (!row) return;
+        row.classList.add('dots-bell-resonate');
+        setTimeout(function() {
+            row.classList.remove('dots-bell-resonate');
+        }, 850);
     }
 
     /* FINAL SACRED MEGA GONG (EXACT SOUND FROM MAIN APP) */
@@ -2173,6 +2267,7 @@
         try {
             initAudio();
             stopActiveBells();
+            triggerDotsBellResonance();
             playBowl(196.00, 2, 0.55, 0.45, 0.04, 0.24);
         } catch(e) {}
     }
@@ -2272,6 +2367,59 @@
         return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
     }
 
+    function updateTimerDisplay(s) {
+        if (!els.display) return;
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        var mStr = (m < 10 ? '0' : '') + m;
+        var sStr = (sec < 10 ? '0' : '') + sec;
+        els.display.innerHTML = mStr + '<span class="timer-colon">:</span>' + sStr;
+    }
+
+    /* STILLNESS SERENITY TRACKER (12s INACTIVITY FADE) */
+    var stillnessTimer = null;
+    function resetStillnessTimer() {
+        if (stillnessTimer) clearTimeout(stillnessTimer);
+        document.body.classList.remove('is-stillness');
+        if (isRunning && isZenAuraActive) {
+            stillnessTimer = setTimeout(function() {
+                if (isRunning && isZenAuraActive) {
+                    document.body.classList.add('is-stillness');
+                }
+            }, 12000);
+        }
+    }
+    function cancelStillnessTimer() {
+        if (stillnessTimer) clearTimeout(stillnessTimer);
+        document.body.classList.remove('is-stillness');
+    }
+    function initStillnessTracker() {
+        ['pointerdown', 'pointermove', 'keydown', 'touchstart'].forEach(function(evt) {
+            window.addEventListener(evt, resetStillnessTimer, { passive: true });
+        });
+    }
+
+    /* SUBTLE MOBILE GYROSCOPE SHIMMER ON PRANA BADGE */
+    function initGyroShimmer() {
+        if (typeof window === 'undefined' || !window.addEventListener) return;
+        var lastUpdate = 0;
+        var badge = document.getElementById('badgePrana');
+        window.addEventListener('deviceorientation', function(e) {
+            if (!isZenAuraActive) return;
+            var now = Date.now();
+            if (now - lastUpdate < 50) return;
+            lastUpdate = now;
+            var gamma = e.gamma || 0;
+            var beta = e.beta || 0;
+            var xShift = Math.max(-5, Math.min(5, gamma * 0.15));
+            var yShift = Math.max(-5, Math.min(5, (beta - 45) * 0.15));
+            if (badge) {
+                badge.style.setProperty('--gyro-x', xShift.toFixed(1) + 'px');
+                badge.style.setProperty('--gyro-y', yShift.toFixed(1) + 'px');
+            }
+        }, { passive: true });
+    }
+
     var appInitialized = false;
     function initApp() {
         if (appInitialized) return;
@@ -2285,12 +2433,24 @@
         syncStepperDisplays();
         renderLifetimeDisplay();
         checkPinGate();
+        initStillnessTracker();
+        initGyroShimmer();
 
         // Авто-анимация глубокого вдоха PRANA через 1 секунду после входа
         setTimeout(function() {
             triggerPranaBreathe();
         }, 1000);
 
+        // Единоразовый утренний луч золота по слову «МАСТЕР» при входе
+        setTimeout(function() {
+            var t = document.querySelector('.master-title');
+            if (t) {
+                t.classList.add('header-morning-ray');
+                setTimeout(function() {
+                    t.classList.remove('header-morning-ray');
+                }, 1800);
+            }
+        }, 1200);
 
         var masterTitleEl = document.querySelector('.master-title');
         if (masterTitleEl) {
@@ -2338,7 +2498,7 @@
             els.practiceSubtitle.textContent = stage.sub || '';
         }
 
-        els.display.textContent = formatTime(stageSecRemaining);
+        updateTimerDisplay(stageSecRemaining);
         updateProgress();
         updateDots(stage.mainIndex);
         updateMediaSession(stage.title, stage.sub);
@@ -2436,6 +2596,7 @@
         els.startBtn.classList.remove('paused');
 
         requestScreenLock();
+        resetStillnessTimer();
         updateMediaSession(pipeline[currentStageIdx] ? pipeline[currentStageIdx].title : '', 'Практика активна');
         timerInterval = setInterval(tick, 1000);
     }
@@ -2446,6 +2607,7 @@
         clearInterval(timerInterval);
         timerInterval = null;
         releaseScreenLock();
+        cancelStillnessTimer();
         flushGlobalPracticeTime();
         els.startBtn.textContent = 'ПРОДОЛЖИТЬ';
         els.startBtn.classList.add('paused');
@@ -2471,7 +2633,7 @@
 
         var now = Date.now();
         stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
-        els.display.textContent = formatTime(stageSecRemaining);
+        updateTimerDisplay(stageSecRemaining);
 
         // Multi-cycle stages (Zamki)
         if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
@@ -2503,18 +2665,13 @@
     var finishGongTimer = null;
     function finishSession(delayedGong) {
         pauseTimer();
-        els.display.textContent = '00:00';
+        cancelStillnessTimer();
+        updateTimerDisplay(0);
         els.practiceTitle.textContent = 'ПРАКТИКА ЗАВЕРШЕНА';
         els.practiceTitle.classList.remove('is-rest');
         els.practiceSubtitle.textContent = 'БЛАГОДАРИМ ЗА ПРАКТИКУ 🙏';
         els.progressBar.style.width = '100%';
         flushGlobalPracticeTime();
-        if (isZenAuraActive && els.lifetimeValue) {
-            els.lifetimeValue.classList.add('milestone-glow');
-            setTimeout(function() {
-                if (els.lifetimeValue) els.lifetimeValue.classList.remove('milestone-glow');
-            }, 4500);
-        }
         els.startBtn.textContent = 'ЗАНОВО';
         els.startBtn.classList.remove('paused');
         currentStageIdx = 0;
@@ -2538,6 +2695,7 @@
             finishGongTimer = null;
         }
         pauseTimer();
+        cancelStillnessTimer();
         currentStageIdx = 0;
         pipeline = buildPipeline();
         loadStage(0, false);
@@ -2575,15 +2733,26 @@
         syncZenAuraUI();
         syncStepperDisplays();
         var modal = document.getElementById('settingsModal');
-        if (modal) modal.classList.add('open');
+        if (modal) {
+            modal.classList.remove('closing');
+            modal.classList.add('open');
+        }
     }
 
     function closeSettingsModal(e) {
-        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn')) {
+        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) {
             return;
         }
         var modal = document.getElementById('settingsModal');
-        if (modal) modal.classList.remove('open');
+        if (!modal) return;
+        if (modal._isClosing) return;
+        modal._isClosing = true;
+        modal.classList.add('closing');
+        setTimeout(function() {
+            modal.classList.remove('open');
+            modal.classList.remove('closing');
+            modal._isClosing = false;
+        }, 260);
 
         var oldPipelineLength = pipeline.length;
         pipeline = buildPipeline();
@@ -2661,14 +2830,14 @@
             requestScreenLock();
             var now = Date.now();
             stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
-            els.display.textContent = formatTime(stageSecRemaining);
+            updateTimerDisplay(stageSecRemaining);
             updateProgress();
             renderLifetimeDisplay();
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.6.7)
-    var CURRENT_APP_VERSION = '1.6.7';
+    // PWA Version Tracking & Safe Cache Management (v1.6.8)
+    var CURRENT_APP_VERSION = '1.6.8';
 
     function checkPwaVersionMigration() {
         try {
@@ -2707,7 +2876,7 @@
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.7').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.8').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
