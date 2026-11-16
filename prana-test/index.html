@@ -17,7 +17,7 @@
     <!-- DESIGN LIBRARIES & TYPOGRAPHY -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
 
 
     <style>
@@ -77,8 +77,8 @@
             text-transform: uppercase;
             text-align: center;
             margin: 0;
-            opacity: 0.95;
-            text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+            opacity: 0.90;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
             line-height: 1;
             pointer-events: none;
         }
@@ -570,6 +570,97 @@
             padding-left: 2px;
         }
 
+        /* DYNAMIC SETTINGS CARDS CONTAINER & FLUID TRANSITIONS */
+        #settingsCardsContainer {
+            position: relative;
+            transition: opacity 0.20s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #settingsCardsContainer.cards-switching {
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        .setting-card, .rest-compact-row {
+            transition: border-color 0.45s ease, box-shadow 0.45s ease, transform 0.25s ease;
+        }
+        .setting-card.card-highlight-moved {
+            border-color: rgba(212, 175, 55, 0.95) !important;
+            box-shadow: 0 0 22px rgba(212, 175, 55, 0.42), inset 0 0 12px rgba(212, 175, 55, 0.15) !important;
+        }
+
+        /* ZEN ATMOSPHERE CARD (OPTIONAL AURA TOGGLE) */
+        .zen-toggle-card {
+            background: rgba(26, 26, 30, 0.75);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 9px 14px;
+            margin-top: 4px;
+        }
+        .zen-toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        .zen-toggle-sub {
+            font-size: 0.62rem;
+            color: var(--text);
+            opacity: 0.6;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+        .zen-switch-btn {
+            border: 1px solid var(--gold);
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border-radius: 12px;
+            padding: 5px 13px;
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .zen-switch-btn.off {
+            border-color: rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.38);
+        }
+
+        /* MEDITATIVE ZEN AMBIENT AURA (SUBTLE, TRANSCENDENT BREATHING SPACE) */
+        body.zen-aura-on::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: min(88vw, 440px);
+            height: min(88vw, 440px);
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 42%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: zenAuraPulse 9.6s ease-in-out infinite alternate;
+        }
+        @keyframes zenAuraPulse {
+            0% {
+                opacity: 0.35;
+                transform: translate(-50%, -50%) scale(0.92);
+                filter: blur(22px);
+            }
+            50% {
+                opacity: 0.75;
+                transform: translate(-50%, -50%) scale(1.06);
+                filter: blur(30px);
+            }
+            100% {
+                opacity: 0.45;
+                transform: translate(-50%, -50%) scale(0.98);
+                filter: blur(24px);
+            }
+        }
+
         /* PIN CODE MODAL (888 / 72 HOURS VALIDITY) */
         #pinModal {
             align-items: center;
@@ -723,7 +814,7 @@
 
         .master-title {
             font-family: "Montserrat", -apple-system, sans-serif;
-            font-weight: 700;
+            font-weight: 200;
             letter-spacing: 0.32em;
             text-indent: 0.32em;
         }
@@ -979,7 +1070,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.6.1</div>
+            <div class="version-tag">MASTER PRANA v1.6.2</div>
         </footer>
     </div>
 
@@ -1011,7 +1102,7 @@
                 <div id="settingsCardsContainer" style="display:flex; flex-direction:column; gap:10px;">
                     <!-- АНУЛОМ-ВИЛОМ -->
                     <div class="setting-card" id="cardAnulom">
-                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ-ВИЛОМ</div>
+                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ-ВИЛОМ • СТАРТ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Время дыхания:</span>
                             <div class="stepper-ctrls">
@@ -1022,9 +1113,9 @@
                         </div>
                     </div>
 
-                    <!-- ОТДЫХ ПОСЛЕ АНУЛОМА (ТОЛЬКО В ВАРИАНТЕ 1) -->
+                    <!-- ОТДЫХ (ТОЛЬКО В ВАРИАНТЕ 1) -->
                     <div class="rest-compact-row" id="rowRestAnulom">
-                        <div class="rest-compact-label">ОТДЫХ ПОСЛЕ АНУЛОМА</div>
+                        <div class="rest-compact-label">ОТДЫХ</div>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('restAnulom', -15)">−</button>
                             <span class="step-value" id="val_restAnulom">60 с</span>
@@ -1045,9 +1136,9 @@
                         </div>
                     </div>
 
-                    <!-- ОТДЫХ ПОСЛЕ БХАСТРИКИ -->
+                    <!-- ОТДЫХ -->
                     <div class="rest-compact-row" id="rowRestBhastrika">
-                        <div class="rest-compact-label">ОТДЫХ ПОСЛЕ БХАСТРИКИ</div>
+                        <div class="rest-compact-label">ОТДЫХ</div>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
                             <span class="step-value" id="val_rest1">60 с</span>
@@ -1086,7 +1177,7 @@
 
                     <!-- ЗАМКИ (БАНДХИ) -->
                     <div class="setting-card" id="cardZamki">
-                        <div class="setting-card-title" id="title_zamki">4. ЗАМКИ</div>
+                        <div class="setting-card-title" id="title_zamki">4. ЗАМКИ • ФИНАЛ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Повторы (по 25 с):</span>
                             <div class="stepper-ctrls">
@@ -1099,13 +1190,26 @@
                     </div>
                 </div>
 
+                <!-- ZEN ATMOSPHERE CARD (OPTIONAL AURA TOGGLE) -->
+                <div class="setting-card zen-toggle-card">
+                    <div class="zen-toggle-header">
+                        <div>
+                            <div class="setting-card-title">ДЗЕН-АТМОСФЕРА</div>
+                            <div class="zen-toggle-sub">Мягкое дыхание золотой ауры в пространстве</div>
+                        </div>
+                        <button class="zen-switch-btn" id="btnZenAura" onclick="toggleZenAura()" title="Включить / отключить ауру">
+                            <span class="zen-switch-status">ВКЛ</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
                 <div class="settings-total-banner">
                     <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.1</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.2</div>
             </div>
         </div>
     </div>
@@ -1395,20 +1499,62 @@
         updateBottomTotalLabel();
     }
 
+    /* =====================================================
+       ZEN AMBIENT AURA LOGIC (TRANSCENDENT & TOTALLY OPTIONAL)
+       Can be toggled ON/OFF in 1 tap from settings modal
+       ===================================================== */
+    var ZEN_AURA_KEY = 'mb_prana_zen_aura';
+    var isZenAuraActive = true;
+    try {
+        var savedAura = localStorage.getItem(ZEN_AURA_KEY);
+        if (savedAura === 'false') isZenAuraActive = false;
+    } catch(e) {}
+
+    function syncZenAuraUI() {
+        var btn = document.getElementById('btnZenAura');
+        if (isZenAuraActive) {
+            document.body.classList.add('zen-aura-on');
+            if (btn) {
+                btn.classList.remove('off');
+                btn.classList.add('active');
+                var st = btn.querySelector('.zen-switch-status');
+                if (st) st.textContent = 'ВКЛ';
+            }
+        } else {
+            document.body.classList.remove('zen-aura-on');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.classList.add('off');
+                var st2 = btn.querySelector('.zen-switch-status');
+                if (st2) st2.textContent = 'ВЫКЛ';
+            }
+        }
+    }
+
+    function toggleZenAura() {
+        isZenAuraActive = !isZenAuraActive;
+        try {
+            localStorage.setItem(ZEN_AURA_KEY, isZenAuraActive ? 'true' : 'false');
+        } catch(e) {}
+        syncZenAuraUI();
+        showToast(isZenAuraActive ? 'Дзен-аура включена' : 'Дзен-аура выключена');
+    }
+
     function selectVariant(v) {
         if (v !== 'v1' && v !== 'v2') v = 'v1';
+        if (currentVariant === v) return;
         currentVariant = v;
         try {
             localStorage.setItem(VARIANT_KEY, currentVariant);
         } catch(e) {}
-        syncVariantUI();
+        syncVariantUI(false);
 
         handleFullReset(true);
         updateBottomTotalLabel();
         showToast(currentVariant === 'v1' ? 'Включен Вариант 1 (Анулом сначала)' : 'Включен Вариант 2 (Бхастрика сначала)');
     }
 
-    function syncCardsOrder() {
+    function syncCardsOrder(isImmediate) {
         var container = document.getElementById('settingsCardsContainer');
         var cardAnulom = document.getElementById('cardAnulom');
         var rowRestAnulom = document.getElementById('rowRestAnulom');
@@ -1424,42 +1570,62 @@
 
         if (!container || !cardAnulom || !cardBhastrika || !cardKapala || !cardZamki) return;
 
-        if (currentVariant === 'v1') {
-            // Порядок Варианта 1: Анулом -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки
-            setValText('title_anulom', '1. АНУЛОМ-ВИЛОМ');
-            setValText('title_bhastrika', '2. БХАСТРИКА');
-            setValText('title_kapala', '3. КАПАЛАБХАТИ');
-            setValText('title_zamki', '4. ЗАМКИ');
+        function applyOrderDOM() {
+            if (currentVariant === 'v1') {
+                // Порядок Варианта 1: Анулом (Старт) -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки (Финал)
+                setValText('title_anulom', '1. АНУЛОМ-ВИЛОМ • СТАРТ');
+                setValText('title_bhastrika', '2. БХАСТРИКА');
+                setValText('title_kapala', '3. КАПАЛАБХАТИ');
+                setValText('title_zamki', '4. ЗАМКИ • ФИНАЛ');
 
-            if (rowRestAnulom) rowRestAnulom.style.display = 'flex';
-            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
+                if (rowRestAnulom) rowRestAnulom.style.display = 'flex';
+                if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
 
-            container.appendChild(cardAnulom);
-            if (rowRestAnulom) container.appendChild(rowRestAnulom);
-            container.appendChild(cardBhastrika);
-            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
-            container.appendChild(cardKapala);
-            container.appendChild(cardZamki);
+                container.appendChild(cardAnulom);
+                if (rowRestAnulom) container.appendChild(rowRestAnulom);
+                container.appendChild(cardBhastrika);
+                if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
+                container.appendChild(cardKapala);
+                container.appendChild(cardZamki);
 
-        } else {
-            // Порядок Варианта 2: Бхастрика -> Отдых -> Капалабхати -> Замки -> Анулом
-            setValText('title_bhastrika', '1. БХАСТРИКА');
-            setValText('title_kapala', '2. КАПАЛАБХАТИ');
-            setValText('title_zamki', '3. ЗАМКИ');
-            setValText('title_anulom', '4. АНУЛОМ-ВИЛОМ');
+            } else {
+                // Порядок Варианта 2: Бхастрика (Старт) -> Отдых -> Капалабхати -> Замки -> Анулом (Финал)
+                setValText('title_bhastrika', '1. БХАСТРИКА • СТАРТ');
+                setValText('title_kapala', '2. КАПАЛАБХАТИ');
+                setValText('title_zamki', '3. ЗАМКИ');
+                setValText('title_anulom', '4. АНУЛОМ-ВИЛОМ • ФИНАЛ');
 
-            if (rowRestAnulom) rowRestAnulom.style.display = 'none';
-            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
+                if (rowRestAnulom) rowRestAnulom.style.display = 'none';
+                if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
 
-            container.appendChild(cardBhastrika);
-            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
-            container.appendChild(cardKapala);
-            container.appendChild(cardZamki);
-            container.appendChild(cardAnulom);
+                container.appendChild(cardBhastrika);
+                if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
+                container.appendChild(cardKapala);
+                container.appendChild(cardZamki);
+                container.appendChild(cardAnulom);
+            }
         }
+
+        if (isImmediate) {
+            applyOrderDOM();
+            return;
+        }
+
+        // Мягкий дзенский морфинг при переключении порядка практик
+        container.classList.add('cards-switching');
+        setTimeout(function() {
+            applyOrderDOM();
+            container.classList.remove('cards-switching');
+
+            // Подсвечиваем перемещенную карточку Анулома золотистым сиянием
+            cardAnulom.classList.add('card-highlight-moved');
+            setTimeout(function() {
+                cardAnulom.classList.remove('card-highlight-moved');
+            }, 1200);
+        }, 110);
     }
 
-    function syncVariantUI() {
+    function syncVariantUI(isImmediate) {
         var b1 = document.getElementById('btnVar1');
         var b2 = document.getElementById('btnVar2');
         var mb1 = document.getElementById('modalBtnVar1');
@@ -1488,7 +1654,7 @@
             }
         }
 
-        syncCardsOrder();
+        syncCardsOrder(isImmediate);
         syncStepperDisplays();
     }
 
@@ -1518,7 +1684,7 @@
                 isRest: false
             });
 
-            // ОТДЫХ ПОСЛЕ АНУЛОМА
+            // ОТДЫХ (ПОСЛЕ АНУЛОМА)
             var rAnulom = (typeof s.restAnulom !== 'undefined') ? s.restAnulom : s.rest1;
             if (rAnulom > 0) {
                 list.push({
@@ -1541,7 +1707,7 @@
                 isRest: false
             });
 
-            // ОТДЫХ ПОСЛЕ БХАСТРИКИ
+            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 1,
@@ -1607,7 +1773,7 @@
                 isRest: false
             });
 
-            // ОТДЫХ ПОСЛЕ БХАСТРИКИ
+            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 0,
@@ -2008,7 +2174,8 @@
     function initApp() {
         if (appInitialized) return;
         appInitialized = true;
-        syncVariantUI();
+        syncVariantUI(true);
+        syncZenAuraUI();
         pipeline = buildPipeline();
         currentStageIdx = 0;
         loadStage(currentStageIdx, false);
@@ -2016,6 +2183,11 @@
         syncStepperDisplays();
         renderLifetimeDisplay();
         checkPinGate();
+
+        // Авто-анимация глубокого вдоха PRANA через 1 секунду после входа
+        setTimeout(function() {
+            triggerPranaBreathe();
+        }, 1000);
     }
 
     function loadStage(idx, autoStart) {
@@ -2268,7 +2440,8 @@
        ===================================================== */
     function openSettingsModal() {
         unlockAudioSession();
-        syncVariantUI();
+        syncVariantUI(true);
+        syncZenAuraUI();
         syncStepperDisplays();
         var modal = document.getElementById('settingsModal');
         if (modal) modal.classList.add('open');
@@ -2365,7 +2538,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.2').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
