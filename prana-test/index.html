@@ -906,48 +906,6 @@
             text-shadow: 0 0 10px var(--gold-glow);
         }
 
-        /* VARIANT SWITCHER (SEGMENTED PILL) */
-        .variant-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 4px 0 10px 0;
-            width: 100%;
-        }
-        .variant-pill-box {
-            display: inline-flex;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 24px;
-            padding: 3px;
-            gap: 4px;
-            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.5);
-        }
-        .variant-pill-btn {
-            font-family: "Montserrat", -apple-system, sans-serif;
-            font-size: 0.68rem;
-            font-weight: 800;
-            letter-spacing: 0.12em;
-            color: rgba(255, 255, 255, 0.6);
-            background: transparent;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 16px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .variant-pill-btn:hover {
-            color: #ffffff;
-        }
-        .variant-pill-btn.active {
-            background: var(--gold);
-            color: #000000;
-            box-shadow: 0 2px 10px var(--gold-glow);
-        }
-
         /* VARIANT SETTINGS MODAL CARD */
         .variant-modal-card {
             border-color: rgba(212, 175, 55, 0.35);
@@ -955,50 +913,39 @@
         }
         .variant-modal-toggle {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            flex-direction: row;
+            gap: 10px;
             margin-top: 6px;
         }
         .variant-choice-btn {
             font-family: "Montserrat", -apple-system, sans-serif;
+            flex: 1;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 10px 14px;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 12px;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
             cursor: pointer;
             transition: all 0.2s ease;
-            text-align: left;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        .variant-choice-btn .v-title {
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            color: var(--accent);
-            margin-bottom: 2px;
-        }
-        .variant-choice-btn .v-desc {
-            font-size: 0.65rem;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 0.04em;
+        .variant-choice-btn:hover {
+            color: #ffffff;
+            border-color: rgba(212, 175, 55, 0.4);
         }
         .variant-choice-btn.active {
-            background: rgba(212, 175, 55, 0.15);
+            background: rgba(212, 175, 55, 0.18);
             border-color: var(--gold);
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
-        }
-        .variant-choice-btn.active .v-title {
             color: var(--gold);
-        }
-        .variant-choice-btn.active .v-desc {
-            color: #ffffff;
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.28);
         }
     </style>
 </head>
@@ -1012,16 +959,8 @@
 
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
     <main class="center-stage">
-        <!-- VARIANT SWITCHER (SEGMENTED PILL) -->
-        <div class="variant-bar">
-            <div class="variant-pill-box" role="tablist">
-                <button class="variant-pill-btn active" id="btnVar1" onclick="selectVariant('v1')">ВАРИАНТ 1</button>
-                <button class="variant-pill-btn" id="btnVar2" onclick="selectVariant('v2')">ВАРИАНТ 2</button>
-            </div>
-        </div>
-
         <div class="practice-header">
-            <div class="practice-title" id="stageTitle">АНУЛОМ-ВИЛОМ</div>
+            <div class="practice-title" id="stageTitle">АНУЛОМ</div>
             <div class="practice-subtitle" id="stageSubtitle"></div>
         </div>
 
@@ -1070,7 +1009,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.6.2</div>
+            <div class="version-tag">MASTER PRANA v1.6.3</div>
         </footer>
     </div>
 
@@ -1078,7 +1017,7 @@
     <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">⚙️ НАСТРОЙКИ • ВАРИАНТ 1</div>
+                <div class="modal-title" id="modalTitle">⚙️ НАСТРОЙКИ</div>
                 <button class="modal-close-btn" onclick="closeSettingsModal()">ГОТОВО</button>
             </div>
 
@@ -1087,22 +1026,16 @@
                 <div class="setting-card variant-modal-card">
                     <div class="setting-card-title">ПОРЯДОК ПРАКТИК</div>
                     <div class="variant-modal-toggle">
-                        <button class="variant-choice-btn active" id="modalBtnVar1" onclick="selectVariant('v1')">
-                            <span class="v-title">ВАРИАНТ 1</span>
-                            <span class="v-desc">Анулом → Бхастрика → Капалабхати → Замки</span>
-                        </button>
-                        <button class="variant-choice-btn" id="modalBtnVar2" onclick="selectVariant('v2')">
-                            <span class="v-title">ВАРИАНТ 2</span>
-                            <span class="v-desc">Бхастрика → Капалабхати → Замки → Анулом</span>
-                        </button>
+                        <button class="variant-choice-btn active" id="modalBtnVar1" onclick="selectVariant('v1')">ВАРИАНТ 1</button>
+                        <button class="variant-choice-btn" id="modalBtnVar2" onclick="selectVariant('v2')">ВАРИАНТ 2</button>
                     </div>
                 </div>
 
                 <!-- ДИНАМИЧЕСКИЙ КОНТЕЙНЕР ПОРЯДКА ПРАКТИК -->
                 <div id="settingsCardsContainer" style="display:flex; flex-direction:column; gap:10px;">
-                    <!-- АНУЛОМ-ВИЛОМ -->
+                    <!-- АНУЛОМ -->
                     <div class="setting-card" id="cardAnulom">
-                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ-ВИЛОМ • СТАРТ</div>
+                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ • СТАРТ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Время дыхания:</span>
                             <div class="stepper-ctrls">
@@ -1209,7 +1142,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.2</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.3</div>
             </div>
         </div>
     </div>
@@ -1565,7 +1498,7 @@
         var modalTitle = document.getElementById('modalTitle');
 
         if (modalTitle) {
-            modalTitle.textContent = (currentVariant === 'v1') ? '⚙️ НАСТРОЙКИ • ВАРИАНТ 1' : '⚙️ НАСТРОЙКИ • ВАРИАНТ 2';
+            modalTitle.textContent = '⚙️ НАСТРОЙКИ';
         }
 
         if (!container || !cardAnulom || !cardBhastrika || !cardKapala || !cardZamki) return;
@@ -1573,7 +1506,7 @@
         function applyOrderDOM() {
             if (currentVariant === 'v1') {
                 // Порядок Варианта 1: Анулом (Старт) -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки (Финал)
-                setValText('title_anulom', '1. АНУЛОМ-ВИЛОМ • СТАРТ');
+                setValText('title_anulom', '1. АНУЛОМ • СТАРТ');
                 setValText('title_bhastrika', '2. БХАСТРИКА');
                 setValText('title_kapala', '3. КАПАЛАБХАТИ');
                 setValText('title_zamki', '4. ЗАМКИ • ФИНАЛ');
@@ -1593,7 +1526,7 @@
                 setValText('title_bhastrika', '1. БХАСТРИКА • СТАРТ');
                 setValText('title_kapala', '2. КАПАЛАБХАТИ');
                 setValText('title_zamki', '3. ЗАМКИ');
-                setValText('title_anulom', '4. АНУЛОМ-ВИЛОМ • ФИНАЛ');
+                setValText('title_anulom', '4. АНУЛОМ • ФИНАЛ');
 
                 if (rowRestAnulom) rowRestAnulom.style.display = 'none';
                 if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
@@ -1642,7 +1575,7 @@
 
         if (els && els.dots && els.dots.length >= 4) {
             if (currentVariant === 'v1') {
-                if (els.dots[0]) els.dots[0].title = 'Анулом-Вилом';
+                if (els.dots[0]) els.dots[0].title = 'Анулом';
                 if (els.dots[1]) els.dots[1].title = 'Бхастрика';
                 if (els.dots[2]) els.dots[2].title = 'Капалабхати';
                 if (els.dots[3]) els.dots[3].title = 'Замки';
@@ -1650,7 +1583,7 @@
                 if (els.dots[0]) els.dots[0].title = 'Бхастрика';
                 if (els.dots[1]) els.dots[1].title = 'Капалабхати';
                 if (els.dots[2]) els.dots[2].title = 'Замки';
-                if (els.dots[3]) els.dots[3].title = 'Анулом-Вилом';
+                if (els.dots[3]) els.dots[3].title = 'Анулом';
             }
         }
 
@@ -1671,12 +1604,12 @@
         var kCycles = Math.max(1, s.kapalaCycles);
 
         if (currentVariant === 'v1') {
-            // ВАРИАНТ 1: НАЧИНАЕМ С АНУЛОМ-ВИЛОМ
+            // ВАРИАНТ 1: НАЧИНАЕМ С АНУЛОМ
 
-            // 1. АНУЛОМ-ВИЛОМ
+            // 1. АНУЛОМ
             list.push({
                 id: 'anulom', mainIndex: 0,
-                title: 'АНУЛОМ-ВИЛОМ', sub: '',
+                title: 'АНУЛОМ', sub: '',
                 duration: s.anulomTime,
                 hasTick: true,
                 tickVolume: 0.30,
@@ -1825,10 +1758,10 @@
                 isMultiCycle: true
             });
 
-            // 4. АНУЛОМ-ВИЛОМ (ФИНАЛ С ГОНГОМ)
+            // 4. АНУЛОМ (ФИНАЛ С ГОНГОМ)
             list.push({
                 id: 'anulom', mainIndex: 3,
-                title: 'АНУЛОМ-ВИЛОМ', sub: '',
+                title: 'АНУЛОМ', sub: '',
                 duration: s.anulomTime,
                 hasTick: true,
                 tickVolume: 0.30,
@@ -2538,7 +2471,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.2').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.3').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
