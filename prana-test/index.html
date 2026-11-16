@@ -979,7 +979,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.6.0</div>
+            <div class="version-tag">MASTER PRANA v1.6.1</div>
         </footer>
     </div>
 
@@ -987,7 +987,7 @@
     <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <div class="modal-title">⚙️ НАСТРОЙКИ ПРАКТИК</div>
+                <div class="modal-title" id="modalTitle">⚙️ НАСТРОЙКИ • ВАРИАНТ 1</div>
                 <button class="modal-close-btn" onclick="closeSettingsModal()">ГОТОВО</button>
             </div>
 
@@ -1007,82 +1007,95 @@
                     </div>
                 </div>
 
-                <!-- 1. БХАСТРИКА -->
-                <div class="setting-card">
-                    <div class="setting-card-title">БХАСТРИКА</div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Время дыхания:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
-                            <span class="step-value" id="val_bhastrikaTime">3:00</span>
-                            <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
+                <!-- ДИНАМИЧЕСКИЙ КОНТЕЙНЕР ПОРЯДКА ПРАКТИК -->
+                <div id="settingsCardsContainer" style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- АНУЛОМ-ВИЛОМ -->
+                    <div class="setting-card" id="cardAnulom">
+                        <div class="setting-card-title" id="title_anulom">1. АНУЛОМ-ВИЛОМ</div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Время дыхания:</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
+                                <span class="step-value" id="val_anulomTime">10:00</span>
+                                <button class="step-btn" onclick="stepChange('anulomTime', 60)">+</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ОТДЫХ 1 -->
-                <div class="rest-compact-row">
-                    <div class="rest-compact-label">ОТДЫХ</div>
-                    <div class="stepper-ctrls">
-                        <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
-                        <span class="step-value" id="val_rest1">60 с</span>
-                        <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
+                    <!-- ОТДЫХ ПОСЛЕ АНУЛОМА (ТОЛЬКО В ВАРИАНТЕ 1) -->
+                    <div class="rest-compact-row" id="rowRestAnulom">
+                        <div class="rest-compact-label">ОТДЫХ ПОСЛЕ АНУЛОМА</div>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('restAnulom', -15)">−</button>
+                            <span class="step-value" id="val_restAnulom">60 с</span>
+                            <button class="step-btn" onclick="stepChange('restAnulom', 15)">+</button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- 2. КАПАЛАБХАТИ -->
-                <div class="setting-card">
-                    <div class="setting-card-title">КАПАЛАБХАТИ</div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Количество циклов:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('kapalaCycles', -1)">−</button>
-                            <span class="step-value" id="val_kapalaCycles">3</span>
-                            <button class="step-btn" onclick="stepChange('kapalaCycles', 1)">+</button>
+                    <!-- БХАСТРИКА -->
+                    <div class="setting-card" id="cardBhastrika">
+                        <div class="setting-card-title" id="title_bhastrika">2. БХАСТРИКА</div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Время дыхания:</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
+                                <span class="step-value" id="val_bhastrikaTime">3:00</span>
+                                <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Время одного цикла:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('kapalaCycleTime', -15)">−</button>
-                            <span class="step-value" id="val_kapalaCycleTime">2:00</span>
-                            <button class="step-btn" onclick="stepChange('kapalaCycleTime', 15)">+</button>
-                        </div>
-                    </div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Отдых между циклами:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('kapalaRestSec', -15)">−</button>
-                            <span class="step-value" id="val_kapalaRestSec">60 с</span>
-                            <button class="step-btn" onclick="stepChange('kapalaRestSec', 15)">+</button>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 3. ЗАМКИ (БАНДХИ) — 25 СЕК / ЦИКЛ, ОБЩЕЕ ВРЕМЯ = ПОВТОРЫ * 25 С -->
-                <div class="setting-card">
-                    <div class="setting-card-title">ЗАМКИ</div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Повторы (по 25 с):</span>
+                    <!-- ОТДЫХ ПОСЛЕ БХАСТРИКИ -->
+                    <div class="rest-compact-row" id="rowRestBhastrika">
+                        <div class="rest-compact-label">ОТДЫХ ПОСЛЕ БХАСТРИКИ</div>
                         <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('zamkiReps', -1)">−</button>
-                            <span class="step-value" id="val_zamkiReps">7</span>
-                            <button class="step-btn" onclick="stepChange('zamkiReps', 1)">+</button>
+                            <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
+                            <span class="step-value" id="val_rest1">60 с</span>
+                            <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
                         </div>
                     </div>
-                    <div class="fixed-time-note" id="note_zamkiTotal">Общее время: 2:55 (7 × 25 с)</div>
-                </div>
 
-                <!-- 4. АНУЛОМ-ВИЛОМ -->
-                <div class="setting-card">
-                    <div class="setting-card-title">АНУЛОМ-ВИЛОМ</div>
-                    <div class="stepper-row">
-                        <span class="stepper-label">Время дыхания:</span>
-                        <div class="stepper-ctrls">
-                            <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
-                            <span class="step-value" id="val_anulomTime">10:00</span>
-                            <button class="step-btn" onclick="stepChange('anulomTime', 60)">+</button>
+                    <!-- КАПАЛАБХАТИ -->
+                    <div class="setting-card" id="cardKapala">
+                        <div class="setting-card-title" id="title_kapala">3. КАПАЛАБХАТИ</div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Количество циклов:</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('kapalaCycles', -1)">−</button>
+                                <span class="step-value" id="val_kapalaCycles">3</span>
+                                <button class="step-btn" onclick="stepChange('kapalaCycles', 1)">+</button>
+                            </div>
                         </div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Время одного цикла:</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('kapalaCycleTime', -15)">−</button>
+                                <span class="step-value" id="val_kapalaCycleTime">2:00</span>
+                                <button class="step-btn" onclick="stepChange('kapalaCycleTime', 15)">+</button>
+                            </div>
+                        </div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Отдых между циклами:</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('kapalaRestSec', -15)">−</button>
+                                <span class="step-value" id="val_kapalaRestSec">60 с</span>
+                                <button class="step-btn" onclick="stepChange('kapalaRestSec', 15)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ЗАМКИ (БАНДХИ) -->
+                    <div class="setting-card" id="cardZamki">
+                        <div class="setting-card-title" id="title_zamki">4. ЗАМКИ</div>
+                        <div class="stepper-row">
+                            <span class="stepper-label">Повторы (по 25 с):</span>
+                            <div class="stepper-ctrls">
+                                <button class="step-btn" onclick="stepChange('zamkiReps', -1)">−</button>
+                                <span class="step-value" id="val_zamkiReps">7</span>
+                                <button class="step-btn" onclick="stepChange('zamkiReps', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="fixed-time-note" id="note_zamkiTotal">Общее время: 2:55 (7 × 25 с)</div>
                     </div>
                 </div>
 
@@ -1092,7 +1105,7 @@
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.0</div>
+                <div style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px;">MASTER PRANA v1.6.1</div>
             </div>
         </div>
     </div>
@@ -1295,9 +1308,12 @@
     }
 
     /* =====================================================
-       PRACTICE SETTINGS & VARIANT MANAGEMENT (MAKS SPECS 16-11-2026)
+       PRACTICE SETTINGS & DYNAMIC VARIANT PROFILES (MAKS SPECS)
+       Каждый вариант имеет независимый профиль настроек и собственный порядок карточек!
        ===================================================== */
-    var SETTINGS_KEY = 'mb_prana_test_settings';
+    var SETTINGS_KEY_V1 = 'mb_prana_settings_v1';
+    var SETTINGS_KEY_V2 = 'mb_prana_settings_v2';
+    var OLD_SETTINGS_KEY = 'mb_prana_test_settings';
     var VARIANT_KEY = 'prana_active_variant';
     var currentVariant = 'v1';
 
@@ -1306,43 +1322,76 @@
         if (savedVar === 'v2') currentVariant = 'v2';
     } catch(e) {}
 
-    var defaultSettings = {
-        bhastrikaTime: 180, // 3:00
-        rest1: 60,          // 60s
-        kapalaCycles: 3,    // 3 cycles
+    var defaultSettingsV1 = {
+        anulomTime: 600,      // 10:00
+        restAnulom: 60,       // 60s
+        bhastrikaTime: 180,   // 3:00
+        rest1: 60,            // 60s (отдых после Бхастрики)
+        kapalaCycles: 3,      // 3 cycles
         kapalaCycleTime: 120, // 2:00
-        kapalaRestSec: 60,  // 60s rest between cycles
-        zamkiReps: 7,       // 7 reps
-        zamkiHoldTime: 25,  // STRICT 25s (Maks spec 16-11-2026)
-        anulomTime: 600     // 10:00
+        kapalaRestSec: 60,    // 60s rest between cycles
+        zamkiReps: 7,         // 7 reps
+        zamkiHoldTime: 25     // STRICT 25s
     };
 
-    var settings = Object.assign({}, defaultSettings);
+    var defaultSettingsV2 = {
+        bhastrikaTime: 180,   // 3:00
+        rest1: 60,            // 60s (отдых после Бхастрики)
+        kapalaCycles: 3,      // 3 cycles
+        kapalaCycleTime: 120, // 2:00
+        kapalaRestSec: 60,    // 60s rest between cycles
+        zamkiReps: 7,         // 7 reps
+        zamkiHoldTime: 25,    // STRICT 25s
+        anulomTime: 600       // 10:00
+    };
 
+    var settingsV1 = Object.assign({}, defaultSettingsV1);
+    var settingsV2 = Object.assign({}, defaultSettingsV2);
+
+    // Загрузка настроек Варианта 1
     try {
-        var saved = localStorage.getItem(SETTINGS_KEY);
-        if (saved) {
-            var parsed = JSON.parse(saved);
-            for (var k in parsed) {
-                if (typeof defaultSettings[k] !== 'undefined') {
-                    settings[k] = parsed[k];
-                }
-            }
-            // Strict override for fixed durations: 25s standard (Maks spec 16-11-2026)
-            settings.zamkiHoldTime = 25;
-            if (parsed.zamkiHoldTime !== 25) {
-                try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
+        var s1 = localStorage.getItem(SETTINGS_KEY_V1);
+        if (s1) {
+            var p1 = JSON.parse(s1);
+            for (var k1 in p1) if (typeof defaultSettingsV1[k1] !== 'undefined') settingsV1[k1] = p1[k1];
+        } else {
+            var legacy = localStorage.getItem(OLD_SETTINGS_KEY);
+            if (legacy) {
+                var pLegacy = JSON.parse(legacy);
+                for (var kl in pLegacy) if (typeof defaultSettingsV1[kl] !== 'undefined') settingsV1[kl] = pLegacy[kl];
             }
         }
-    } catch (e) {
-        console.warn('Could not load settings:', e);
+        settingsV1.zamkiHoldTime = 25;
+    } catch(e) {}
+
+    // Загрузка настроек Варианта 2
+    try {
+        var s2 = localStorage.getItem(SETTINGS_KEY_V2);
+        if (s2) {
+            var p2 = JSON.parse(s2);
+            for (var k2 in p2) if (typeof defaultSettingsV2[k2] !== 'undefined') settingsV2[k2] = p2[k2];
+        } else {
+            var legacy2 = localStorage.getItem(OLD_SETTINGS_KEY);
+            if (legacy2) {
+                var pLegacy2 = JSON.parse(legacy2);
+                for (var kl2 in pLegacy2) if (typeof defaultSettingsV2[kl2] !== 'undefined') settingsV2[kl2] = pLegacy2[kl2];
+            }
+        }
+        settingsV2.zamkiHoldTime = 25;
+    } catch(e) {}
+
+    function getActiveSettings() {
+        return (currentVariant === 'v1') ? settingsV1 : settingsV2;
     }
 
     function saveSettings() {
         try {
-            settings.zamkiHoldTime = 25;
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-        } catch (e) {}
+            settingsV1.zamkiHoldTime = 25;
+            settingsV2.zamkiHoldTime = 25;
+            localStorage.setItem(SETTINGS_KEY_V1, JSON.stringify(settingsV1));
+            localStorage.setItem(SETTINGS_KEY_V2, JSON.stringify(settingsV2));
+            localStorage.setItem(OLD_SETTINGS_KEY, JSON.stringify(getActiveSettings()));
+        } catch(e) {}
         updateBottomTotalLabel();
     }
 
@@ -1357,6 +1406,57 @@
         handleFullReset(true);
         updateBottomTotalLabel();
         showToast(currentVariant === 'v1' ? 'Включен Вариант 1 (Анулом сначала)' : 'Включен Вариант 2 (Бхастрика сначала)');
+    }
+
+    function syncCardsOrder() {
+        var container = document.getElementById('settingsCardsContainer');
+        var cardAnulom = document.getElementById('cardAnulom');
+        var rowRestAnulom = document.getElementById('rowRestAnulom');
+        var cardBhastrika = document.getElementById('cardBhastrika');
+        var rowRestBhastrika = document.getElementById('rowRestBhastrika');
+        var cardKapala = document.getElementById('cardKapala');
+        var cardZamki = document.getElementById('cardZamki');
+        var modalTitle = document.getElementById('modalTitle');
+
+        if (modalTitle) {
+            modalTitle.textContent = (currentVariant === 'v1') ? '⚙️ НАСТРОЙКИ • ВАРИАНТ 1' : '⚙️ НАСТРОЙКИ • ВАРИАНТ 2';
+        }
+
+        if (!container || !cardAnulom || !cardBhastrika || !cardKapala || !cardZamki) return;
+
+        if (currentVariant === 'v1') {
+            // Порядок Варианта 1: Анулом -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки
+            setValText('title_anulom', '1. АНУЛОМ-ВИЛОМ');
+            setValText('title_bhastrika', '2. БХАСТРИКА');
+            setValText('title_kapala', '3. КАПАЛАБХАТИ');
+            setValText('title_zamki', '4. ЗАМКИ');
+
+            if (rowRestAnulom) rowRestAnulom.style.display = 'flex';
+            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
+
+            container.appendChild(cardAnulom);
+            if (rowRestAnulom) container.appendChild(rowRestAnulom);
+            container.appendChild(cardBhastrika);
+            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
+            container.appendChild(cardKapala);
+            container.appendChild(cardZamki);
+
+        } else {
+            // Порядок Варианта 2: Бхастрика -> Отдых -> Капалабхати -> Замки -> Анулом
+            setValText('title_bhastrika', '1. БХАСТРИКА');
+            setValText('title_kapala', '2. КАПАЛАБХАТИ');
+            setValText('title_zamki', '3. ЗАМКИ');
+            setValText('title_anulom', '4. АНУЛОМ-ВИЛОМ');
+
+            if (rowRestAnulom) rowRestAnulom.style.display = 'none';
+            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
+
+            container.appendChild(cardBhastrika);
+            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
+            container.appendChild(cardKapala);
+            container.appendChild(cardZamki);
+            container.appendChild(cardAnulom);
+        }
     }
 
     function syncVariantUI() {
@@ -1387,6 +1487,9 @@
                 if (els.dots[3]) els.dots[3].title = 'Анулом-Вилом';
             }
         }
+
+        syncCardsOrder();
+        syncStepperDisplays();
     }
 
     /* =====================================================
@@ -1397,8 +1500,9 @@
        ===================================================== */
     function buildPipeline() {
         var list = [];
-        var zReps = Math.max(1, settings.zamkiReps);
-        var kCycles = Math.max(1, settings.kapalaCycles);
+        var s = getActiveSettings();
+        var zReps = Math.max(1, s.zamkiReps);
+        var kCycles = Math.max(1, s.kapalaCycles);
 
         if (currentVariant === 'v1') {
             // ВАРИАНТ 1: НАЧИНАЕМ С АНУЛОМ-ВИЛОМ
@@ -1407,7 +1511,7 @@
             list.push({
                 id: 'anulom', mainIndex: 0,
                 title: 'АНУЛОМ-ВИЛОМ', sub: '',
-                duration: settings.anulomTime,
+                duration: s.anulomTime,
                 hasTick: true,
                 tickVolume: 0.30,
                 bellAtEnd: true,
@@ -1415,11 +1519,12 @@
             });
 
             // ОТДЫХ ПОСЛЕ АНУЛОМА
-            if (settings.rest1 > 0) {
+            var rAnulom = (typeof s.restAnulom !== 'undefined') ? s.restAnulom : s.rest1;
+            if (rAnulom > 0) {
                 list.push({
                     id: 'rest_anulom', mainIndex: 0,
                     title: 'ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
-                    duration: settings.rest1,
+                    duration: rAnulom,
                     hasTick: false,
                     bellAtEnd: true,
                     isRest: true
@@ -1430,18 +1535,18 @@
             list.push({
                 id: 'bhastrika', mainIndex: 1,
                 title: 'БХАСТРИКА', sub: 'ДЫХАНИЕ',
-                duration: settings.bhastrikaTime,
+                duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
                 isRest: false
             });
 
             // ОТДЫХ ПОСЛЕ БХАСТРИКИ
-            if (settings.rest1 > 0) {
+            if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 1,
                     title: 'ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
-                    duration: settings.rest1,
+                    duration: s.rest1,
                     hasTick: false,
                     bellAtEnd: true,
                     isRest: true
@@ -1455,18 +1560,18 @@
                     id: 'kapala_' + c1, mainIndex: 2,
                     title: 'КАПАЛАБХАТИ',
                     sub: '',
-                    duration: settings.kapalaCycleTime,
+                    duration: s.kapalaCycleTime,
                     hasTick: true,
                     bellAtEnd: true,
                     isRest: false
                 });
 
-                if (!isLastK1 && settings.kapalaRestSec > 0) {
+                if (!isLastK1 && s.kapalaRestSec > 0) {
                     list.push({
                         id: 'kapala_rest_' + c1, mainIndex: 2,
                         title: 'ОТДЫХ',
                         sub: '',
-                        duration: settings.kapalaRestSec,
+                        duration: s.kapalaRestSec,
                         hasTick: false,
                         bellAtEnd: true,
                         isRest: true
@@ -1496,18 +1601,18 @@
             list.push({
                 id: 'bhastrika', mainIndex: 0,
                 title: 'БХАСТРИКА', sub: 'ДЫХАНИЕ',
-                duration: settings.bhastrikaTime,
+                duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
                 isRest: false
             });
 
             // ОТДЫХ ПОСЛЕ БХАСТРИКИ
-            if (settings.rest1 > 0) {
+            if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 0,
                     title: 'ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
-                    duration: settings.rest1,
+                    duration: s.rest1,
                     hasTick: false,
                     bellAtEnd: true,
                     isRest: true
@@ -1521,18 +1626,18 @@
                     id: 'kapala_' + c2, mainIndex: 1,
                     title: 'КАПАЛАБХАТИ',
                     sub: '',
-                    duration: settings.kapalaCycleTime,
+                    duration: s.kapalaCycleTime,
                     hasTick: true,
                     bellAtEnd: true,
                     isRest: false
                 });
 
-                if (!isLastK2 && settings.kapalaRestSec > 0) {
+                if (!isLastK2 && s.kapalaRestSec > 0) {
                     list.push({
                         id: 'kapala_rest_' + c2, mainIndex: 1,
                         title: 'ОТДЫХ',
                         sub: '',
-                        duration: settings.kapalaRestSec,
+                        duration: s.kapalaRestSec,
                         hasTick: false,
                         bellAtEnd: true,
                         isRest: true
@@ -1558,7 +1663,7 @@
             list.push({
                 id: 'anulom', mainIndex: 3,
                 title: 'АНУЛОМ-ВИЛОМ', sub: '',
-                duration: settings.anulomTime,
+                duration: s.anulomTime,
                 hasTick: true,
                 tickVolume: 0.30,
                 bellAtEnd: false,
@@ -2187,36 +2292,40 @@
 
     function stepChange(key, delta) {
         unlockAudioSession();
-        if (typeof settings[key] === 'undefined') return;
+        var s = getActiveSettings();
+        if (typeof s[key] === 'undefined') return;
 
-        var val = settings[key] + delta;
+        var val = s[key] + delta;
 
         if (key === 'kapalaCycles') {
             val = Math.max(1, Math.min(10, val));
         } else if (key === 'zamkiReps') {
             val = Math.max(1, Math.min(20, val));
-        } else if (key === 'rest1' || key === 'kapalaRestSec') {
+        } else if (key === 'rest1' || key === 'restAnulom' || key === 'kapalaRestSec') {
             val = Math.max(0, Math.min(300, val));
         } else {
             val = Math.max(30, Math.min(3600, val));
         }
 
-        settings[key] = val;
+        s[key] = val;
         saveSettings();
         syncStepperDisplays();
     }
 
     function syncStepperDisplays() {
-        setValText('val_bhastrikaTime', formatMMSS(settings.bhastrikaTime));
-        setValText('val_rest1', settings.rest1 + ' с');
-        setValText('val_kapalaCycles', settings.kapalaCycles);
-        setValText('val_kapalaCycleTime', formatMMSS(settings.kapalaCycleTime));
-        setValText('val_kapalaRestSec', settings.kapalaRestSec + ' с');
-        setValText('val_zamkiReps', settings.zamkiReps);
-        setValText('val_anulomTime', formatMMSS(settings.anulomTime));
+        var s = getActiveSettings();
+        setValText('val_bhastrikaTime', formatMMSS(s.bhastrikaTime));
+        setValText('val_rest1', s.rest1 + ' с');
+        var rAnulom = (typeof s.restAnulom !== 'undefined') ? s.restAnulom : s.rest1;
+        setValText('val_restAnulom', rAnulom + ' с');
+        setValText('val_kapalaCycles', s.kapalaCycles);
+        setValText('val_kapalaCycleTime', formatMMSS(s.kapalaCycleTime));
+        setValText('val_kapalaRestSec', s.kapalaRestSec + ' с');
+        setValText('val_zamkiReps', s.zamkiReps);
+        setValText('val_anulomTime', formatMMSS(s.anulomTime));
 
-        var zSec = settings.zamkiReps * 25;
-        setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + settings.zamkiReps + ' × 25 с)');
+        var zSec = s.zamkiReps * 25;
+        setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + s.zamkiReps + ' × 25 с)');
     }
 
     function formatMMSS(s) {
@@ -2256,7 +2365,7 @@
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
