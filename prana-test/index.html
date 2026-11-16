@@ -528,6 +528,12 @@
             color: #ffffff;
             min-width: 48px;
             text-align: center;
+            transition: transform 0.08s ease, color 0.12s ease, text-shadow 0.12s ease;
+        }
+        .step-value.is-stepping {
+            color: var(--gold) !important;
+            transform: scale(1.18);
+            text-shadow: 0 0 14px var(--gold-glow);
         }
 
         /* REST COMPACT ROW */
@@ -684,21 +690,24 @@
             50%, 100% { left: 120%; }
         }
 
-        /* 2. ZEN RING HALO (EXPANDING SINGING BOWL WAVES) */
+        /* 2. ZEN ACOUSTIC LIGHT BLOOM (NO CHEAP BORDERS — SILK WAVE OF GOLDEN RESONANCE) */
         body.zen-aura-on .zen-ripple-ring {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            border: 1.5px solid rgba(212, 175, 55, 0.7);
+            border: none;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 72%);
+            filter: blur(32px);
             pointer-events: none;
             z-index: 1;
-            animation: zenRippleExpand 3.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+            animation: zenAcousticBloom 3.8s cubic-bezier(0.12, 0.8, 0.25, 1) forwards;
         }
-        @keyframes zenRippleExpand {
-            0% { width: 130px; height: 130px; opacity: 0.85; transform: translate(-50%, -50%) scale(0.85); }
-            100% { width: min(130vw, 750px); height: min(130vw, 750px); opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+        @keyframes zenAcousticBloom {
+            0% { width: 100px; height: 100px; opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+            18% { opacity: 0.85; }
+            100% { width: min(135vw, 750px); height: min(135vw, 750px); opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
         }
 
         /* 3. REST PHASE VELVET TWILIGHT */
@@ -710,20 +719,54 @@
         }
 
         /* 4. STAGE DOTS CONSTELLATION */
+        body.zen-aura-on .dots-row {
+            position: relative;
+            padding: 4px 6px;
+        }
+        body.zen-aura-on .dots-row::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.04), rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.04));
+            transform: translateY(-50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body.zen-aura-on .stage-dot {
+            position: relative;
+            z-index: 1;
+        }
         body.zen-aura-on .stage-dot.active {
-            box-shadow: 0 0 16px var(--gold), 0 0 32px rgba(212, 175, 55, 0.55);
-            transform: scale(1.28);
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #fff3c4;
+            box-shadow: 0 0 14px var(--gold), 0 0 28px rgba(212, 175, 55, 0.6);
+            transform: scale(1.4);
+            animation: dotConstellationPulse 3.2s ease-in-out infinite alternate;
+        }
+        @keyframes dotConstellationPulse {
+            0% { transform: scale(1.3); box-shadow: 0 0 12px var(--gold), 0 0 20px rgba(212, 175, 55, 0.4); }
+            100% { transform: scale(1.55); box-shadow: 0 0 18px var(--gold), 0 0 34px rgba(212, 175, 55, 0.7); }
         }
 
-        /* 5. TITLE SHIMMER ON STAGE CHANGE */
+        /* 5. TITLE SHIMMER ON STAGE CHANGE (SLOW, MEDITATIVE SILK SUNRISE) */
         body.zen-aura-on .practice-title.title-shimmer {
-            animation: titleGoldShimmer 1.1s ease forwards;
+            animation: titleGoldShimmer 2.8s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
         }
         @keyframes titleGoldShimmer {
-            0% { filter: brightness(1); }
-            40% { filter: brightness(1.4) drop-shadow(0 0 16px rgba(212, 175, 55, 0.8)); text-shadow: 0 0 20px #ffffff; }
-            100% { filter: brightness(1); }
+            0% {
+                filter: brightness(1);
+                text-shadow: 0 0 0 transparent;
+            }
+            35% {
+                filter: brightness(1.15) drop-shadow(0 0 10px rgba(212, 175, 55, 0.35));
+                text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+            }
+            100% {
+                filter: brightness(1);
+                text-shadow: 0 0 0 transparent;
+            }
         }
 
         /* 6. MAGNETIC BUTTON PRESS */
@@ -735,35 +778,45 @@
             box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(212, 175, 55, 0.3) !important;
         }
 
-        /* 7. FLOATING ZEN PARTICLES */
+        /* 7. FLOATING ZEN PARTICLES (ULTRA-DELICATE TEMPLE SUNBEAM DUST) */
         .zen-particle { display: none; }
         body.zen-aura-on .zen-particle {
             display: block;
             position: fixed;
-            width: 3px;
-            height: 3px;
-            background: rgba(212, 175, 55, 0.7);
+            width: 1.5px;
+            height: 1.5px;
+            background: rgba(254, 243, 199, 0.85);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.9);
+            box-shadow: 0 0 4px rgba(212, 175, 55, 0.5);
             pointer-events: none;
             z-index: 0;
+            will-change: transform, opacity;
         }
-        body.zen-aura-on .zen-particle.p1 {
-            top: 28%; left: 22%;
-            animation: zenParticleFloat 16s infinite ease-in-out alternate;
+        body.zen-aura-on .zen-particle.p1 { top: 18%; left: 16%; animation: dustFloat1 24s infinite ease-in-out alternate; }
+        body.zen-aura-on .zen-particle.p2 { top: 32%; left: 78%; animation: dustFloat2 28s infinite ease-in-out alternate-reverse; }
+        body.zen-aura-on .zen-particle.p3 { top: 48%; left: 24%; animation: dustFloat3 22s infinite ease-in-out alternate; }
+        body.zen-aura-on .zen-particle.p4 { top: 62%; left: 68%; animation: dustFloat1 30s infinite ease-in-out alternate-reverse; }
+        body.zen-aura-on .zen-particle.p5 { top: 76%; left: 32%; animation: dustFloat2 26s infinite ease-in-out alternate; }
+        body.zen-aura-on .zen-particle.p6 { top: 22%; left: 85%; animation: dustFloat3 32s infinite ease-in-out alternate; }
+        body.zen-aura-on .zen-particle.p7 { top: 54%; left: 12%; animation: dustFloat1 20s infinite ease-in-out alternate-reverse; }
+        body.zen-aura-on .zen-particle.p8 { top: 82%; left: 74%; animation: dustFloat2 34s infinite ease-in-out alternate; }
+        body.zen-aura-on .zen-particle.p9 { top: 38%; left: 52%; animation: dustFloat3 25s infinite ease-in-out alternate-reverse; }
+        body.zen-aura-on .zen-particle.p10 { top: 68%; left: 45%; animation: dustFloat1 29s infinite ease-in-out alternate; }
+
+        @keyframes dustFloat1 {
+            0% { transform: translate3d(0, 0, 0); opacity: 0.08; }
+            50% { transform: translate3d(20px, -28px, 0); opacity: 0.38; }
+            100% { transform: translate3d(-16px, 22px, 0); opacity: 0.12; }
         }
-        body.zen-aura-on .zen-particle.p2 {
-            top: 65%; left: 78%;
-            animation: zenParticleFloat 19s infinite ease-in-out alternate-reverse;
+        @keyframes dustFloat2 {
+            0% { transform: translate3d(0, 0, 0); opacity: 0.12; }
+            50% { transform: translate3d(-24px, -18px, 0); opacity: 0.42; }
+            100% { transform: translate3d(18px, 26px, 0); opacity: 0.09; }
         }
-        body.zen-aura-on .zen-particle.p3 {
-            top: 45%; left: 50%;
-            animation: zenParticleFloat 22s infinite ease-in-out alternate;
-        }
-        @keyframes zenParticleFloat {
-            0% { transform: translate(0, 0) scale(0.8); opacity: 0.2; }
-            50% { transform: translate(25px, -35px) scale(1.3); opacity: 0.75; }
-            100% { transform: translate(-20px, 25px) scale(0.9); opacity: 0.3; }
+        @keyframes dustFloat3 {
+            0% { transform: translate3d(0, 0, 0); opacity: 0.06; }
+            50% { transform: translate3d(14px, 24px, 0); opacity: 0.35; }
+            100% { transform: translate3d(-22px, -16px, 0); opacity: 0.14; }
         }
 
         /* 8. MASTER TITLE LONG-TOUCH REACTION */
@@ -1080,10 +1133,17 @@
 
     <!-- ZEN AMBIENT PARTICLES & RIPPLE LAYERS -->
     <div id="zenRipplesContainer" style="pointer-events:none; position:fixed; inset:0; z-index:1;"></div>
-    <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0;">
+    <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
         <div class="zen-particle p1"></div>
         <div class="zen-particle p2"></div>
         <div class="zen-particle p3"></div>
+        <div class="zen-particle p4"></div>
+        <div class="zen-particle p5"></div>
+        <div class="zen-particle p6"></div>
+        <div class="zen-particle p7"></div>
+        <div class="zen-particle p8"></div>
+        <div class="zen-particle p9"></div>
+        <div class="zen-particle p10"></div>
     </div>
 
     <!-- TOP HEADER ZONE -->
@@ -1144,7 +1204,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.5 ↻</div>
+            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.6 ↻</div>
         </footer>
     </div>
 
@@ -1277,7 +1337,7 @@
                     </div>
                 </div>
 
-                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.5 ↻</div>
+                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.6 ↻</div>
             </div>
         </div>
     </div>
@@ -1612,18 +1672,12 @@
         if (!isZenAuraActive) return;
         var c = document.getElementById('zenRipplesContainer');
         if (!c) return;
-        for (var i = 0; i < 3; i++) {
-            (function(delay) {
-                setTimeout(function() {
-                    var ring = document.createElement('div');
-                    ring.className = 'zen-ripple-ring';
-                    c.appendChild(ring);
-                    setTimeout(function() {
-                        if (ring.parentNode) ring.parentNode.removeChild(ring);
-                    }, 3800);
-                }, delay);
-            })(i * 380);
-        }
+        var bloom = document.createElement('div');
+        bloom.className = 'zen-ripple-ring';
+        c.appendChild(bloom);
+        setTimeout(function() {
+            if (bloom.parentNode) bloom.parentNode.removeChild(bloom);
+        }, 4000);
     }
 
     function selectVariant(v) {
@@ -2600,16 +2654,34 @@
 
     var stepperHoldTimer = null;
     var stepperHoldInterval = null;
+    var stepperHoldCount = 0;
 
     function startStepperHold(key, delta) {
         stepChange(key, delta);
         stopStepperHold();
+        stepperHoldCount = 0;
+
+        if (navigator.vibrate) {
+            try { navigator.vibrate(8); } catch(e){}
+        }
 
         stepperHoldTimer = setTimeout(function() {
+            var speed = 90;
             stepperHoldInterval = setInterval(function() {
+                stepperHoldCount++;
                 stepChange(key, delta);
-            }, 140);
-        }, 320);
+                if (navigator.vibrate && stepperHoldCount % 2 === 0) {
+                    try { navigator.vibrate(5); } catch(e){}
+                }
+                if (stepperHoldCount > 5 && speed > 50) {
+                    clearInterval(stepperHoldInterval);
+                    speed = 50;
+                    stepperHoldInterval = setInterval(function() {
+                        stepChange(key, delta);
+                    }, speed);
+                }
+            }, speed);
+        }, 180);
     }
 
     function stopStepperHold() {
@@ -2637,6 +2709,15 @@
         s[key] = val;
         saveSettings();
         syncStepperDisplays();
+
+        var valEl = document.getElementById('val_' + key);
+        if (valEl) {
+            valEl.classList.add('is-stepping');
+            clearTimeout(valEl._stepTimer);
+            valEl._stepTimer = setTimeout(function() {
+                valEl.classList.remove('is-stepping');
+            }, 140);
+        }
     }
 
     function syncStepperDisplays() {
@@ -2690,8 +2771,8 @@
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.6.5)
-    var CURRENT_APP_VERSION = '1.6.5';
+    // PWA Version Tracking & Safe Cache Management (v1.6.6)
+    var CURRENT_APP_VERSION = '1.6.6';
 
     function checkPwaVersionMigration() {
         try {
@@ -2730,7 +2811,7 @@
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.6').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
