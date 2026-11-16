@@ -528,12 +528,6 @@
             color: #ffffff;
             min-width: 48px;
             text-align: center;
-            transition: transform 0.08s ease, color 0.12s ease, text-shadow 0.12s ease;
-        }
-        .step-value.is-stepping {
-            color: var(--gold) !important;
-            transform: scale(1.18);
-            text-shadow: 0 0 14px var(--gold-glow);
         }
 
         /* REST COMPACT ROW */
@@ -690,25 +684,7 @@
             50%, 100% { left: 120%; }
         }
 
-        /* 2. ZEN ACOUSTIC LIGHT BLOOM (NO CHEAP BORDERS — SILK WAVE OF GOLDEN RESONANCE) */
-        body.zen-aura-on .zen-ripple-ring {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: none;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 72%);
-            filter: blur(32px);
-            pointer-events: none;
-            z-index: 1;
-            animation: zenAcousticBloom 3.8s cubic-bezier(0.12, 0.8, 0.25, 1) forwards;
-        }
-        @keyframes zenAcousticBloom {
-            0% { width: 100px; height: 100px; opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
-            18% { opacity: 0.85; }
-            100% { width: min(135vw, 750px); height: min(135vw, 750px); opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
-        }
+
 
         /* 3. REST PHASE VELVET TWILIGHT */
         body.zen-aura-on.in-rest-phase {
@@ -1131,8 +1107,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- ZEN AMBIENT PARTICLES & RIPPLE LAYERS -->
-    <div id="zenRipplesContainer" style="pointer-events:none; position:fixed; inset:0; z-index:1;"></div>
+    <!-- ZEN AMBIENT PARTICLES LAYER -->
     <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
         <div class="zen-particle p1"></div>
         <div class="zen-particle p2"></div>
@@ -1204,7 +1179,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.6 ↻</div>
+            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.6.7 ↻</div>
         </footer>
     </div>
 
@@ -1327,17 +1302,14 @@
                 <!-- ZEN ATMOSPHERE CARD (OPTIONAL AURA & ANIMATIONS TOGGLE) -->
                 <div class="setting-card zen-toggle-card">
                     <div class="zen-toggle-header">
-                        <div>
-                            <div class="setting-card-title">ДЗЕН-АТМОСФЕРА И АНИМАЦИИ</div>
-                            <div class="zen-toggle-sub">Золотая аура, дыхание шкалы, волны чаши, сияние</div>
-                        </div>
-                        <button class="zen-switch-btn off" id="btnZenAura" onclick="toggleZenAura()" title="Включить / отключить дзен-эффекты">
+                        <div class="setting-card-title">АТМОСФЕРА</div>
+                        <button class="zen-switch-btn off" id="btnZenAura" onclick="toggleZenAura()" title="Включить / отключить атмосферу">
                             <span class="zen-switch-status">ВЫКЛ</span>
                         </button>
                     </div>
                 </div>
 
-                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.6 ↻</div>
+                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.6.7 ↻</div>
             </div>
         </div>
     </div>
@@ -1665,19 +1637,7 @@
             localStorage.setItem(ZEN_AURA_KEY, isZenAuraActive ? 'true' : 'false');
         } catch(e) {}
         syncZenAuraUI();
-        showToast(isZenAuraActive ? 'Дзен-атмосфера включена' : 'Дзен-атмосфера выключена');
-    }
-
-    function triggerZenRipples() {
-        if (!isZenAuraActive) return;
-        var c = document.getElementById('zenRipplesContainer');
-        if (!c) return;
-        var bloom = document.createElement('div');
-        bloom.className = 'zen-ripple-ring';
-        c.appendChild(bloom);
-        setTimeout(function() {
-            if (bloom.parentNode) bloom.parentNode.removeChild(bloom);
-        }, 4000);
+        showToast(isZenAuraActive ? 'Атмосфера включена' : 'Атмосфера выключена');
     }
 
     function selectVariant(v) {
@@ -2204,7 +2164,7 @@
                 try { mallet.disconnect(); mGain.disconnect(); } catch(e){}
             };
 
-            triggerZenRipples();
+
         } catch(e) {}
     }
 
@@ -2331,25 +2291,7 @@
             triggerPranaBreathe();
         }, 1000);
 
-        // Интерактивное удержание кнопок степперов (+ / −)
-        document.querySelectorAll('.step-btn').forEach(function(btn) {
-            var onclickAttr = btn.getAttribute('onclick');
-            if (onclickAttr && onclickAttr.includes('stepChange')) {
-                var m = onclickAttr.match(/stepChange\(['"]([^'"]+)['"],\s*(-?\d+)\)/);
-                if (m) {
-                    var k = m[1];
-                    var d = parseInt(m[2], 10);
-                    btn.removeAttribute('onclick');
-                    btn.addEventListener('pointerdown', function(e) {
-                        e.preventDefault();
-                        startStepperHold(k, d);
-                    });
-                    btn.addEventListener('pointerup', stopStepperHold);
-                    btn.addEventListener('pointerleave', stopStepperHold);
-                    btn.addEventListener('pointercancel', stopStepperHold);
-                }
-            }
-        });
+
         var masterTitleEl = document.querySelector('.master-title');
         if (masterTitleEl) {
             var releaseMasterGlow = function() {
@@ -2652,43 +2594,6 @@
         }
     }
 
-    var stepperHoldTimer = null;
-    var stepperHoldInterval = null;
-    var stepperHoldCount = 0;
-
-    function startStepperHold(key, delta) {
-        stepChange(key, delta);
-        stopStepperHold();
-        stepperHoldCount = 0;
-
-        if (navigator.vibrate) {
-            try { navigator.vibrate(8); } catch(e){}
-        }
-
-        stepperHoldTimer = setTimeout(function() {
-            var speed = 90;
-            stepperHoldInterval = setInterval(function() {
-                stepperHoldCount++;
-                stepChange(key, delta);
-                if (navigator.vibrate && stepperHoldCount % 2 === 0) {
-                    try { navigator.vibrate(5); } catch(e){}
-                }
-                if (stepperHoldCount > 5 && speed > 50) {
-                    clearInterval(stepperHoldInterval);
-                    speed = 50;
-                    stepperHoldInterval = setInterval(function() {
-                        stepChange(key, delta);
-                    }, speed);
-                }
-            }, speed);
-        }, 180);
-    }
-
-    function stopStepperHold() {
-        if (stepperHoldTimer) { clearTimeout(stepperHoldTimer); stepperHoldTimer = null; }
-        if (stepperHoldInterval) { clearInterval(stepperHoldInterval); stepperHoldInterval = null; }
-    }
-
     function stepChange(key, delta) {
         unlockAudioSession();
         var s = getActiveSettings();
@@ -2709,15 +2614,6 @@
         s[key] = val;
         saveSettings();
         syncStepperDisplays();
-
-        var valEl = document.getElementById('val_' + key);
-        if (valEl) {
-            valEl.classList.add('is-stepping');
-            clearTimeout(valEl._stepTimer);
-            valEl._stepTimer = setTimeout(function() {
-                valEl.classList.remove('is-stepping');
-            }, 140);
-        }
     }
 
     function syncStepperDisplays() {
@@ -2771,8 +2667,8 @@
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.6.6)
-    var CURRENT_APP_VERSION = '1.6.6';
+    // PWA Version Tracking & Safe Cache Management (v1.6.7)
+    var CURRENT_APP_VERSION = '1.6.7';
 
     function checkPwaVersionMigration() {
         try {
@@ -2811,7 +2707,7 @@
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.6.6').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.6.7').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
