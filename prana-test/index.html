@@ -810,9 +810,9 @@
         .master-title {
             pointer-events: auto !important;
             cursor: pointer;
-            transition: all 0.4s ease;
             user-select: none;
             -webkit-user-select: none;
+            transition: color 0.6s ease, text-shadow 0.6s ease;
         }
         body.zen-aura-on .master-title.master-held {
             color: #fff6d6 !important;
@@ -838,32 +838,45 @@
             transition: opacity 0.35s ease;
         }
 
-        /* 11. DAWN BREATH ON HEADER (SILKY SMOOTH WARMTH ON APP LOAD — ZERO JITTER) */
+        /* 11. DAWN BREATH ON HEADER (GRACEFUL SACRED MORNING WARMTH) */
         .master-title.header-morning-ray {
-            animation: dawnBreath 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: dawnBreath 3.6s cubic-bezier(0.25, 1, 0.5, 1) both;
+            will-change: color, text-shadow;
         }
         @keyframes dawnBreath {
             0% {
                 color: #ffffff;
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
-                opacity: 0.90;
+                text-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
             }
-            45% {
-                color: #fff4d6;
-                text-shadow: 0 0 24px rgba(212, 175, 55, 0.45), 0 0 45px rgba(212, 175, 55, 0.2);
-                opacity: 1;
+            40% {
+                color: #ffeed1;
+                text-shadow: 0 0 24px rgba(212, 175, 55, 0.65), 0 0 42px rgba(212, 175, 55, 0.35);
             }
             100% {
                 color: #ffffff;
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
-                opacity: 0.90;
+                text-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
             }
         }
 
-        /* 15. SUBTLE GYRO SHIMMER ON PRANA BADGE */
-        body.zen-aura-on .badge-brand {
-            box-shadow: var(--gyro-x, 0px) var(--gyro-y, 0px) 14px var(--gold-glow);
-            transition: box-shadow 0.18s ease-out;
+        /* PWA UPDATE BUTTON (IN SETTINGS ONLY) */
+        .pwa-update-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: var(--gold);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            padding: 7px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pwa-update-btn:active {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(0.97);
         }
 
         /* PIN CODE MODAL (888 / 72 HOURS VALIDITY) */
@@ -1228,7 +1241,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA" style="cursor:pointer;">MASTER PRANA v1.7.0 ↻</div>
+            <div class="version-tag">MASTER PRANA v1.7.1</div>
         </footer>
     </div>
 
@@ -1245,8 +1258,8 @@
                 <div class="setting-card variant-modal-card">
                     <div class="setting-card-title">ПОРЯДОК ПРАКТИК</div>
                     <div class="variant-modal-toggle">
-                        <button class="variant-choice-btn active" id="modalBtnVar1" onclick="selectVariant('v1')">АНУЛОМ</button>
-                        <button class="variant-choice-btn" id="modalBtnVar2" onclick="selectVariant('v2')">БХАСТРИКА</button>
+                        <button class="variant-choice-btn active" id="modalBtnVar1" onclick="selectVariant('v1')">ВАРИАНТ 1</button>
+                        <button class="variant-choice-btn" id="modalBtnVar2" onclick="selectVariant('v2')">ВАРИАНТ 2</button>
                     </div>
                 </div>
 
@@ -1259,7 +1272,7 @@
                             <span class="stepper-label">Время дыхания:</span>
                             <div class="stepper-ctrls">
                                 <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
-                                <span class="step-value" id="val_anulomTime">10:00</span>
+                                <span class="step-value" id="val_anulomTime">10 мин</span>
                                 <button class="step-btn" onclick="stepChange('anulomTime', 60)">+</button>
                             </div>
                         </div>
@@ -1348,17 +1361,16 @@
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <!-- ZEN ATMOSPHERE CARD (OPTIONAL AURA & ANIMATIONS TOGGLE) -->
-                <div class="setting-card zen-toggle-card">
-                    <div class="zen-toggle-header">
-                        <div class="setting-card-title">АТМОСФЕРА</div>
-                        <button class="zen-switch-btn off" id="btnZenAura" onclick="toggleZenAura()" title="Включить / отключить атмосферу">
-                            <span class="zen-switch-status">ВЫКЛ</span>
-                        </button>
-                    </div>
+                <!-- PWA UPDATE ACTION IN SETTINGS ONLY -->
+                <div style="padding: 18px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <button class="pwa-update-btn" onclick="forcePwaUpdate()" title="Проверить и загрузить обновление PWA">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px; margin-right:5px;">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        ОБНОВИТЬ ПРИЛОЖЕНИЕ (v1.7.1)
+                    </button>
                 </div>
-
-                <div onclick="forcePwaUpdate()" style="text-align:center; font-size:0.55rem; letter-spacing:0.15em; color:var(--accent); opacity:0.4; padding:8px 0 2px; cursor:pointer;" title="Нажмите для обновления PWA">MASTER PRANA v1.7.0 ↻</div>
             </div>
         </div>
     </div>
@@ -1649,44 +1661,12 @@
     }
 
     /* =====================================================
-       ZEN AMBIENT AURA & ANIMATIONS LOGIC (DISABLED BY DEFAULT)
-       Toggled in settings modal — all effects strictly isolated
+       ZEN AMBIENT AURA & ANIMATIONS LOGIC (ENABLED BY DEFAULT)
        ===================================================== */
-    var ZEN_AURA_KEY = 'mb_prana_zen_aura_v2';
-    var isZenAuraActive = false; // СТРОГО ВЫКЛЮЧЕНО ПО УМОЛЧАНИЮ
-    try {
-        var savedAura = localStorage.getItem(ZEN_AURA_KEY);
-        if (savedAura === 'true') isZenAuraActive = true;
-    } catch(e) {}
+    var isZenAuraActive = true;
 
     function syncZenAuraUI() {
-        var btn = document.getElementById('btnZenAura');
-        if (isZenAuraActive) {
-            document.body.classList.add('zen-aura-on');
-            if (btn) {
-                btn.classList.remove('off');
-                btn.classList.add('active');
-                var st = btn.querySelector('.zen-switch-status');
-                if (st) st.textContent = 'ВКЛ';
-            }
-        } else {
-            document.body.classList.remove('zen-aura-on');
-            if (btn) {
-                btn.classList.remove('active');
-                btn.classList.add('off');
-                var st2 = btn.querySelector('.zen-switch-status');
-                if (st2) st2.textContent = 'ВЫКЛ';
-            }
-        }
-    }
-
-    function toggleZenAura() {
-        isZenAuraActive = !isZenAuraActive;
-        try {
-            localStorage.setItem(ZEN_AURA_KEY, isZenAuraActive ? 'true' : 'false');
-        } catch(e) {}
-        syncZenAuraUI();
-        showToast(isZenAuraActive ? 'Атмосфера включена' : 'Атмосфера выключена');
+        document.body.classList.add('zen-aura-on');
     }
 
     function selectVariant(v) {
@@ -2337,27 +2317,6 @@
         });
     }
 
-    /* SUBTLE MOBILE GYROSCOPE SHIMMER ON PRANA BADGE */
-    function initGyroShimmer() {
-        if (typeof window === 'undefined' || !window.addEventListener) return;
-        var lastUpdate = 0;
-        var badge = document.getElementById('badgePrana');
-        window.addEventListener('deviceorientation', function(e) {
-            if (!isZenAuraActive) return;
-            var now = Date.now();
-            if (now - lastUpdate < 50) return;
-            lastUpdate = now;
-            var gamma = e.gamma || 0;
-            var beta = e.beta || 0;
-            var xShift = Math.max(-5, Math.min(5, gamma * 0.15));
-            var yShift = Math.max(-5, Math.min(5, (beta - 45) * 0.15));
-            if (badge) {
-                badge.style.setProperty('--gyro-x', xShift.toFixed(1) + 'px');
-                badge.style.setProperty('--gyro-y', yShift.toFixed(1) + 'px');
-            }
-        }, { passive: true });
-    }
-
     var appInitialized = false;
     function initApp() {
         if (appInitialized) return;
@@ -2372,23 +2331,22 @@
         renderLifetimeDisplay();
         checkPinGate();
         initStillnessTracker();
-        initGyroShimmer();
 
-        // Авто-анимация глубокого вдоха PRANA через 1 секунду после входа
-        setTimeout(function() {
-            triggerPranaBreathe();
-        }, 1000);
-
-        // Единоразовое мягкое утреннее дыхание света по слову «МАСТЕР» при входе
+        // Единоразовое мягкое рассветное дыхание света по слову «МАСТЕР» при входе
         setTimeout(function() {
             var t = document.querySelector('.master-title');
             if (t) {
                 t.classList.add('header-morning-ray');
                 setTimeout(function() {
                     t.classList.remove('header-morning-ray');
-                }, 3800);
+                }, 3900);
             }
-        }, 800);
+        }, 500);
+
+        // Авто-анимация глубокого осознанного вдоха PRANA через 1.4 секунды после входа
+        setTimeout(function() {
+            triggerPranaBreathe();
+        }, 1400);
 
         var masterTitleEl = document.querySelector('.master-title');
         if (masterTitleEl) {
@@ -2712,7 +2670,9 @@
 
         var val = s[key] + delta;
 
-        if (key === 'kapalaCycles') {
+        if (key === 'anulomTime') {
+            val = Math.max(60, Math.min(3600, Math.round(val / 60) * 60));
+        } else if (key === 'kapalaCycles') {
             val = Math.max(1, Math.min(10, val));
         } else if (key === 'zamkiReps') {
             val = Math.max(1, Math.min(20, val));
@@ -2737,7 +2697,8 @@
         setValText('val_kapalaCycleTime', formatMMSS(s.kapalaCycleTime));
         setValText('val_kapalaRestSec', s.kapalaRestSec + ' с');
         setValText('val_zamkiReps', s.zamkiReps);
-        setValText('val_anulomTime', formatMMSS(s.anulomTime));
+        var anulomMins = Math.max(1, Math.round(s.anulomTime / 60));
+        setValText('val_anulomTime', anulomMins + ' мин');
 
         var zSec = s.zamkiReps * 25;
         setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + s.zamkiReps + ' × 25 с)');
@@ -2778,8 +2739,8 @@
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.7.0)
-    var CURRENT_APP_VERSION = '1.7.0';
+    // PWA Version Tracking & Safe Cache Management (v1.7.1)
+    var CURRENT_APP_VERSION = '1.7.1';
 
     function checkPwaVersionMigration() {
         try {
@@ -2798,27 +2759,29 @@
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
             }).then(function() {
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(regs) {
-                        var p = [];
-                        for (var i = 0; i < regs.length; i++) {
-                            p.push(regs[i].unregister());
+                    navigator.serviceWorker.getRegistration().then(function(reg) {
+                        if (reg) {
+                            reg.update().then(function() {
+                                setTimeout(function() { window.location.reload(); }, 300);
+                            });
+                        } else {
+                            setTimeout(function() { window.location.reload(); }, 300);
                         }
-                        Promise.all(p).then(function() {
-                            setTimeout(function() { window.location.reload(true); }, 250);
-                        });
+                    }).catch(function() {
+                        window.location.reload();
                     });
                 } else {
-                    setTimeout(function() { window.location.reload(true); }, 250);
+                    setTimeout(function() { window.location.reload(); }, 300);
                 }
             });
         } else {
-            window.location.reload(true);
+            window.location.reload();
         }
     }
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.7.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.7.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
