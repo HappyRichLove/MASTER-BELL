@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#0c0f24">
@@ -36,6 +36,14 @@
             --border: rgba(253, 172, 59, 0.28);
             --rest-color: #ffffff;
             --rest-glow: rgba(255, 255, 255, 0.4);
+        }
+
+        html {
+            background-color: var(--bg);
+            background: var(--bg);
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
         }
 
         body {
@@ -84,20 +92,15 @@
             text-align: center;
             margin: 0;
             opacity: 1;
-            text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
             line-height: 1;
+            text-shadow: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             pointer-events: auto !important;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
-            transition: color 0.8s ease, text-shadow 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.25, 1);
-        }
-            line-height: 1;
-            pointer-events: auto !important;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: color 0.8s ease, text-shadow 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.25, 1);
+            transition: color 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.25, 1);
         }
 
         /* LUMINESCENT GOLD BRAND BADGE (LAMP EFFECT & GENTLE BREATH TOUCH) */
@@ -109,13 +112,13 @@
             text-indent: 0.28em;
             color: var(--gold);
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
             padding: 3px 14px;
             border-radius: 20px;
-            background: rgba(212, 175, 55, 0.12);
-            border: 1px solid rgba(212, 175, 55, 0.45);
-            box-shadow: 0 0 16px rgba(212, 175, 55, 0.35), inset 0 0 10px rgba(212, 175, 55, 0.15);
-            text-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
+            background: rgba(253, 172, 59, 0.12);
+            border: 1px solid rgba(253, 172, 59, 0.5);
+            box-shadow: 0 0 14px rgba(253, 172, 59, 0.35), inset 0 0 8px rgba(253, 172, 59, 0.15);
+            text-shadow: 0 0 8px rgba(253, 172, 59, 0.6);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             pointer-events: auto;
@@ -123,7 +126,6 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            /* Soft, deep yogic exhale: ~4.5 seconds gradual return */
             transition: all 4.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -139,11 +141,11 @@
 
         /* Deep, slow conscious inhale: ~3.2 seconds gentle swelling of light */
         .badge-brand.prana-breathe {
-            color: #fff6d6;
-            background: rgba(212, 175, 55, 0.25);
-            border-color: rgba(212, 175, 55, 0.75);
-            box-shadow: 0 0 26px rgba(212, 175, 55, 0.7), inset 0 0 15px rgba(212, 175, 55, 0.4);
-            text-shadow: 0 0 16px rgba(212, 175, 55, 0.95), 0 0 28px rgba(255, 255, 255, 0.5);
+            color: #ffffff;
+            background: rgba(253, 172, 59, 0.28);
+            border-color: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 24px rgba(253, 172, 59, 0.75), inset 0 0 12px rgba(255, 255, 255, 0.35);
+            text-shadow: 0 0 12px #ffffff, 0 0 18px rgba(253, 172, 59, 0.8);
             transform: scale(1.04);
             transition: all 3.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -848,38 +850,6 @@
             transition: opacity 0.35s ease;
         }
 
-        /* 11. SACRED DAWN GLEAM ON «МАСТЕР» (ELEGANT GOLDEN LIGHT SWEEP) */
-        .master-title.header-morning-ray {
-            background: linear-gradient(
-                110deg,
-                #ffffff 0%,
-                #ffffff 36%,
-                #ffe699 46%,
-                #ffffff 50%,
-                #ffd269 54%,
-                #ffffff 64%,
-                #ffffff 100%
-            );
-            background-size: 260% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: masterDawnGleam 2.5s cubic-bezier(0.2, 0.8, 0.25, 1) both;
-            will-change: background-position, filter;
-        }
-        @keyframes masterDawnGleam {
-            0% {
-                background-position: 125% 0;
-                filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.08));
-            }
-            45% {
-                filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.65)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.35));
-            }
-            100% {
-                background-position: -25% 0;
-                filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.08));
-            }
-        }
-
         /* MODAL PWA UPDATE LINK (QUIET CIRCULAR ARROW TAG) */
         .modal-version-btn {
             cursor: pointer;
@@ -1466,7 +1436,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.0</div>
+            <div class="version-tag">MASTER v1.8.1</div>
         </footer>
     </div>
 
@@ -1580,15 +1550,6 @@
                     </div>
                 </div>
 
-                <!-- ПРОФИЛЬ УЧЕНИКА / ПИН-КОД (СИНХРОНИЗАЦИЯ СТАТИСТИКИ) -->
-                <div class="setting-card" id="cardStudentProfile" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div class="setting-card-title" id="studentProfileTitle" style="margin:0; font-size:0.82rem;">👤 УЧЕНИК</div>
-                        <div id="studentProfileStatus" style="font-size:0.65rem; color:var(--accent); margin-top:3px;">Локальный режим • Нажмите для ввода ПИН</div>
-                    </div>
-                    <button class="step-btn" id="btnStudentLogin" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openStudentAuthModal()">ПИН-КОД</button>
-                </div>
-
                 <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
                 <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -1606,7 +1567,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.0 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.1 ↻</div>
                 </div>
             </div>
         </div>
@@ -1808,72 +1769,15 @@
     }
 
     /* =====================================================
-       STUDENT AUTH & PROFILE BY PIN (INSTANT SYNC)
+       SECURITY PIN GATE (CANONICAL 888 PIN)
        ===================================================== */
-    var KNOWN_STUDENTS = {
-        '888': { name: 'Макс', role: 'Мастер' },
-        '777': { name: 'Сергей', role: 'Архитектор' },
-        '101': { name: 'Алексей', role: 'Ученик' },
-        '102': { name: 'Мария', role: 'Ученик' },
-        '103': { name: 'Дмитрий Е.', role: 'Мастер' },
-        '104': { name: 'Михаил', role: 'Ученик' },
-        '105': { name: 'Анна', role: 'Ученик' },
-        '108': { name: 'Мастер 108', role: 'Мастер' }
-    };
-
-    function getStudentProfile() {
-        try {
-            var raw = localStorage.getItem('mb_student_profile');
-            return raw ? JSON.parse(raw) : null;
-        } catch(e) { return null; }
-    }
-
-    function saveStudentProfile(pin, name) {
-        var profile = { pin: pin, name: name, authDate: Date.now() };
-        localStorage.setItem('mb_student_profile', JSON.stringify(profile));
-        renderStudentProfileUI();
-    }
-
-    function renderStudentProfileUI() {
-        var profile = getStudentProfile();
-        var statusEl = document.getElementById('studentProfileStatus');
-        var btnEl = document.getElementById('btnStudentLogin');
-        if (!statusEl || !btnEl) return;
-
-        if (profile && profile.name) {
-            statusEl.textContent = profile.name + ' (ПИН: ' + profile.pin + ') • Синхронизировано ✨';
-            statusEl.style.color = '#fdac3b';
-            btnEl.textContent = 'Сменить';
-        } else {
-            statusEl.textContent = 'Локальный режим • Нажмите для ввода ПИН';
-            statusEl.style.color = 'var(--accent)';
-            btnEl.textContent = 'Войти';
-        }
-    }
-
-    function openStudentAuthModal() {
-        unlockAudioSession();
-        clearPin();
-        var modal = document.getElementById('pinModal');
-        if (modal) modal.classList.add('open');
-    }
-
     function checkPin() {
-        var student = KNOWN_STUDENTS[enteredPin];
-        // 888 acts as universal master PIN, or any known student PIN
-        if (student || enteredPin === '888') {
-            var studentName = student ? student.name : 'Мастер';
-            saveStudentProfile(enteredPin, studentName);
-
+        if (enteredPin === '888') {
             var unlockUntil = Date.now() + THREE_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
-            showToast('Приветствуем, ' + studentName + ' ✨');
-
-            setTimeout(function() {
-                var modal = document.getElementById('pinModal');
-                if (modal) modal.classList.remove('open');
-                clearPin();
-            }, 250);
+            var modal = document.getElementById('pinModal');
+            if (modal) modal.classList.remove('open');
+            clearPin();
         } else {
             for (var i = 0; i < 3; i++) {
                 var dot = document.getElementById('pinDot' + i);
@@ -2192,7 +2096,7 @@
             // 2. БХАСТРИКА
             list.push({
                 id: 'bhastrika', mainIndex: 1,
-                title: 'БХАСТРИКА', sub: 'ДЫХАНИЕ',
+                title: 'БХАСТРИКА', sub: '',
                 duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
@@ -2203,7 +2107,7 @@
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 1,
-                    title: 'ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
+                    title: 'ОТДЫХ', sub: '',
                     duration: s.rest1,
                     hasTick: false,
                     bellAtEnd: true,
@@ -2258,7 +2162,7 @@
             // 1. БХАСТРИКА
             list.push({
                 id: 'bhastrika', mainIndex: 0,
-                title: 'БХАСТРИКА', sub: 'ДЫХАНИЕ',
+                title: 'БХАСТРИКА', sub: '',
                 duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
@@ -2269,7 +2173,7 @@
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 0,
-                    title: 'ОТДЫХ', sub: 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ',
+                    title: 'ОТДЫХ', sub: '',
                     duration: s.rest1,
                     hasTick: false,
                     bellAtEnd: true,
@@ -2737,20 +2641,8 @@
         updateBottomTotalLabel();
         syncStepperDisplays();
         renderLifetimeDisplay();
-        renderStudentProfileUI();
         checkPinGate();
         initStillnessTracker();
-
-        // Единоразовый благородный золотистый блеск света по слову «МАСТЕР» при загрузке
-        setTimeout(function() {
-            var t = document.querySelector('.master-title');
-            if (t) {
-                t.classList.add('header-morning-ray');
-                setTimeout(function() {
-                    t.classList.remove('header-morning-ray');
-                }, 2700);
-            }
-        }, 500);
 
         // Авто-анимация глубокого осознанного вдоха PRANA через 1.8 секунды после входа
         setTimeout(function() {
@@ -2802,8 +2694,8 @@
             els.practiceSubtitle.style.display = 'block';
             els.practiceSubtitle.textContent = 'ПОДХОД 1 ИЗ ' + stage.reps + ' • ' + stage.cycleSec + ' С';
         } else {
-            els.practiceSubtitle.style.display = stage.sub ? 'block' : 'none';
-            els.practiceSubtitle.textContent = stage.sub || '';
+            els.practiceSubtitle.style.display = 'none';
+            els.practiceSubtitle.textContent = '';
         }
 
         updateTimerDisplay(stageSecRemaining);
@@ -3281,8 +3173,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.0)
-    var CURRENT_APP_VERSION = '1.8.0';
+    // PWA Version Tracking & Safe Cache Management (v1.8.1)
+    var CURRENT_APP_VERSION = '1.8.1';
 
     function checkPwaVersionMigration() {
         try {
@@ -3299,7 +3191,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.0...');
+        showToast('Обновление PWA v1.8.1...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3325,9 +3217,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.0)
+    // Service Worker registration (STABLE v1.8.1)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
