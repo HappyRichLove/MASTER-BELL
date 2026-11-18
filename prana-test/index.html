@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#000000">
@@ -58,7 +58,7 @@
             -webkit-user-select: none;
         }
 
-        /* TOP HEADER ZONE */
+        /* TOP HEADER ZONE — CRYSTAL CLEAN ZEN MASTERY (NO TOP VIGNETTE / NO DARK SCRIM) */
         .header-area {
             position: relative;
             display: flex;
@@ -66,12 +66,28 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: max(68px, calc(env(safe-area-inset-top, 44px) + 36px));
+            padding-top: max(32px, calc(env(safe-area-inset-top, 20px) + 16px));
             padding-bottom: 6px;
             flex-shrink: 0;
         }
 
+        /* DELICATE ASCENDING SUNRISE GLEAM BEHIND «МАСТЕР» */
+        .header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 170px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.05) 50%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .master-title {
+            position: relative;
+            z-index: 1;
             font-size: clamp(1.85rem, 6.5vw, 2.5rem);
             font-weight: 200;
             letter-spacing: 0.32em;
@@ -80,10 +96,14 @@
             text-transform: uppercase;
             text-align: center;
             margin: 0;
-            opacity: 0.90;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+            opacity: 1;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 35px rgba(255, 255, 255, 0.18);
             line-height: 1;
-            pointer-events: none;
+            pointer-events: auto !important;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.8s ease, text-shadow 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.25, 1);
         }
 
         /* LUMINESCENT GOLD BRAND BADGE (LAMP EFFECT & GENTLE BREATH TOUCH) */
@@ -807,13 +827,6 @@
         }
 
         /* 8. MASTER TITLE LONG-TOUCH REACTION */
-        .master-title {
-            pointer-events: auto !important;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: color 0.6s ease, text-shadow 0.6s ease;
-        }
         body.zen-aura-on .master-title.master-held {
             color: #fff6d6 !important;
             text-shadow: 0 0 25px rgba(212, 175, 55, 0.95), 0 0 45px rgba(255, 255, 255, 0.6) !important;
@@ -826,13 +839,16 @@
             display: inline-block;
         }
 
-        /* 3. STILLNESS MODE (FADE TO SERENITY ON 12s INACTIVITY) */
-        body.zen-aura-on.is-stillness .header-area,
+        /* 3. STILLNESS MODE (FADE TO SERENITY ON 20s INACTIVITY) */
         body.zen-aura-on.is-stillness .secondary-btns,
         body.zen-aura-on.is-stillness .bottom-zone {
-            opacity: 0.12;
+            opacity: 0.15;
             transition: opacity 1.4s cubic-bezier(0.2, 0.8, 0.2, 1);
             pointer-events: none;
+        }
+        body.zen-aura-on.is-stillness .header-area {
+            opacity: 0.88; /* «МАСТЕР» сохраняет благородное чистое сияние */
+            transition: opacity 1.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .header-area, .secondary-btns, .bottom-zone {
             transition: opacity 0.35s ease;
@@ -1170,6 +1186,216 @@
             color: var(--gold);
             box-shadow: 0 0 14px rgba(212, 175, 55, 0.28);
         }
+
+        /* =====================================================
+           PWA INSTALL BUTTON & ZEN MODAL STYLES
+           ===================================================== */
+        .install-pwa-btn {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.38);
+            color: rgba(255, 255, 255, 0.85);
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            margin: 0 auto 10px;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+        .install-pwa-btn:hover, .install-pwa-btn:active {
+            border-color: var(--gold);
+            color: #ffffff;
+            background: rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+        }
+
+        /* AUTO-HIDE INSTALL BUTTON IN STANDALONE PWA */
+        @media all and (display-mode: standalone) {
+            .install-pwa-btn, #installModal, .install-pwa-card {
+                display: none !important;
+            }
+        }
+
+        /* ZEN INSTALL MODAL OVERLAY */
+        #installModal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        #installModal.show { display: flex; }
+        .install-card {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            background: #141416;
+            padding: 24px 20px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 410px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .install-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .install-title {
+            color: var(--gold);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .install-close-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .install-close-btn:hover {
+            border-color: var(--gold);
+            color: #ffffff;
+        }
+        .install-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .install-tab-btn {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            flex: 1;
+            padding: 9px 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 700;
+            font-size: 0.76rem;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .install-tab-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #000000;
+            font-weight: 800;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+        }
+        .install-body-scroll {
+            overflow-y: auto;
+            max-height: 56vh;
+            padding-right: 4px;
+        }
+        .install-content-panel { display: none; }
+        .install-content-panel.active { display: block; }
+        .install-step-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+            align-items: flex-start;
+        }
+        .install-step-num {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .install-step-text {
+            color: #e5e5ea;
+            font-size: 0.84rem;
+            line-height: 1.45;
+            font-weight: 400;
+        }
+        .install-step-text b {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .install-accordion-toggle {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+            padding: 10px 14px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transition: 0.25s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .install-accordion-toggle:hover {
+            background: rgba(212, 175, 55, 0.16);
+            border-color: var(--gold);
+        }
+        .install-accordion-box {
+            display: none;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .install-accordion-box.show { display: block; }
+        .install-img-caption {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 6px;
+            margin-top: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .install-accordion-box img {
+            width: 82%;
+            max-width: 250px;
+            margin: 0 auto 12px auto;
+            display: block;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -1244,9 +1470,12 @@
             <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
 
+        <!-- КНОПКА УСТАНОВКИ ПРИЛОЖЕНИЯ (ИСЧЕЗАЕТ В STANDALONE) -->
+        <button class="install-pwa-btn" id="installPwaBtn" onclick="handleInstallPwaClick()">📲 Установить приложение</button>
+
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.7.5</div>
+            <div class="version-tag">MASTER PRANA v1.7.6</div>
         </footer>
     </div>
 
@@ -1360,6 +1589,15 @@
                     </div>
                 </div>
 
+                <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
+                <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="setting-card-title" style="margin:0; font-size:0.82rem;">📲 ПРИЛОЖЕНИЕ НА ТЕЛЕФОН</div>
+                        <div style="font-size:0.62rem; color:var(--accent); margin-top:3px;">Иконка на рабочий стол без рамок браузера</div>
+                    </div>
+                    <button class="install-pwa-btn" style="margin:0; padding:6px 14px;" onclick="handleInstallPwaClick()">Установить</button>
+                </div>
+
                 <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
                 <div class="settings-total-banner">
                     <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
@@ -1368,7 +1606,98 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.5 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.6 ↻</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ZEN INSTALL PWA MODAL OVERLAY -->
+    <div id="installModal" onclick="closeInstallModal()">
+        <div class="install-card" onclick="event.stopPropagation()">
+            <div class="install-header-row">
+                <div class="install-title">Установка приложения</div>
+                <button class="install-close-btn" onclick="closeInstallModal()">✕</button>
+            </div>
+
+            <div class="install-tabs">
+                <button class="install-tab-btn active" id="tabIos" onclick="switchInstallTab('ios')">iPhone (Safari)</button>
+                <button class="install-tab-btn" id="tabAnd" onclick="switchInstallTab('android')">Android (Chrome)</button>
+            </div>
+
+            <div class="install-body-scroll">
+                <!-- IOS INSTRUCTIONS -->
+                <div class="install-content-panel active" id="contentIos">
+                    <div class="install-step-item">
+                        <div class="install-step-num">1</div>
+                        <div class="install-step-text">Откройте сайт в браузере <b>Safari</b> на iPhone.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">2</div>
+                        <div class="install-step-text">Нажмите кнопку <b>«Поделиться»</b> (квадрат со стрелкой вверх) в нижней панели Safari.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">3</div>
+                        <div class="install-step-text">В меню пролистайте вниз и выберите <b>«На экран "Домой"»</b> (иконка с плюсиком).</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">4</div>
+                        <div class="install-step-text">Нажмите кнопку <b>«Добавить»</b> в правом верхнем углу экрана.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">5</div>
+                        <div class="install-step-text">Готово! Приложение появится на рабочем столе как отдельная программа.</div>
+                    </div>
+
+                    <button class="install-accordion-toggle" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+                    <div class="install-accordion-box">
+                        <div class="install-img-caption">Шаг 1: Нажмите «Поделиться» в нижней панели Safari</div>
+                        <img src="img/ios-step1.jpeg" alt="Шаг 1" loading="lazy">
+                        <div class="install-img-caption">Шаг 2: В открывшемся меню пролистайте вниз</div>
+                        <img src="img/ios-step2.jpeg" alt="Шаг 2" loading="lazy">
+                        <div class="install-img-caption">Шаг 3: Если кнопки нет, нажмите «Показать больше»</div>
+                        <img src="img/ios-step3.jpeg" alt="Шаг 3" loading="lazy">
+                        <div class="install-img-caption">Шаг 4: Выберите пункт «На экран "Домой"»</div>
+                        <img src="img/ios-step4.jpeg" alt="Шаг 4" loading="lazy">
+                        <div class="install-img-caption">Шаг 5: Нажмите «Добавить» сверху</div>
+                        <img src="img/ios-step5.jpeg" alt="Шаг 5" loading="lazy">
+                    </div>
+                </div>
+
+                <!-- ANDROID INSTRUCTIONS -->
+                <div class="install-content-panel" id="contentAnd">
+                    <div class="install-step-item">
+                        <div class="install-step-num">1</div>
+                        <div class="install-step-text">Откройте сайт в <b>Google Chrome</b> на Android.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">2</div>
+                        <div class="install-step-text">Нажмите меню <b>«Три точки» (⋮)</b> в правом верхнем углу браузера.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">3</div>
+                        <div class="install-step-text">В списке выберите <b>«Установить приложение»</b> (или «Добавить на главный экран»).</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">4</div>
+                        <div class="install-step-text">Нажмите <b>«Установить»</b> в появившемся диалоговом окне.</div>
+                    </div>
+                    <div class="install-step-item">
+                        <div class="install-step-num">5</div>
+                        <div class="install-step-text">Готово! Иконка MASTER появится среди ваших приложений.</div>
+                    </div>
+
+                    <button class="install-accordion-toggle" onclick="toggleInstallAccordion(this)">📸 Показать инструкцию с фото</button>
+                    <div class="install-accordion-box">
+                        <div class="install-img-caption">Шаг 1: Нажмите «Три точки» (⋮) в углу</div>
+                        <img src="img/android-step1.jpeg" alt="Шаг 1" loading="lazy">
+                        <div class="install-img-caption">Шаг 2: В открывшемся меню выберите «Установить»</div>
+                        <img src="img/android-step2.jpeg" alt="Шаг 2" loading="lazy">
+                        <div class="install-img-caption">Шаг 3: Нажмите кнопку «Установить» для подтверждения</div>
+                        <img src="img/android-step3.jpeg" alt="Шаг 3" loading="lazy">
+                        <div class="install-img-caption">Шаг 4: Подтвердите установку</div>
+                        <img src="img/android-step4.jpeg" alt="Шаг 4" loading="lazy">
+                    </div>
                 </div>
             </div>
         </div>
@@ -2116,6 +2445,30 @@
         playStrikeNoise(dry, strikeVol, 0.05);
     }
 
+    /* INTERMEDIATE LOCK/CYCLE GENTLE CHIME (528 HZ SOLFEGGIO SERENITY / ZERO CLICK) */
+    function playRepBell() {
+        try {
+            initAudio();
+            if (!audio) return;
+            var now = audio.currentTime;
+            var g = audio.createGain();
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.exponentialRampToValueAtTime(0.28, now + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+            g.connect(masterGain);
+
+            var osc = audio.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(528, now); // 528 Hz Pure Heart / Transformation Tone
+            osc.connect(g);
+            osc.start(now);
+            osc.stop(now + 1.65);
+            osc.onended = function() {
+                try { osc.disconnect(); g.disconnect(); } catch(e){}
+            };
+        } catch(e) {}
+    }
+
     /* PRACTICE TRANSITION BELL — PURE CELESTIAL TIBETAN BOWL (432 HZ / ZERO POP / ZERO CRACKLE) */
     function playBell() {
         try {
@@ -2293,7 +2646,7 @@
         els.display.innerHTML = mStr + '<span class="timer-colon">:</span>' + sStr;
     }
 
-    /* STILLNESS SERENITY TRACKER (12s INACTIVITY FADE) */
+    /* STILLNESS SERENITY TRACKER (20s INACTIVITY FADE) */
     var stillnessTimer = null;
     function resetStillnessTimer() {
         if (stillnessTimer) clearTimeout(stillnessTimer);
@@ -2303,7 +2656,7 @@
                 if (isRunning && isZenAuraActive) {
                     document.body.classList.add('is-stillness');
                 }
-            }, 12000);
+            }, 20000);
         }
     }
     function cancelStillnessTimer() {
@@ -2388,8 +2741,11 @@
         }
 
         if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
-            els.practiceSubtitle.textContent = '';
+            lastRepIndexAnnounced = -1;
+            els.practiceSubtitle.style.display = 'block';
+            els.practiceSubtitle.textContent = 'ПОДХОД 1 ИЗ ' + stage.reps + ' • ' + stage.cycleSec + ' С';
         } else {
+            els.practiceSubtitle.style.display = stage.sub ? 'block' : 'none';
             els.practiceSubtitle.textContent = stage.sub || '';
         }
 
@@ -2483,11 +2839,15 @@
         }
     }
 
+    var lastTickTimestamp = Date.now();
+    var lastRepIndexAnnounced = -1;
+
     function startTimer() {
         if (isRunning) return;
         isRunning = true;
         document.body.classList.add('is-running');
         stageEndTime = Date.now() + (stageSecRemaining * 1000);
+        lastTickTimestamp = Date.now();
         els.startBtn.textContent = 'ПАУЗА';
         els.startBtn.classList.remove('paused');
 
@@ -2525,16 +2885,36 @@
             playTick(volScale);
         }
 
-        // Add to lifetime counter
-        addGlobalPracticeSecond();
-
         var now = Date.now();
+        var elapsedSec = Math.max(1, Math.round((now - lastTickTimestamp) / 1000));
+        lastTickTimestamp = now;
+
+        // Add to lifetime counter with exact second delta
+        pendingSecToAdd += elapsedSec;
+        renderLifetimeDisplay();
+        if (pendingSecToAdd >= 5) {
+            flushGlobalPracticeTime();
+        }
+
         stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
         updateTimerDisplay(stageSecRemaining);
 
-        // Multi-cycle stages (Zamki)
+        // Multi-cycle stages (Zamki: 7 подходов по 25 сек с промежуточным сигналом и счетчиком)
         if (stage.isMultiCycle && stage.reps && stage.cycleSec) {
-            // Subtitle hidden — no cycle display
+            var elapsedInZamki = stage.duration - stageSecRemaining;
+            var currentRep = Math.min(stage.reps, Math.floor(elapsedInZamki / stage.cycleSec) + 1);
+            var secInCurrentRep = stage.cycleSec - (elapsedInZamki % stage.cycleSec);
+            if (secInCurrentRep === 0 && elapsedInZamki > 0) secInCurrentRep = stage.cycleSec;
+
+            els.practiceSubtitle.style.display = 'block';
+            els.practiceSubtitle.textContent = 'ПОДХОД ' + currentRep + ' ИЗ ' + stage.reps + ' • ' + secInCurrentRep + ' С';
+
+            if (elapsedInZamki > 0 && (elapsedInZamki % stage.cycleSec === 0) && stageSecRemaining > 0) {
+                if (lastRepIndexAnnounced !== currentRep) {
+                    lastRepIndexAnnounced = currentRep;
+                    playRepBell();
+                }
+            }
         }
 
         updateProgress();
@@ -2567,12 +2947,20 @@
         updateTimerDisplay(0);
         els.practiceTitle.textContent = 'ПРАКТИКА ЗАВЕРШЕНА';
         els.practiceTitle.classList.remove('is-rest');
+        els.practiceSubtitle.style.display = 'none';
         els.practiceSubtitle.textContent = '';
         els.progressBar.style.width = '100%';
         flushGlobalPracticeTime();
         els.startBtn.textContent = 'ЗАНОВО';
         els.startBtn.classList.remove('paused');
         currentStageIdx = 0;
+
+        // Зажигаем все точки золотым статусом завершения
+        if (els.dots && els.dots.length) {
+            els.dots.forEach(function(dot) {
+                dot.className = 'stage-dot completed';
+            });
+        }
 
         if (finishGongTimer) clearTimeout(finishGongTimer);
         if (delayedGong) {
@@ -2726,20 +3114,118 @@
     document.addEventListener('touchstart', function(e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 
-    // Background sync on visibility change
+    // Background sync on visibility change & AudioContext resume
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden && isRunning) {
-            requestScreenLock();
-            var now = Date.now();
-            stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
-            updateTimerDisplay(stageSecRemaining);
-            updateProgress();
-            renderLifetimeDisplay();
+        if (!document.hidden) {
+            if (audio && audio.state === 'suspended') {
+                try { audio.resume(); } catch(e){}
+            }
+            if (isRunning) {
+                requestScreenLock();
+                var now = Date.now();
+                var elapsedSec = Math.max(0, Math.round((now - lastTickTimestamp) / 1000));
+                lastTickTimestamp = now;
+                if (elapsedSec > 0) {
+                    pendingSecToAdd += elapsedSec;
+                    flushGlobalPracticeTime();
+                }
+                stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
+                updateTimerDisplay(stageSecRemaining);
+                updateProgress();
+                renderLifetimeDisplay();
+            }
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.7.5)
-    var CURRENT_APP_VERSION = '1.7.5';
+    /* =====================================================
+       PWA INSTALLATION & STANDALONE MANAGEMENT
+       ===================================================== */
+    var deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        var pwaBtn = document.getElementById('installPwaBtn');
+        if (pwaBtn && !isStandaloneMode()) pwaBtn.style.display = 'inline-flex';
+    });
+
+    function isStandaloneMode() {
+        return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+    }
+
+    function checkStandaloneUI() {
+        if (isStandaloneMode()) {
+            var btn1 = document.getElementById('installPwaBtn');
+            var card1 = document.getElementById('settingInstallCard');
+            if (btn1) btn1.style.display = 'none';
+            if (card1) card1.style.display = 'none';
+        }
+    }
+
+    function handleInstallPwaClick() {
+        unlockAudioSession();
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then(function(choiceResult) {
+                if (choiceResult.outcome === 'accepted') {
+                    showToast('Установка запущена');
+                }
+                deferredInstallPrompt = null;
+            });
+        } else {
+            openInstallModal();
+        }
+    }
+
+    function openInstallModal() {
+        var modal = document.getElementById('installModal');
+        if (!modal) return;
+        modal.classList.add('show');
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(ua)) switchInstallTab('android');
+        else switchInstallTab('ios');
+    }
+
+    function closeInstallModal(e) {
+        if (e && e.target && e.target.closest('.install-card')) return;
+        var modal = document.getElementById('installModal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function switchInstallTab(platform) {
+        var tabIos = document.getElementById('tabIos');
+        var tabAnd = document.getElementById('tabAnd');
+        var contIos = document.getElementById('contentIos');
+        var contAnd = document.getElementById('contentAnd');
+        if (!tabIos || !tabAnd || !contIos || !contAnd) return;
+
+        tabIos.classList.remove('active');
+        tabAnd.classList.remove('active');
+        contIos.classList.remove('active');
+        contAnd.classList.remove('active');
+
+        if (platform === 'ios') {
+            tabIos.classList.add('active');
+            contIos.classList.add('active');
+        } else {
+            tabAnd.classList.add('active');
+            contAnd.classList.add('active');
+        }
+    }
+
+    function toggleInstallAccordion(btn) {
+        var box = btn.nextElementSibling;
+        if (!box) return;
+        if (box.classList.contains('show')) {
+            box.classList.remove('show');
+            btn.innerHTML = '📸 Показать инструкцию с фото';
+        } else {
+            box.classList.add('show');
+            btn.innerHTML = '✕ Скрыть фото';
+        }
+    }
+
+    // PWA Version Tracking & Safe Cache Management (v1.7.6)
+    var CURRENT_APP_VERSION = '1.7.6';
 
     function checkPwaVersionMigration() {
         try {
@@ -2752,7 +3238,11 @@
     checkPwaVersionMigration();
 
     function forcePwaUpdate() {
-        showToast('Обновление PWA...');
+        if (!navigator.onLine) {
+            showToast('Нет сети. Обновление недоступно в офлайне');
+            return;
+        }
+        showToast('Обновление PWA v1.7.6...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -2778,17 +3268,21 @@
         }
     }
 
-    // Service Worker registration (STABLE — NO auto-reload loops)
+    // Service Worker registration (STABLE v1.7.6)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.7.5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.7.6').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
 
     // Initialize application
-    document.addEventListener('DOMContentLoaded', initApp);
+    document.addEventListener('DOMContentLoaded', function() {
+        initApp();
+        checkStandaloneUI();
+    });
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initApp();
+        checkStandaloneUI();
     }
 
         /* =====================================================

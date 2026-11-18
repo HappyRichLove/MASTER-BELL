@@ -1,5 +1,5 @@
-/* Service Worker — MASTER PRANA v1.7.5 */
-var CACHE_NAME = 'master-prana-v1.7.5';
+/* Service Worker — MASTER PRANA v1.7.6 */
+var CACHE_NAME = 'master-prana-v1.7.6';
 var ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,16 @@ var ASSETS = [
   './favicon.svg',
   './apple-touch-icon.png',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './img/ios-step1.jpeg',
+  './img/ios-step2.jpeg',
+  './img/ios-step3.jpeg',
+  './img/ios-step4.jpeg',
+  './img/ios-step5.jpeg',
+  './img/android-step1.jpeg',
+  './img/android-step2.jpeg',
+  './img/android-step3.jpeg',
+  './img/android-step4.jpeg'
 ];
 
 self.addEventListener('install', function(e) {
