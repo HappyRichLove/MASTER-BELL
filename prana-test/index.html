@@ -3921,14 +3921,23 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.9)
-    var CURRENT_APP_VERSION = '1.8.9';
+    // PWA Version Tracking & Safe Cache Management (v2.0)
+    var CURRENT_APP_VERSION = '2.0';
 
     function checkPwaVersionMigration() {
         try {
             var lastVer = localStorage.getItem('mb_prana_app_version');
             if (lastVer !== CURRENT_APP_VERSION) {
                 localStorage.setItem('mb_prana_app_version', CURRENT_APP_VERSION);
+                if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                        keys.forEach(function(k) {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0') {
+                                caches.delete(k);
+                            }
+                        });
+                    });
+                }
             }
         } catch(e) {}
     }
@@ -3939,7 +3948,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.9...');
+        showToast('Обновление PWA v2.0...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3948,26 +3957,26 @@
                     navigator.serviceWorker.getRegistration().then(function(reg) {
                         if (reg) {
                             reg.update().then(function() {
-                                setTimeout(function() { window.location.reload(); }, 300);
+                                setTimeout(function() { window.location.reload(true); }, 300);
                             });
                         } else {
-                            setTimeout(function() { window.location.reload(); }, 300);
+                            setTimeout(function() { window.location.reload(true); }, 300);
                         }
                     }).catch(function() {
-                        window.location.reload();
+                        window.location.reload(true);
                     });
                 } else {
-                    setTimeout(function() { window.location.reload(); }, 300);
+                    setTimeout(function() { window.location.reload(true); }, 300);
                 }
             });
         } else {
-            window.location.reload();
+            window.location.reload(true);
         }
     }
 
-    // Service Worker registration (STABLE v1.8.9)
+    // Service Worker registration (STABLE v2.0)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.9').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
