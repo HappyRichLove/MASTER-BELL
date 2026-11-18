@@ -383,7 +383,7 @@
             transition: opacity 0.5s ease;
         }
         .bottom-time-label { display: none !important; }
-        body.is-running .bottom-lifetime-capsule,
+        /* Physical layout stability: bottom lifetime capsule stays stably in place, preventing screen twitching */
         body.is-running .bottom-time-label { display: none !important; }
         .lifetime-caption {
             font-size: 0.58rem;
@@ -450,18 +450,14 @@
             background: rgba(6, 9, 24, 0.65);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: flex-end;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
             overscroll-behavior: contain;
-            transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .modal-overlay.open,
-        .modal-overlay.closing {
-            display: flex;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .modal-overlay.open {
             opacity: 1;
@@ -470,10 +466,11 @@
         .modal-overlay.closing {
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.24s cubic-bezier(0.32, 1, 0.32, 1);
+            transition: opacity 0.26s cubic-bezier(0.32, 1, 0.32, 1);
         }
 
         .modal-sheet {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0c0f24;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-bottom: none;
@@ -1107,8 +1104,8 @@
            stored in _PROJECT_CORE/DESIGN_CATALOG.md
            ===================================================== */
         body {
-            font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-weight: 800;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 400;
         }
 
         .master-title {
@@ -1217,7 +1214,7 @@
             margin-top: 6px;
         }
         .variant-choice-btn {
-            font-family: "Montserrat", -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             flex: 1;
             display: flex;
             align-items: center;
@@ -1974,7 +1971,6 @@
             var closeBtn = document.getElementById('btnPinModalClose');
             if (closeBtn) closeBtn.style.display = 'none';
             if (modal) {
-                modal.style.display = 'flex';
                 modal.classList.remove('closing');
                 modal.classList.add('open');
             }
@@ -1985,15 +1981,11 @@
     function openPinAuthModal() {
         unlockAudioSession();
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
         clearPin();
         var modal = document.getElementById('pinModal');
         var closeBtn = document.getElementById('btnPinModalClose');
         if (closeBtn) closeBtn.style.display = isPranaUnlocked() ? 'flex' : 'none';
         if (modal) {
-            modal.style.display = 'flex';
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
@@ -2007,19 +1999,14 @@
             if (modal) {
                 modal.classList.add('closing');
                 setTimeout(function() {
-                    modal.classList.remove('open');
-                    modal.classList.remove('closing');
-                    modal.style.display = 'none';
-                    window.scrollTo(0, 0);
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
+                    modal.classList.remove('open', 'closing');
                 }, 280);
             }
             clearPin();
         }
     }
 
-    var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwiZ_oe83Gm8WoTld6u3A61WgQNNiMjt1Pyn9vKgqdnKszkO0f8N03Bzp9B1mqS1ptmWw/exec';
+    var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwAFT0Dz7_STSxk7xJVaNZV_mBrtkayI5vebcxuXCOqEhlo2UfTVurVxnxJSWP01SvJxA/exec';
     var pinAutoCheckTimer = null;
 
     function pressPin(digit) {
@@ -2163,12 +2150,7 @@
                         if (modal) {
                             modal.classList.add('closing');
                             setTimeout(function() {
-                                modal.classList.remove('open');
-                                modal.classList.remove('closing');
-                                modal.style.display = 'none';
-                                window.scrollTo(0, 0);
-                                document.body.scrollTop = 0;
-                                document.documentElement.scrollTop = 0;
+                                modal.classList.remove('open', 'closing');
                             }, 280);
                         }
                         clearPin();
@@ -2296,13 +2278,9 @@
     function openMasterDashboardModal() {
         unlockAudioSession();
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
 
         var modal = document.getElementById('masterDashboardModal');
         if (modal) {
-            modal.style.display = 'flex';
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
@@ -2397,28 +2375,13 @@
             document.activeElement.blur();
         }
         var modal = document.getElementById('masterDashboardModal');
-        if (!modal) return;
-        if (modal._isClosing) return;
+        if (!modal || modal._isClosing) return;
         modal._isClosing = true;
         modal.classList.add('closing');
 
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-
         setTimeout(function() {
-            modal.classList.remove('open');
-            modal.classList.remove('closing');
-            modal.style.display = 'none';
+            modal.classList.remove('open', 'closing');
             modal._isClosing = false;
-            window.scrollTo(0, 0);
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-            if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-            document.body.style.transform = 'translateZ(0)';
-            setTimeout(function() {
-                document.body.style.transform = '';
-            }, 50);
         }, 280);
     }
 
@@ -2641,15 +2604,18 @@
             setValText('title_kapala', '3. КАПАЛАБХАТИ');
             setValText('title_zamki', '4. ЗАМКИ');
 
-            if (rowRestAnulom) rowRestAnulom.style.display = 'flex';
-            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
-
-            container.appendChild(cardAnulom);
-            if (rowRestAnulom) container.appendChild(rowRestAnulom);
-            container.appendChild(cardBhastrika);
-            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
-            container.appendChild(cardKapala);
-            container.appendChild(cardZamki);
+            cardAnulom.style.order = '1';
+            if (rowRestAnulom) {
+                rowRestAnulom.style.order = '2';
+                rowRestAnulom.style.display = 'flex';
+            }
+            cardBhastrika.style.order = '3';
+            if (rowRestBhastrika) {
+                rowRestBhastrika.style.order = '4';
+                rowRestBhastrika.style.display = 'flex';
+            }
+            cardKapala.style.order = '5';
+            cardZamki.style.order = '6';
 
         } else {
             // Порядок Варианта 2: Бхастрика -> Отдых -> Капалабхати -> Замки -> Анулом
@@ -2658,14 +2624,17 @@
             setValText('title_zamki', '3. ЗАМКИ');
             setValText('title_anulom', '4. АНУЛОМ');
 
-            if (rowRestAnulom) rowRestAnulom.style.display = 'none';
-            if (rowRestBhastrika) rowRestBhastrika.style.display = 'flex';
-
-            container.appendChild(cardBhastrika);
-            if (rowRestBhastrika) container.appendChild(rowRestBhastrika);
-            container.appendChild(cardKapala);
-            container.appendChild(cardZamki);
-            container.appendChild(cardAnulom);
+            cardBhastrika.style.order = '1';
+            if (rowRestBhastrika) {
+                rowRestBhastrika.style.order = '2';
+                rowRestBhastrika.style.display = 'flex';
+            }
+            cardKapala.style.order = '3';
+            cardZamki.style.order = '4';
+            cardAnulom.style.order = '5';
+            if (rowRestAnulom) {
+                rowRestAnulom.style.display = 'none';
+            }
         }
     }
 
@@ -3599,15 +3568,11 @@
     function openSettingsModal() {
         unlockAudioSession();
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
         syncVariantUI(true);
         syncZenAuraUI();
         syncStepperDisplays();
         var modal = document.getElementById('settingsModal');
         if (modal) {
-            modal.style.display = 'flex';
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
@@ -3621,28 +3586,13 @@
             document.activeElement.blur();
         }
         var modal = document.getElementById('settingsModal');
-        if (!modal) return;
-        if (modal._isClosing) return;
+        if (!modal || modal._isClosing) return;
         modal._isClosing = true;
         modal.classList.add('closing');
 
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-
         setTimeout(function() {
-            modal.classList.remove('open');
-            modal.classList.remove('closing');
-            modal.style.display = 'none';
+            modal.classList.remove('open', 'closing');
             modal._isClosing = false;
-            window.scrollTo(0, 0);
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-            if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-            document.body.style.transform = 'translateZ(0)';
-            setTimeout(function() {
-                document.body.style.transform = '';
-            }, 50);
         }, 280);
 
         var oldPipelineLength = pipeline.length;
@@ -3881,9 +3831,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.1)
+    // Service Worker registration (STABLE v2.0)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
