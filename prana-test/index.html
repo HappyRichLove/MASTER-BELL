@@ -147,7 +147,7 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            transition: transform 0.3s ease, background 0.3s ease;
+            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .badge-brand:active {
@@ -159,9 +159,9 @@
             color: #ffffff;
             background: rgba(253, 172, 59, 0.28);
             border-color: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 0 16px rgba(253, 172, 59, 0.5);
+            box-shadow: 0 0 18px rgba(253, 172, 59, 0.55);
             transform: scale(1.04);
-            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -400,28 +400,6 @@
             letter-spacing: 0.06em;
             color: var(--gold);
             text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
-        }
-
-        .dash-pill-btn {
-            font-size: 0.58rem;
-            letter-spacing: 0.18em;
-            color: var(--gold);
-            opacity: 0.65;
-            cursor: pointer;
-            text-transform: uppercase;
-            padding: 3px 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(253, 172, 59, 0.25);
-            background: rgba(253, 172, 59, 0.08);
-            margin-top: 3px;
-            transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-        .dash-pill-btn:active {
-            opacity: 1;
-            background: rgba(253, 172, 59, 0.2);
-            transform: scale(0.96);
         }
 
         /* FOOTER */
@@ -1529,8 +1507,6 @@
             <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
 
-        <div class="dash-pill-btn" id="btnMainDashboard" onclick="openMasterDashboardModal()" style="display:none;" title="Дашборд">дашборд</div>
-
         <!-- FOOTER -->
         <footer class="footer-area">
             <div class="version-tag">MASTER v2.0</div>
@@ -2126,8 +2102,16 @@
                 if (data && data.status === 'ok') {
                     var unlockUntil = Date.now() + AUTH_TOKEN_VALIDITY_MS;
                     localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
-                    localStorage.setItem('mb_user_role', data.role || 'student');
-                    localStorage.setItem('mb_user_name', data.name || 'Ученик');
+
+                    var assignedId = data.id || '';
+                    var assignedRole = (data.role || '').toLowerCase();
+                    if (assignedId === 'MP-001') assignedRole = 'architect';
+                    if (assignedId === 'MP-002') assignedRole = 'master';
+                    if (!assignedRole) assignedRole = 'student';
+
+                    localStorage.setItem('mb_user_id', assignedId);
+                    localStorage.setItem('mb_user_role', assignedRole);
+                    localStorage.setItem('mb_user_name', data.name || (assignedId === 'MP-001' ? 'Сергей П (Архитектор)' : (assignedId === 'MP-002' ? 'Максим Б (Мастер)' : 'Ученик')));
                     localStorage.setItem('mb_user_pin', pin);
 
                     try {
@@ -2251,13 +2235,14 @@
         var nameEl = document.getElementById('authSyncName');
         var btnEl = document.getElementById('btnAuthSyncAction');
         var settingsDashBtn = document.getElementById('btnSettingsDashboard');
-        var mainDashBtn = document.getElementById('btnMainDashboard');
 
         var role = (localStorage.getItem('mb_user_role') || '').toLowerCase();
         var name = (localStorage.getItem('mb_user_name') || '');
         var pin = (localStorage.getItem('mb_user_pin') || '').trim();
+        var id = (localStorage.getItem('mb_user_id') || '').toUpperCase().trim();
 
-        var isMaster = (role === 'architect' || role === 'master' || 
+        var isMaster = (id === 'MP-001' || id === 'MP-002' ||
+                        role === 'architect' || role === 'master' || 
                         name.toLowerCase().indexOf('сергей') !== -1 || 
                         name.toLowerCase().indexOf('макс') !== -1 ||
                         name.toLowerCase().indexOf('архитектор') !== -1 ||
@@ -2271,7 +2256,6 @@
             }
             if (btnEl) btnEl.textContent = 'Сменить';
             if (settingsDashBtn) settingsDashBtn.style.display = 'inline-block';
-            if (mainDashBtn) mainDashBtn.style.display = 'inline-block';
         } else if (name) {
             if (nameEl) {
                 nameEl.textContent = name;
@@ -2279,7 +2263,6 @@
             }
             if (btnEl) btnEl.textContent = 'Сменить';
             if (settingsDashBtn) settingsDashBtn.style.display = 'none';
-            if (mainDashBtn) mainDashBtn.style.display = 'none';
         } else {
             if (nameEl) {
                 nameEl.textContent = 'Синхронизация';
@@ -2287,7 +2270,6 @@
             }
             if (btnEl) btnEl.textContent = 'ПИН-КОД';
             if (settingsDashBtn) settingsDashBtn.style.display = 'none';
-            if (mainDashBtn) mainDashBtn.style.display = 'none';
         }
     }
 
@@ -3890,15 +3872,15 @@
             try { navigator.vibrate(12); } catch(e){}
         }
 
-        // Deep slow inhale: gradually blossoms over 3.2 seconds
+        // Apply smooth inhale
         el.classList.add('prana-breathe');
         
         if (pranaBreathTimer) clearTimeout(pranaBreathTimer);
-        // After deep full inhale and short pause (3400ms), smoothly and softly exhales back over 4.5 seconds
+        // Exhale smoothly and softly back after gentle breath pause
         pranaBreathTimer = setTimeout(function() {
             el.classList.remove('prana-breathe');
             pranaBreathTimer = null;
-        }, 3400);
+        }, 550);
     }
 
 </script>
