@@ -902,7 +902,222 @@
                         text-shadow 0.45s cubic-bezier(0.2, 0.8, 0.25, 1);
         }
 
-        /* --- THEME 4: RUBY WINE VELVET (ИКОНКА 4) --- */
+        /* --- 1. THEME 4 CLEAN: RUBY MATTE (ГРАФИКА: КРАСНАЯ КНОПКА, БЕЖЕВЫЕ ЦИФРЫ, БЕЗ НЕОНА) --- */
+        body.theme-ruby-clean {
+            --bg: #1a060e;
+            --surface: #260a15;
+            --surface-elevated: #360e1f;
+            --text: #fdfbf7;
+            --accent: #d4a59a;
+            --gold: #f6e6c6;
+            --gold-glow: transparent;
+            --border: rgba(246, 230, 198, 0.25);
+            --rest-color: #f6e6c6;
+            --rest-glow: transparent;
+            background: #1a060e !important;
+        }
+        body.theme-ruby-clean::before,
+        body.theme-ruby-clean .zen-particle {
+            display: none !important;
+        }
+        body.theme-ruby-clean .timer-display {
+            color: #f6e6c6 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-clean .master-title {
+            color: #fdfbf7 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-clean .practice-title {
+            color: #b82846 !important;
+        }
+        body.theme-ruby-clean .btn-main {
+            background: #b82846 !important;
+            color: #fdfbf7 !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+        }
+        body.theme-ruby-clean .btn-main.paused {
+            background: transparent !important;
+            color: #b82846 !important;
+            border: 2px solid #b82846 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-clean .btn-main.rest-state {
+            background: #f6e6c6 !important;
+            color: #1a060e !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+        }
+        body.theme-ruby-clean .badge-brand {
+            color: #f6e6c6 !important;
+            background: rgba(184, 40, 70, 0.18) !important;
+            border-color: rgba(246, 230, 198, 0.4) !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-clean .progress-bar {
+            background: #b82846 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-clean .stage-dot.active {
+            background: #b82846 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-clean .modal-sheet {
+            background: #200812 !important;
+            border-color: rgba(246, 230, 198, 0.25) !important;
+        }
+        body.theme-ruby-clean .setting-card {
+            background: #2a0c18 !important;
+            border-color: rgba(246, 230, 198, 0.15) !important;
+        }
+        body.theme-ruby-clean .variant-choice-btn.active {
+            background: #b82846 !important;
+            color: #fdfbf7 !important;
+            border-color: #b82846 !important;
+        }
+        body.theme-ruby-clean .bottom-lifetime-capsule {
+            background: rgba(246, 230, 198, 0.08) !important;
+            border-color: rgba(246, 230, 198, 0.2) !important;
+        }
+        body.theme-ruby-clean .lifetime-digits {
+            color: #f6e6c6 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-clean .icon-btn {
+            background: #260a15 !important;
+            border-color: rgba(246, 230, 198, 0.2) !important;
+            color: #f6e6c6 !important;
+        }
+
+        /* --- 2. THEME 4 LIGHT: BEIGE SAND (СВЕТЛЫЙ ДИЗАЙН: БЕЖЕВЫЙ ФОН, КРАСНАЯ КНОПКА, ТЕМНЫЕ ЦИФРЫ) --- */
+        body.theme-ruby-light {
+            --bg: #f5efe6;
+            --surface: #eae0d0;
+            --surface-elevated: #ded2bf;
+            --text: #240a12;
+            --accent: #7a505b;
+            --gold: #240a12;
+            --gold-glow: transparent;
+            --border: rgba(36, 10, 18, 0.2);
+            --rest-color: #9e1c36;
+            --rest-glow: transparent;
+            background: #f5efe6 !important;
+        }
+        body.theme-ruby-light::before,
+        body.theme-ruby-light .zen-particle {
+            display: none !important;
+        }
+        body.theme-ruby-light .timer-display {
+            color: #240a12 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-light .master-title {
+            color: #240a12 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-light .practice-title {
+            color: #9e1c36 !important;
+        }
+        body.theme-ruby-light .btn-main {
+            background: #9e1c36 !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(158, 28, 54, 0.35) !important;
+        }
+        body.theme-ruby-light .btn-main.paused {
+            background: transparent !important;
+            color: #9e1c36 !important;
+            border: 2px solid #9e1c36 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-light .btn-main.rest-state {
+            background: #240a12 !important;
+            color: #f5efe6 !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(36, 10, 18, 0.35) !important;
+        }
+        body.theme-ruby-light .badge-brand {
+            color: #9e1c36 !important;
+            background: rgba(158, 28, 54, 0.08) !important;
+            border-color: rgba(158, 28, 54, 0.35) !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-light .progress-wrapper {
+            background: rgba(36, 10, 18, 0.12) !important;
+        }
+        body.theme-ruby-light .progress-bar {
+            background: #9e1c36 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-light .stage-dot {
+            background: rgba(36, 10, 18, 0.2) !important;
+        }
+        body.theme-ruby-light .stage-dot.active {
+            background: #9e1c36 !important;
+            box-shadow: none !important;
+        }
+        body.theme-ruby-light .bottom-lifetime-capsule {
+            background: rgba(36, 10, 18, 0.06) !important;
+            border-color: rgba(36, 10, 18, 0.18) !important;
+        }
+        body.theme-ruby-light .lifetime-digits {
+            color: #240a12 !important;
+            text-shadow: none !important;
+        }
+        body.theme-ruby-light .version-tag {
+            color: #7a505b !important;
+        }
+        body.theme-ruby-light .modal-sheet {
+            background: #f7f2eb !important;
+            border-color: rgba(36, 10, 18, 0.2) !important;
+            color: #240a12 !important;
+        }
+        body.theme-ruby-light .modal-title {
+            color: #240a12 !important;
+        }
+        body.theme-ruby-light .modal-close-btn {
+            background: #9e1c36 !important;
+            color: #ffffff !important;
+        }
+        body.theme-ruby-light .setting-card {
+            background: #ede3d4 !important;
+            border-color: rgba(36, 10, 18, 0.12) !important;
+        }
+        body.theme-ruby-light .setting-card-title {
+            color: #240a12 !important;
+        }
+        body.theme-ruby-light .stepper-label {
+            color: #5c3842 !important;
+        }
+        body.theme-ruby-light .step-btn {
+            background: #ded2bf !important;
+            border-color: rgba(36, 10, 18, 0.2) !important;
+            color: #240a12 !important;
+        }
+        body.theme-ruby-light .step-value {
+            color: #9e1c36 !important;
+        }
+        body.theme-ruby-light .variant-choice-btn {
+            background: #ded2bf !important;
+            color: #5c3842 !important;
+            border-color: transparent !important;
+        }
+        body.theme-ruby-light .variant-choice-btn.active {
+            background: #9e1c36 !important;
+            color: #ffffff !important;
+            border-color: #9e1c36 !important;
+        }
+        body.theme-ruby-light .icon-btn {
+            background: #eae0d0 !important;
+            border-color: rgba(36, 10, 18, 0.15) !important;
+            color: #240a12 !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        /* --- 3. THEME 4 AURA: RUBY WINE VELVET (С АТМОСФЕРОЙ) --- */
         body.theme-ruby {
             --bg: #14050a;
             --surface: #220912;
@@ -982,7 +1197,93 @@
             box-shadow: 0 0 4px rgba(219, 151, 135, 0.6) !important;
         }
 
-        /* --- THEME 8: SAPPHIRE MIDNIGHT INDIGO (ИКОНКА 8) --- */
+        /* --- 4. THEME 8 CLEAN: SAPPHIRE MATTE (ГРАФИКА: СИНЕ-ФИОЛЕТОВЫЙ ФОН, БЕЛАЯ КНОПКА, БЕЗ НЕОНА) --- */
+        body.theme-sapphire-clean {
+            --bg: #101432;
+            --surface: #191f4a;
+            --surface-elevated: #242c64;
+            --text: #ffffff;
+            --accent: #97a4d6;
+            --gold: #fdac3b;
+            --gold-glow: transparent;
+            --border: rgba(253, 172, 59, 0.25);
+            --rest-color: #ffffff;
+            --rest-glow: transparent;
+            background: #101432 !important;
+        }
+        body.theme-sapphire-clean::before,
+        body.theme-sapphire-clean .zen-particle {
+            display: none !important;
+        }
+        body.theme-sapphire-clean .timer-display {
+            color: #ffffff !important;
+            text-shadow: none !important;
+        }
+        body.theme-sapphire-clean .master-title {
+            color: #ffffff !important;
+            text-shadow: none !important;
+        }
+        body.theme-sapphire-clean .practice-title {
+            color: #fdac3b !important;
+        }
+        body.theme-sapphire-clean .btn-main {
+            background: #ffffff !important;
+            color: #101432 !important;
+            font-weight: 800 !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+        }
+        body.theme-sapphire-clean .btn-main.paused {
+            background: transparent !important;
+            color: #ffffff !important;
+            border: 2px solid #ffffff !important;
+            box-shadow: none !important;
+        }
+        body.theme-sapphire-clean .btn-main.rest-state {
+            background: #fdac3b !important;
+            color: #101432 !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+        }
+        body.theme-sapphire-clean .badge-brand {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        body.theme-sapphire-clean .progress-bar {
+            background: #ffffff !important;
+            box-shadow: none !important;
+        }
+        body.theme-sapphire-clean .stage-dot.active {
+            background: #fdac3b !important;
+            box-shadow: none !important;
+        }
+        body.theme-sapphire-clean .modal-sheet {
+            background: #151a3e !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        body.theme-sapphire-clean .setting-card {
+            background: #1e2554 !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+        body.theme-sapphire-clean .variant-choice-btn.active {
+            background: #ffffff !important;
+            color: #101432 !important;
+            border-color: #ffffff !important;
+        }
+        body.theme-sapphire-clean .lifetime-digits {
+            color: #fdac3b !important;
+            text-shadow: none !important;
+        }
+        body.theme-sapphire-clean .icon-btn {
+            background: #191f4a !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            color: #ffffff !important;
+        }
+
+        /* --- 5. THEME 8 AURA: SAPPHIRE MIDNIGHT INDIGO (С АТМОСФЕРОЙ) --- */
         body.theme-sapphire {
             --bg: #090b16;
             --surface: #131733;
@@ -1440,7 +1741,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.7.3</div>
+            <div class="version-tag">MASTER PRANA v1.7.4</div>
         </footer>
     </div>
 
@@ -1453,13 +1754,22 @@
             </div>
 
             <div class="modal-scroll">
-                <!-- ВЫБОР ЦВЕТОВОЙ ПАЛИТРЫ (СТИЛЬ 4 / СТИЛЬ 8 / ОБСИДИАН) -->
+                <!-- ВЫБОР ЦВЕТОВОЙ ПАЛИТРЫ -->
                 <div class="setting-card">
                     <div class="setting-card-title">ЦВЕТОВАЯ ПАЛИТРА</div>
-                    <div class="variant-modal-toggle" style="grid-template-columns: 1fr 1fr 1fr;">
-                        <button class="variant-choice-btn active" id="btnThemeDefault" onclick="applyAppTheme('default', true)">ОБСИДИАН</button>
-                        <button class="variant-choice-btn" id="btnThemeRuby" onclick="applyAppTheme('ruby', true)">4 • РУБИН</button>
-                        <button class="variant-choice-btn" id="btnThemeSapphire" onclick="applyAppTheme('sapphire', true)">8 • САПФИР</button>
+                    
+                    <div style="font-size:0.56rem; letter-spacing:0.12em; color:var(--accent); opacity:0.8; margin-bottom:6px; text-transform:uppercase;">ВАРИАНТ 4 (РУБИН &amp; БЕЖ):</div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-bottom:10px;">
+                        <button class="variant-choice-btn" id="btnThemeRubyClean" onclick="applyAppTheme('ruby-clean', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">4 • МАТТ</button>
+                        <button class="variant-choice-btn" id="btnThemeRubyLight" onclick="applyAppTheme('ruby-light', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">4 • СВЕТЛЫЙ</button>
+                        <button class="variant-choice-btn" id="btnThemeRuby" onclick="applyAppTheme('ruby', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">4 • АУРА</button>
+                    </div>
+
+                    <div style="font-size:0.56rem; letter-spacing:0.12em; color:var(--accent); opacity:0.8; margin-bottom:6px; text-transform:uppercase;">ВАРИАНТ 8 (САПФИР) И КЛАССИКА:</div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
+                        <button class="variant-choice-btn" id="btnThemeSapphireClean" onclick="applyAppTheme('sapphire-clean', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">8 • МАТТ</button>
+                        <button class="variant-choice-btn" id="btnThemeSapphire" onclick="applyAppTheme('sapphire', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">8 • АУРА</button>
+                        <button class="variant-choice-btn active" id="btnThemeDefault" onclick="applyAppTheme('default', true)" style="font-size:0.55rem; padding:8px 2px; white-space:nowrap;">ОБСИДИАН</button>
                     </div>
                 </div>
 
@@ -1572,7 +1882,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.3 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.4 ↻</div>
                 </div>
             </div>
         </div>
@@ -1873,23 +2183,27 @@
     }
 
     /* =====================================================
-       DYNAMIC COLOR PALETTES (STYLE 4: RUBY / STYLE 8: SAPPHIRE)
+       DYNAMIC COLOR PALETTES (STYLE 4 & STYLE 8 VARIANTS)
        ===================================================== */
-    var APP_THEMES = ['default', 'ruby', 'sapphire'];
+    var APP_THEMES = ['default', 'ruby-clean', 'ruby-light', 'ruby', 'sapphire-clean', 'sapphire'];
     var themeLabels = {
         'default': 'Палитра: ОБСИДИАН (Дефолт)',
-        'ruby': 'Палитра: СТИЛЬ 4 (Рубиновый бархат)',
-        'sapphire': 'Палитра: СТИЛЬ 8 (Сапфировый индиго)'
+        'ruby-clean': 'Палитра: 4 • РУБИН МАТТ (Красная кнопка, беж)',
+        'ruby-light': 'Палитра: 4 • БЕЖЕВЫЙ ПЕСОК (Светлый дизайн)',
+        'ruby': 'Палитра: 4 • РУБИН АУРА (С атмосферой)',
+        'sapphire-clean': 'Палитра: 8 • САПФИР МАТТ (Белая кнопка)',
+        'sapphire': 'Палитра: 8 • САПФИР АУРА (С атмосферой)'
     };
 
     function applyAppTheme(themeName, showNotification) {
         if (APP_THEMES.indexOf(themeName) === -1) themeName = 'default';
         
-        document.body.classList.remove('theme-ruby', 'theme-sapphire');
-        if (themeName === 'ruby') {
-            document.body.classList.add('theme-ruby');
-        } else if (themeName === 'sapphire') {
-            document.body.classList.add('theme-sapphire');
+        document.body.classList.remove(
+            'theme-ruby', 'theme-ruby-clean', 'theme-ruby-light',
+            'theme-sapphire', 'theme-sapphire-clean'
+        );
+        if (themeName !== 'default') {
+            document.body.classList.add('theme-' + themeName);
         }
         
         try {
@@ -1899,19 +2213,26 @@
         // Update meta theme-color for browser chrome
         var metaTheme = document.querySelector('meta[name="theme-color"]');
         if (metaTheme) {
-            if (themeName === 'ruby') metaTheme.setAttribute('content', '#14050a');
+            if (themeName === 'ruby-clean') metaTheme.setAttribute('content', '#1a060e');
+            else if (themeName === 'ruby-light') metaTheme.setAttribute('content', '#f5efe6');
+            else if (themeName === 'ruby') metaTheme.setAttribute('content', '#14050a');
+            else if (themeName === 'sapphire-clean') metaTheme.setAttribute('content', '#101432');
             else if (themeName === 'sapphire') metaTheme.setAttribute('content', '#090b16');
             else metaTheme.setAttribute('content', '#000000');
         }
         
         // Sync modal buttons
-        var bDef = document.getElementById('btnThemeDefault');
-        var bRuby = document.getElementById('btnThemeRuby');
-        var bSaph = document.getElementById('btnThemeSapphire');
-        if (bDef && bRuby && bSaph) {
-            bDef.classList.toggle('active', themeName === 'default');
-            bRuby.classList.toggle('active', themeName === 'ruby');
-            bSaph.classList.toggle('active', themeName === 'sapphire');
+        var btnIds = {
+            'default': 'btnThemeDefault',
+            'ruby-clean': 'btnThemeRubyClean',
+            'ruby-light': 'btnThemeRubyLight',
+            'ruby': 'btnThemeRuby',
+            'sapphire-clean': 'btnThemeSapphireClean',
+            'sapphire': 'btnThemeSapphire'
+        };
+        for (var k in btnIds) {
+            var b = document.getElementById(btnIds[k]);
+            if (b) b.classList.toggle('active', k === themeName);
         }
         
         var btn = document.getElementById('btnThemeToggle');
@@ -1926,8 +2247,12 @@
 
     function cycleAppTheme() {
         var cur = 'default';
-        if (document.body.classList.contains('theme-ruby')) cur = 'ruby';
-        else if (document.body.classList.contains('theme-sapphire')) cur = 'sapphire';
+        for (var i = 0; i < APP_THEMES.length; i++) {
+            if (APP_THEMES[i] !== 'default' && document.body.classList.contains('theme-' + APP_THEMES[i])) {
+                cur = APP_THEMES[i];
+                break;
+            }
+        }
         
         var nextIdx = (APP_THEMES.indexOf(cur) + 1) % APP_THEMES.length;
         applyAppTheme(APP_THEMES[nextIdx], true);
@@ -3013,8 +3338,8 @@
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.7.3)
-    var CURRENT_APP_VERSION = '1.7.3';
+    // PWA Version Tracking & Safe Cache Management (v1.7.4)
+    var CURRENT_APP_VERSION = '1.7.4';
 
     function checkPwaVersionMigration() {
         try {
@@ -3055,7 +3380,7 @@
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.7.3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.7.4').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
