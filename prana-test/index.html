@@ -85,18 +85,6 @@
             -webkit-user-select: none;
         }
 
-        /* TOP NOTCH SOLID SHIELD (PREVENTS SUBPIXEL iOS COMPOSITOR STRIPES) */
-        .notch-shield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: max(24px, env(safe-area-inset-top, 24px));
-            background: #0c0f24;
-            z-index: 1;
-            pointer-events: none;
-        }
-
         /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
         .header-area {
             position: relative;
@@ -461,8 +449,13 @@
         /* SETTINGS MODAL */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(4, 6, 18, 0.78);
+            top: -120px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(4, 6, 18, 0.85);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
             display: none;
             justify-content: center;
             align-items: flex-end;
@@ -897,9 +890,11 @@
             transform: scale(0.96);
         }
 
-        /* PIN CODE MODAL (888 / 72 HOURS VALIDITY) */
+        /* PIN CODE MODAL (777 / 888 / 4-DIGIT STUDENT PINS) */
         #pinModal {
             align-items: center;
+            justify-content: center;
+            padding-top: 120px;
             z-index: 2000;
         }
         .pin-card {
@@ -1397,9 +1392,6 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- TOP NOTCH SOLID SHIELD (SEAMLESS SAPPHIRE NOTCH BACKGROUND) -->
-    <div class="notch-shield"></div>
-
     <!-- ZEN AMBIENT PARTICLES LAYER -->
     <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
         <div class="zen-particle p1"></div>
@@ -1472,7 +1464,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.7</div>
+            <div class="version-tag">MASTER v1.8.8</div>
         </footer>
     </div>
 
@@ -1858,7 +1850,7 @@
         }
     }
 
-    var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxa5sxfyPWJtkfca6lz8SMFqJj3QaNkk43VeirnosVQKsTQjXWgQ0tOi_Y-oVPDoYY5/exec';
+    var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwiZ_oe83Gm8WoTld6u3A61WgQNNiMjt1Pyn9vKgqdnKszkO0f8N03Bzp9B1mqS1ptmWw/exec';
     var pinAutoCheckTimer = null;
 
     function pressPin(digit) {
@@ -3625,8 +3617,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.7)
-    var CURRENT_APP_VERSION = '1.8.7';
+    // PWA Version Tracking & Safe Cache Management (v1.8.8)
+    var CURRENT_APP_VERSION = '1.8.8';
 
     function checkPwaVersionMigration() {
         try {
@@ -3643,7 +3635,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.7...');
+        showToast('Обновление PWA v1.8.8...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3669,9 +3661,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.7)
+    // Service Worker registration (STABLE v1.8.8)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.7').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.8').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
