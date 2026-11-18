@@ -838,45 +838,50 @@
             transition: opacity 0.35s ease;
         }
 
-        /* 11. DAWN BREATH ON HEADER (GRACEFUL SACRED MORNING WARMTH) */
+        /* 11. SACRED DAWN GLEAM ON «МАСТЕР» (ELEGANT GOLDEN LIGHT SWEEP) */
         .master-title.header-morning-ray {
-            animation: dawnBreath 3.6s cubic-bezier(0.25, 1, 0.5, 1) both;
-            will-change: color, text-shadow;
+            background: linear-gradient(
+                110deg,
+                #ffffff 0%,
+                #ffffff 36%,
+                #ffe699 46%,
+                #ffffff 50%,
+                #ffd269 54%,
+                #ffffff 64%,
+                #ffffff 100%
+            );
+            background-size: 260% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: masterDawnGleam 2.5s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+            will-change: background-position, filter;
         }
-        @keyframes dawnBreath {
+        @keyframes masterDawnGleam {
             0% {
-                color: #ffffff;
-                text-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+                background-position: 125% 0;
+                filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.08));
             }
-            40% {
-                color: #ffeed1;
-                text-shadow: 0 0 24px rgba(212, 175, 55, 0.65), 0 0 42px rgba(212, 175, 55, 0.35);
+            45% {
+                filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.65)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.35));
             }
             100% {
-                color: #ffffff;
-                text-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+                background-position: -25% 0;
+                filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.08));
             }
         }
 
-        /* PWA UPDATE BUTTON (IN SETTINGS ONLY) */
-        .pwa-update-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.35);
-            color: var(--gold);
-            font-family: inherit;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            padding: 7px 16px;
-            border-radius: 20px;
+        /* MODAL PWA UPDATE LINK (QUIET CIRCULAR ARROW TAG) */
+        .modal-version-btn {
             cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.25s ease;
+            padding: 6px 14px;
+            border-radius: 6px;
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s ease, transform 0.15s ease;
         }
-        .pwa-update-btn:active {
-            background: rgba(212, 175, 55, 0.2);
-            transform: scale(0.97);
+        .modal-version-btn:active {
+            opacity: 0.85 !important;
+            transform: scale(0.96);
         }
 
         /* PIN CODE MODAL (888 / 72 HOURS VALIDITY) */
@@ -1241,7 +1246,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.7.1</div>
+            <div class="version-tag">MASTER PRANA v1.7.2</div>
         </footer>
     </div>
 
@@ -1361,15 +1366,9 @@
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <!-- PWA UPDATE ACTION IN SETTINGS ONLY -->
-                <div style="padding: 18px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
-                    <button class="pwa-update-btn" onclick="forcePwaUpdate()" title="Проверить и загрузить обновление PWA">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px; margin-right:5px;">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                        </svg>
-                        ОБНОВИТЬ ПРИЛОЖЕНИЕ (v1.7.1)
-                    </button>
+                <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
+                <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.2 ↻</div>
                 </div>
             </div>
         </div>
@@ -2332,21 +2331,21 @@
         checkPinGate();
         initStillnessTracker();
 
-        // Единоразовое мягкое рассветное дыхание света по слову «МАСТЕР» при входе
+        // Единоразовый благородный золотистый блеск света по слову «МАСТЕР» при загрузке
         setTimeout(function() {
             var t = document.querySelector('.master-title');
             if (t) {
                 t.classList.add('header-morning-ray');
                 setTimeout(function() {
                     t.classList.remove('header-morning-ray');
-                }, 3900);
+                }, 2700);
             }
         }, 500);
 
-        // Авто-анимация глубокого осознанного вдоха PRANA через 1.4 секунды после входа
+        // Авто-анимация глубокого осознанного вдоха PRANA через 1.8 секунды после входа
         setTimeout(function() {
             triggerPranaBreathe();
-        }, 1400);
+        }, 1800);
 
         var masterTitleEl = document.querySelector('.master-title');
         if (masterTitleEl) {
@@ -2739,8 +2738,8 @@
         }
     });
 
-    // PWA Version Tracking & Safe Cache Management (v1.7.1)
-    var CURRENT_APP_VERSION = '1.7.1';
+    // PWA Version Tracking & Safe Cache Management (v1.7.2)
+    var CURRENT_APP_VERSION = '1.7.2';
 
     function checkPwaVersionMigration() {
         try {
@@ -2781,7 +2780,7 @@
 
     // Service Worker registration (STABLE — NO auto-reload loops)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.7.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.7.2').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
