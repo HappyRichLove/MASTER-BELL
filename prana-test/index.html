@@ -446,16 +446,14 @@
             text-transform: uppercase;
         }
 
-        /* SETTINGS MODAL */
+        /* SETTINGS & DASHBOARD MODALS (FULL-SCREEN SEAMLESS SAPPHIRE VIEWS) */
         .modal-overlay {
             position: fixed;
-            top: -120px;
+            top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(4, 6, 18, 0.85);
-            -webkit-backdrop-filter: blur(16px);
-            backdrop-filter: blur(16px);
+            background: #0c0f24;
             display: none;
             justify-content: center;
             align-items: flex-end;
@@ -481,17 +479,17 @@
         }
 
         .modal-sheet {
-            background: #0d112b;
-            border-top: none;
-            border-top-left-radius: 28px;
-            border-top-right-radius: 28px;
+            background: #0c0f24;
+            border: none;
+            border-radius: 0;
             width: 100%;
-            max-width: 480px;
-            height: 82vh;
-            max-height: 84vh;
+            max-width: 520px;
+            height: 100%;
+            height: 100dvh;
+            max-height: 100dvh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.75);
+            box-shadow: none;
             transform: translateY(100%);
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
@@ -505,11 +503,12 @@
         }
 
         .modal-header {
-            padding: 16px 20px 10px;
+            padding: max(16px, calc(env(safe-area-inset-top, 24px) + 12px)) 20px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: #0c0f24;
             flex-shrink: 0;
         }
         .modal-title {
@@ -894,7 +893,7 @@
         #pinModal {
             align-items: center;
             justify-content: center;
-            padding-top: 120px;
+            background: rgba(4, 6, 18, 0.88);
             z-index: 2000;
         }
         .pin-card {
@@ -1464,7 +1463,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.8</div>
+            <div class="version-tag">MASTER v1.8.9</div>
         </footer>
     </div>
 
@@ -1914,11 +1913,33 @@
     /* =====================================================
        SECURITY PIN GATE & GOOGLE SHEETS AUTH
        ===================================================== */
+    function syncInitialUserTimeToCloud(pin, totalSec) {
+        if (!pin || !navigator.onLine) return;
+        var secToSend = totalSec || currentMbTotal || 0;
+        var url = GOOGLE_SHEETS_API_URL + '?action=migrate_student&pin=' + encodeURIComponent(pin) +
+                  '&totalSeconds=' + encodeURIComponent(secToSend) +
+                  '&variant=' + encodeURIComponent(currentVariant || 'v1');
+        fetch(url)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data && data.status === 'success') {
+                    if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
+                        currentMbTotal = data.totalSeconds;
+                        try {
+                            localStorage.setItem('mb_total', currentMbTotal.toString());
+                        } catch(e) {}
+                        renderLifetimeDisplay();
+                    }
+                }
+            })
+            .catch(function() {});
+    }
+
     function checkPin() {
         var pin = enteredPin.trim();
         if (!pin) return;
 
-        // 1. Сергей П (Архитектор / ПИН 777 или 7777) — мгновенный офлайн-вход
+        // 1. Сергей П (Архитектор / ПИН 777 или 7777) — мгновенный вход + авто-синхронизация часов
         if (pin === '777' || pin === '7777') {
             var unlockUntil = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
@@ -1928,6 +1949,7 @@
 
             showToast('Сергей П (Архитектор) ✨ Доступ открыт');
             updateAuthSyncUI();
+            syncInitialUserTimeToCloud(pin, currentMbTotal);
 
             setTimeout(function() {
                 var modal = document.getElementById('pinModal');
@@ -1937,7 +1959,7 @@
             return;
         }
 
-        // 2. Максим Б (Мастер / ПИН 888 или 8888) — мгновенный офлайн-вход
+        // 2. Максим Б (Мастер / ПИН 888 или 8888) — мгновенный вход + авто-синхронизация часов
         if (pin === '888' || pin === '8888') {
             var unlockUntil888 = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil888.toString());
@@ -1947,6 +1969,7 @@
 
             showToast('Максим Б (Мастер) ✨ Доступ открыт');
             updateAuthSyncUI();
+            syncInitialUserTimeToCloud(pin, currentMbTotal);
 
             setTimeout(function() {
                 var modal = document.getElementById('pinModal');
@@ -1970,7 +1993,8 @@
         }
 
         showToast('Проверка доступа...');
-        var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
+        var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin) +
+                  '&clientTotalSeconds=' + encodeURIComponent(currentMbTotal);
 
         fetch(url)
             .then(function(res) { return res.json(); })
@@ -1982,13 +2006,15 @@
                     localStorage.setItem('mb_user_name', data.name || 'Ученик');
                     localStorage.setItem('mb_user_pin', pin);
 
-                    // Если в таблице есть наработанные часы — подтягиваем
+                    // Если в таблице есть наработанные часы — подтягиваем, если на телефоне больше — пушим в таблицу
                     if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
                         currentMbTotal = data.totalSeconds;
                         try {
                             localStorage.setItem('mb_total', currentMbTotal.toString());
                         } catch(e) {}
                         renderLifetimeDisplay();
+                    } else if (currentMbTotal > 0) {
+                        syncInitialUserTimeToCloud(pin, currentMbTotal);
                     }
 
                     showToast((data.name || 'Ученик') + ' ✨ Доступ открыт');
@@ -2224,7 +2250,13 @@
     var pendingSecToAdd = 0;
 
     try {
-        currentMbTotal = parseInt(localStorage.getItem('mb_total'), 10) || 0;
+        var k1 = parseInt(localStorage.getItem('mb_total'), 10) || 0;
+        var k2 = parseInt(localStorage.getItem('mb_total_practice_sec'), 10) || 0;
+        var k3 = parseInt(localStorage.getItem('master_bell_lifetime_sec'), 10) || 0;
+        currentMbTotal = Math.max(k1, k2, k3);
+        if (currentMbTotal > 0 && currentMbTotal !== k1) {
+            localStorage.setItem('mb_total', currentMbTotal.toString());
+        }
     } catch(e) {}
 
     function addGlobalPracticeSecond() {
@@ -3617,8 +3649,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.8)
-    var CURRENT_APP_VERSION = '1.8.8';
+    // PWA Version Tracking & Safe Cache Management (v1.8.9)
+    var CURRENT_APP_VERSION = '1.8.9';
 
     function checkPwaVersionMigration() {
         try {
@@ -3635,7 +3667,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.8...');
+        showToast('Обновление PWA v1.8.9...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3661,9 +3693,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.8)
+    // Service Worker registration (STABLE v1.8.9)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.8').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.9').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -3675,16 +3707,19 @@
         }
     }, { passive: false });
 
-    // Initialize application
-    document.addEventListener('DOMContentLoaded', function() {
+    // Initialize application & auto-sync lifetime hours to cloud
+    function handleAppInitSync() {
         initApp();
         checkStandaloneUI();
         flushOfflineSyncBuffer();
-    });
+        var savedPin = localStorage.getItem('mb_user_pin');
+        if (savedPin && currentMbTotal > 0 && navigator.onLine) {
+            syncInitialUserTimeToCloud(savedPin, currentMbTotal);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', handleAppInitSync);
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        initApp();
-        checkStandaloneUI();
-        flushOfflineSyncBuffer();
+        handleAppInitSync();
     }
 
         /* =====================================================
