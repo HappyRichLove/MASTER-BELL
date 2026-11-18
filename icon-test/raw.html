@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>MASTER RAW</title>
+  
+  <!-- PWA & Apple Web App Tags for RAW Version -->
+  <link rel="manifest" href="manifest-raw.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MASTER RAW">
+  <meta name="theme-color" content="#282828">
+  
+  <!-- Apple Touch Icon (RAW) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-raw.png">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-raw.png">
+  
+  <!-- Standard Favicons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192-raw.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512-raw.png">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 20%, #2c2c2c 0%, #151515 100%);
+      --text-main: #f5f5f7;
+      --text-muted: #a1a1a6;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --amber: #ffa266;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom)) 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #e0e0e0;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .icon-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      width: 100%;
+      backdrop-filter: blur(20px);
+    }
+
+    .app-icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 22.5%;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+      object-fit: cover;
+    }
+
+    .card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      backdrop-filter: blur(15px);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .card ol {
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .card li { margin-bottom: 6px; }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      background: #651c30;
+      border: none;
+      border-radius: 16px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">🖼️ RAW ICON TEST</div>
+
+    <h1>MASTER RAW</h1>
+    <p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: -8px;">
+      Установка приложения с исходным изображением иконки (с серой рамкой)
+    </p>
+
+    <div class="icon-stage">
+      <img class="app-icon" src="apple-touch-icon-raw.png" alt="RAW Icon">
+      <div style="font-size: 14px; font-weight: 500;">MASTER RAW</div>
+      <p style="font-size: 12px; color: var(--text-muted); text-align: center;">
+        Исходное изображение как было передано — с серой подложкой вокруг скругленного винного квадрата.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>📲 Установка на экран Домой (Safari)</h3>
+      <ol>
+        <li>Нажмите кнопку <strong>«Поделиться»</strong> (квадрат со стрелкой вверх внизу Safari).</li>
+        <li>Выберите <strong>«На экран „Домой“»</strong>.</li>
+        <li>Имя будет: <strong>MASTER RAW</strong>.</li>
+        <li>Нажмите <strong>«Добавить»</strong>.</li>
+      </ol>
+    </div>
+
+    <a class="btn-action" href="index.html">
+      ← Вернуться к Рекомендованной Чистой версии (Full-Bleed)
+    </a>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>

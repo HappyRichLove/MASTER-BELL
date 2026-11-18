@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>MASTER</title>
+  
+  <!-- PWA & Apple Web App Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MASTER">
+  <meta name="theme-color" content="#651c30">
+  
+  <!-- Apple Touch Icon (Primary iOS PWA Icon) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+  
+  <!-- Standard Favicons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 20%, #2e0d18 0%, #120409 100%);
+      --wine: #651c30;
+      --amber: #ffa266;
+      --cream: #fffae6;
+      --text-main: #f5f5f7;
+      --text-muted: #a1a1a6;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --squircle-radius: 22.5%;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom)) 16px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: rgba(255, 162, 102, 0.12);
+      border: 1px solid rgba(255, 162, 102, 0.25);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+      margin-top: -8px;
+    }
+
+    /* Icon Preview Stage */
+    .icon-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      width: 100%;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .icon-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .icon-wrapper:active {
+      transform: scale(0.95);
+    }
+
+    .app-icon {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--squircle-radius);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      object-fit: cover;
+      display: block;
+    }
+
+    .app-label {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    /* Toggle bar */
+    .toggle-bar {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 4px;
+      width: 100%;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 10px 8px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-btn.active {
+      background: var(--wine);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(101, 28, 48, 0.5);
+    }
+
+    /* Info Card */
+    .card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      backdrop-filter: blur(15px);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--amber);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card ol, .card ul {
+      padding-left: 20px;
+      color: var(--text-main);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .card li {
+      margin-bottom: 6px;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #651c30 0%, #852641 100%);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(101, 28, 48, 0.4);
+      transition: transform 0.2s, opacity 0.2s;
+      text-decoration: none;
+    }
+    .btn-action:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    /* iPhone Mockup preview */
+    .mockup-container {
+      width: 100%;
+      background: #000000;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 36px;
+      padding: 16px 14px 20px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .mockup-notch {
+      width: 90px;
+      height: 20px;
+      background: #000000;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px 10px;
+      width: 100%;
+      padding: 6px 4px;
+    }
+
+    .mock-app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .mock-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .mock-icon.system-1 { background: linear-gradient(135deg, #ff9500, #ff5e3a); }
+    .mock-icon.system-2 { background: linear-gradient(135deg, #5ac8fa, #007aff); }
+    .mock-icon.system-3 { background: linear-gradient(135deg, #4cd964, #34aadc); }
+    .mock-icon.our-icon {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .mock-icon.our-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mock-name {
+      font-size: 11px;
+      color: #ffffff;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 58px;
+    }
+
+    .mock-dock {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+    }
+
+    .standalone-badge {
+      display: none;
+      background: rgba(52, 199, 89, 0.15);
+      border: 1px solid rgba(52, 199, 89, 0.4);
+      color: #34c759;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      width: 100%;
+    }
+
+    .raw-link {
+      color: var(--amber);
+      text-decoration: underline;
+      font-size: 13px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="badge">✦ PWA ICON TEST</div>
+
+    <h1>MASTER</h1>
+    <p class="subtitle">Тестирование отображения иконки при установке на домашний экран (iOS / Android / macOS)</p>
+
+    <div class="standalone-badge" id="standaloneNotice">
+      🎉 Приложение запущено из иконки на домашнем экране!
+    </div>
+
+    <!-- Live Stage -->
+    <div class="icon-stage">
+      <div class="icon-wrapper">
+        <img id="mainIconImg" class="app-icon" src="apple-touch-icon.png" alt="Иконка MASTER">
+      </div>
+      <div class="app-label" id="mainIconLabel">MASTER</div>
+
+      <div class="toggle-bar">
+        <button class="toggle-btn active" id="btnClean" onclick="switchMode('clean')">✨ Чистая (Full-Bleed)</button>
+        <button class="toggle-btn" id="btnRaw" onclick="switchMode('raw')">🖼️ Исходник (Raw с рамкой)</button>
+      </div>
+      <p id="modeDesc" style="font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.4;">
+        Винный фон плавно заполняет иконку до краев. iOS/Android мягко скругляют углы по системному стандарту.
+      </p>
+    </div>
+
+    <!-- Safari Install Instructions -->
+    <div class="card">
+      <h3>📲 Как протестировать на iPhone (iOS Safari)</h3>
+      <ol>
+        <li>Откройте эту страницу в браузере <strong>Safari</strong> на iPhone.</li>
+        <li>Нажмите кнопку <strong>«Поделиться»</strong> (квадрат со стрелкой вверх внизу экрана).</li>
+        <li>Прокрутите вниз и выберите <strong>«На экран „Домой“»</strong> (Add to Home Screen).</li>
+        <li>Имя приложения автоматически заполнится как <strong>MASTER</strong>.</li>
+        <li>Нажмите <strong>«Добавить»</strong> — и проверьте вид иконки на вашем экране рядом с другими приложениями!</li>
+      </ol>
+    </div>
+
+    <!-- Android / Chrome Install Button (shown if supported) -->
+    <button class="btn-action" id="btnInstallChrome" style="display: none;" onclick="triggerChromeInstall()">
+      📥 Установить на устройство (Chrome PWA)
+    </button>
+
+    <!-- Visual Simulation on Home Screen -->
+    <div class="card">
+      <h3>📱 Симуляция на рабочем столе iOS</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        Вот так иконка выглядит в сетке приложений и на доке iPhone:
+      </p>
+
+      <div class="mockup-container">
+        <div class="mockup-notch"></div>
+        <div class="mockup-grid">
+          <div class="mock-app">
+            <div class="mock-icon system-1">📅</div>
+            <div class="mock-name">Календарь</div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon system-2">🌤️</div>
+            <div class="mock-name">Погода</div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon our-icon">
+              <img id="mockAppImg" src="apple-touch-icon.png" alt="MASTER">
+            </div>
+            <div class="mock-name">MASTER</div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon system-3">🎵</div>
+            <div class="mock-name">Музыка</div>
+          </div>
+        </div>
+
+        <div class="mock-dock">
+          <div class="mock-app">
+            <div class="mock-icon" style="background: #34c759; border-radius: 12px; width: 44px; height: 44px; font-size: 20px;">📞</div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon" style="background: #007aff; border-radius: 12px; width: 44px; height: 44px; font-size: 20px;">🧭</div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon our-icon" style="width: 44px; height: 44px; border-radius: 10px;">
+              <img id="mockDockImg" src="apple-touch-icon.png" alt="MASTER">
+            </div>
+          </div>
+          <div class="mock-app">
+            <div class="mock-icon" style="background: #ff2d55; border-radius: 12px; width: 44px; height: 44px; font-size: 20px;">💬</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Dual Install -->
+    <div class="card" style="text-align: center;">
+      <h3 style="justify-content: center;">⚖️ Хотите сравнить обе версии на экране?</h3>
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+        Вы можете установить версию с исходной серой рамкой как отдельное приложение и поставить их рядом на экране iPhone!
+      </p>
+      <a class="btn-action" href="raw.html" style="background: #282828; border: 1px solid rgba(255,255,255,0.15);">
+        🖼️ Перейти к установке версии RAW (с рамкой)
+      </a>
+    </div>
+
+    <p style="font-size: 11px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 10px;">
+      Временный тестовый модуль • Изолирован от основного приложения • v1.0
+    </p>
+  </div>
+
+  <script>
+    // Standalone check
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      document.getElementById('standaloneNotice').style.display = 'block';
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration error:', err));
+    }
+
+    // Chrome install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('btnInstallChrome');
+      if (btn) btn.style.display = 'flex';
+    });
+
+    function triggerChromeInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          document.getElementById('btnInstallChrome').style.display = 'none';
+        });
+      }
+    }
+
+    // Switch mode
+    function switchMode(mode) {
+      const btnClean = document.getElementById('btnClean');
+      const btnRaw = document.getElementById('btnRaw');
+      const mainImg = document.getElementById('mainIconImg');
+      const mockAppImg = document.getElementById('mockAppImg');
+      const mockDockImg = document.getElementById('mockDockImg');
+      const modeDesc = document.getElementById('modeDesc');
+      const mainLabel = document.getElementById('mainIconLabel');
+
+      if (mode === 'clean') {
+        btnClean.classList.add('active');
+        btnRaw.classList.remove('active');
+        mainImg.src = 'apple-touch-icon.png';
+        mockAppImg.src = 'apple-touch-icon.png';
+        mockDockImg.src = 'apple-touch-icon.png';
+        mainLabel.textContent = 'MASTER';
+        modeDesc.textContent = 'Винный фон плавно заполняет иконку до краев. iOS/Android мягко скругляют углы по системному стандарту.';
+        document.querySelector("link[rel='apple-touch-icon']").setAttribute('href', 'apple-touch-icon.png');
+      } else {
+        btnRaw.classList.add('active');
+        btnClean.classList.remove('active');
+        mainImg.src = 'apple-touch-icon-raw.png';
+        mockAppImg.src = 'apple-touch-icon-raw.png';
+        mockDockImg.src = 'apple-touch-icon-raw.png';
+        mainLabel.textContent = 'MASTER RAW';
+        modeDesc.textContent = 'Оригинальный исходник: винный квадрат со встроенными скруглениями на темно-сером фоне.';
+        document.querySelector("link[rel='apple-touch-icon']").setAttribute('href', 'apple-touch-icon-raw.png');
+      }
+    }
+  </script>
+</body>
+</html>
