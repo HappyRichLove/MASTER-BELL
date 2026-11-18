@@ -7,13 +7,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#0c0f24">
     <meta name="apple-mobile-web-app-title" content="MASTER">
     <meta name="application-name" content="MASTER">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>MASTER PRANA</title>
+    <title>MASTER</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -26,16 +26,16 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         :root {
-            --bg: #000000;
-            --surface: #121214;
-            --surface-elevated: #1a1a1e;
+            --bg: #0c0f24;
+            --surface: #141938;
+            --surface-elevated: #1d234d;
             --text: #ffffff;
-            --accent: #8e8e93;
-            --gold: #d4af37;
-            --gold-glow: rgba(212, 175, 55, 0.45);
-            --border: rgba(212, 175, 55, 0.22);
-            --rest-color: #38bdf8;
-            --rest-glow: rgba(56, 189, 248, 0.35);
+            --accent: #9aa6cf;
+            --gold: #fdac3b;
+            --gold-glow: rgba(253, 172, 59, 0.45);
+            --border: rgba(253, 172, 59, 0.28);
+            --rest-color: #ffffff;
+            --rest-glow: rgba(255, 255, 255, 0.4);
         }
 
         body {
@@ -43,6 +43,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 50% 35%, #181e42 0%, #0c0f24 65%, #070914 100%);
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -58,7 +59,7 @@
             -webkit-user-select: none;
         }
 
-        /* TOP HEADER ZONE — CRYSTAL CLEAN ZEN MASTERY (NO TOP VIGNETTE / NO DARK SCRIM) */
+        /* TOP HEADER ZONE — CRYSTAL CLEAN (NO VIGNETTE / NO TOP GLOW OUT OF NOTCH) */
         .header-area {
             position: relative;
             display: flex;
@@ -71,20 +72,6 @@
             flex-shrink: 0;
         }
 
-        /* DELICATE ASCENDING SUNRISE GLEAM BEHIND «МАСТЕР» */
-        .header-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100vw;
-            height: 170px;
-            background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.05) 50%, transparent 80%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
         .master-title {
             position: relative;
             z-index: 1;
@@ -92,12 +79,19 @@
             font-weight: 200;
             letter-spacing: 0.32em;
             text-indent: 0.32em;
-            color: var(--text);
+            color: #ffffff;
             text-transform: uppercase;
             text-align: center;
             margin: 0;
             opacity: 1;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 35px rgba(255, 255, 255, 0.18);
+            text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+            line-height: 1;
+            pointer-events: auto !important;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.8s ease, text-shadow 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.25, 1);
+        }
             line-height: 1;
             pointer-events: auto !important;
             cursor: pointer;
@@ -1470,12 +1464,9 @@
             <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
 
-        <!-- КНОПКА УСТАНОВКИ ПРИЛОЖЕНИЯ (ИСЧЕЗАЕТ В STANDALONE) -->
-        <button class="install-pwa-btn" id="installPwaBtn" onclick="handleInstallPwaClick()">📲 Установить приложение</button>
-
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER PRANA v1.7.6</div>
+            <div class="version-tag">MASTER v1.8.0</div>
         </footer>
     </div>
 
@@ -1589,6 +1580,15 @@
                     </div>
                 </div>
 
+                <!-- ПРОФИЛЬ УЧЕНИКА / ПИН-КОД (СИНХРОНИЗАЦИЯ СТАТИСТИКИ) -->
+                <div class="setting-card" id="cardStudentProfile" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="setting-card-title" id="studentProfileTitle" style="margin:0; font-size:0.82rem;">👤 УЧЕНИК</div>
+                        <div id="studentProfileStatus" style="font-size:0.65rem; color:var(--accent); margin-top:3px;">Локальный режим • Нажмите для ввода ПИН</div>
+                    </div>
+                    <button class="step-btn" id="btnStudentLogin" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openStudentAuthModal()">ПИН-КОД</button>
+                </div>
+
                 <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
                 <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -1606,7 +1606,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER PRANA v1.7.6 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.0 ↻</div>
                 </div>
             </div>
         </div>
@@ -1807,11 +1807,67 @@
         }
     }
 
+    /* =====================================================
+       STUDENT AUTH & PROFILE BY PIN (INSTANT SYNC)
+       ===================================================== */
+    var KNOWN_STUDENTS = {
+        '888': { name: 'Макс', role: 'Мастер' },
+        '777': { name: 'Сергей', role: 'Архитектор' },
+        '101': { name: 'Алексей', role: 'Ученик' },
+        '102': { name: 'Мария', role: 'Ученик' },
+        '103': { name: 'Дмитрий Е.', role: 'Мастер' },
+        '104': { name: 'Михаил', role: 'Ученик' },
+        '105': { name: 'Анна', role: 'Ученик' },
+        '108': { name: 'Мастер 108', role: 'Мастер' }
+    };
+
+    function getStudentProfile() {
+        try {
+            var raw = localStorage.getItem('mb_student_profile');
+            return raw ? JSON.parse(raw) : null;
+        } catch(e) { return null; }
+    }
+
+    function saveStudentProfile(pin, name) {
+        var profile = { pin: pin, name: name, authDate: Date.now() };
+        localStorage.setItem('mb_student_profile', JSON.stringify(profile));
+        renderStudentProfileUI();
+    }
+
+    function renderStudentProfileUI() {
+        var profile = getStudentProfile();
+        var statusEl = document.getElementById('studentProfileStatus');
+        var btnEl = document.getElementById('btnStudentLogin');
+        if (!statusEl || !btnEl) return;
+
+        if (profile && profile.name) {
+            statusEl.textContent = profile.name + ' (ПИН: ' + profile.pin + ') • Синхронизировано ✨';
+            statusEl.style.color = '#fdac3b';
+            btnEl.textContent = 'Сменить';
+        } else {
+            statusEl.textContent = 'Локальный режим • Нажмите для ввода ПИН';
+            statusEl.style.color = 'var(--accent)';
+            btnEl.textContent = 'Войти';
+        }
+    }
+
+    function openStudentAuthModal() {
+        unlockAudioSession();
+        clearPin();
+        var modal = document.getElementById('pinModal');
+        if (modal) modal.classList.add('open');
+    }
+
     function checkPin() {
-        if (enteredPin === '888') {
+        var student = KNOWN_STUDENTS[enteredPin];
+        // 888 acts as universal master PIN, or any known student PIN
+        if (student || enteredPin === '888') {
+            var studentName = student ? student.name : 'Мастер';
+            saveStudentProfile(enteredPin, studentName);
+
             var unlockUntil = Date.now() + THREE_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
-            showToast('Доступ открыт ✨');
+            showToast('Приветствуем, ' + studentName + ' ✨');
 
             setTimeout(function() {
                 var modal = document.getElementById('pinModal');
@@ -2681,6 +2737,7 @@
         updateBottomTotalLabel();
         syncStepperDisplays();
         renderLifetimeDisplay();
+        renderStudentProfileUI();
         checkPinGate();
         initStillnessTracker();
 
@@ -3224,8 +3281,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.7.6)
-    var CURRENT_APP_VERSION = '1.7.6';
+    // PWA Version Tracking & Safe Cache Management (v1.8.0)
+    var CURRENT_APP_VERSION = '1.8.0';
 
     function checkPwaVersionMigration() {
         try {
@@ -3242,7 +3299,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.7.6...');
+        showToast('Обновление PWA v1.8.0...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3268,9 +3325,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.7.6)
+    // Service Worker registration (STABLE v1.8.0)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.7.6').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.0').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
