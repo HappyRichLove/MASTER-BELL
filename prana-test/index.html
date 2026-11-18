@@ -86,37 +86,6 @@
         }
 
         /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
-        
-        .header-settings-btn {
-            position: absolute;
-            top: max(16px, calc(env(safe-area-inset-top, 24px) + 8px));
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            padding: 0;
-            color: #ffffff;
-            opacity: 0.45;
-            cursor: pointer;
-            z-index: 10;
-            transition: opacity 0.3s ease, transform 0.2s ease, color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .header-settings-btn:active {
-            opacity: 1;
-            color: var(--gold);
-            transform: scale(0.92);
-        }
-        @media (hover: hover) {
-            .header-settings-btn:hover {
-                opacity: 0.85;
-                color: var(--gold);
-            }
-        }
 
         .header-area {
             position: relative;
@@ -335,15 +304,10 @@
         }
 
         .secondary-btns {
-            display: none;
-            justify-content: center;
-            gap: 20px;
-            align-items: center;
-            transition: opacity 0.3s ease;
-        }
-        body.is-paused .secondary-btns,
-        body.is-completed .secondary-btns {
             display: flex;
+            justify-content: center;
+            gap: 24px;
+            align-items: center;
         }
 
         .icon-btn {
@@ -408,12 +372,7 @@
             opacity: 0.5;
         }
 
-        .bottom-time-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.18em;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
+        .bottom-time-label { display: none !important; }
 
         /* REFINED LIFETIME ACCUMULATED PRACTICE CAPSULE (AT THE BOTTOM) */
         .bottom-lifetime-capsule {
@@ -429,19 +388,9 @@
             flex-shrink: 0;
             transition: opacity 0.5s ease;
         }
-        .bottom-time-label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            color: var(--accent);
-            text-transform: uppercase;
-            transition: opacity 0.5s ease;
-        }
+        .bottom-time-label { display: none !important; }
         body.is-running .bottom-lifetime-capsule,
-        body.is-running .bottom-time-label {
-            opacity: 0;
-            pointer-events: none;
-        }
+        body.is-running .bottom-time-label { display: none !important; }
         .lifetime-caption {
             font-size: 0.58rem;
             letter-spacing: 0.16em;
@@ -1543,16 +1492,6 @@
     <header class="header-area">
         <h1 class="master-title">МАСТЕР</h1>
         <div class="badge-brand" id="badgePrana" onclick="triggerPranaBreathe()" title="Дыхание Праны">PRANA</div>
-        <button class="header-settings-btn" id="btnHeaderSettings" onclick="openSettingsModal()" title="Настройки" aria-label="Настройки">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <circle cx="8" cy="6" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <circle cx="16" cy="12" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-                <circle cx="10" cy="18" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
-            </svg>
-        </button>
     </header>
 
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
@@ -1572,10 +1511,16 @@
         <div class="controls-area">
             <button class="btn-main" id="startBtn" onclick="togglePlay()">СТАРТ</button>
             <div class="secondary-btns" id="secondaryBtns">
-                <button class="icon-btn reset-btn" id="resetBtn" onclick="handleFullReset()" title="Сброс в начало" aria-label="Сброс в начало">
+                <button class="icon-btn" onclick="handleFullReset()" title="Сброс в начало" aria-label="Сброс в начало">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="1 4 1 10 7 10"></polyline>
                         <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn" onclick="openSettingsModal()" title="Настройки практик" aria-label="Настройки практик">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                     </svg>
                 </button>
             </div>
@@ -1585,7 +1530,7 @@
     <!-- BOTTOM UNIFIED ZONE (INDICATORS, LIFETIME DIGITS, VERSION) -->
     <div class="bottom-zone">
         <section class="stage-indicator-zone">
-            <div class="bottom-time-label" id="bottomLabel" style="display:none;"></div>
+            <div class="bottom-time-label" id="bottomLabel" style="display:none !important;"></div>
             <div class="dots-row">
                 <div class="stage-dot active" id="dot0" title="Анулом-Вилом"></div>
                 <div class="stage-dot" id="dot1" title="Бхастрика"></div>
@@ -1595,7 +1540,7 @@
         </section>
 
         <!-- CLEAN LIFETIME STATS ON MAIN (DIGITS ONLY, NO WORDS) -->
-        <div class="bottom-lifetime-capsule" title="Накопленное время практик">
+        <div class="bottom-lifetime-capsule" id="bottomLifetimeCapsule" title="Накопленное время практик">
             <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
 
@@ -1938,7 +1883,7 @@
     var UNLOCK_KEY = 'prana_unlocked_until';
     var FAILED_ATTEMPTS_KEY = 'mb_pin_failed_attempts';
     var LOCK_UNTIL_KEY = 'mb_pin_lock_until';
-    var FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
+    var AUTH_TOKEN_VALIDITY_MS = 365 * 24 * 60 * 60 * 1000; // 365 дней (1 год)
     var enteredPin = '';
     var pinLockInterval = null;
 
@@ -2011,12 +1956,10 @@
         } catch(e) {}
 
         var lockMs = 0;
-        if (failed >= 6) {
-            lockMs = 15 * 60 * 1000; // 15 минут
-        } else if (failed === 5) {
-            lockMs = 5 * 60 * 1000;  // 5 минут
-        } else if (failed === 4) {
-            lockMs = 60 * 1000;       // 1 минута
+        if (failed === 5) {
+            lockMs = 60 * 1000;         // Ровно 1 минута на 5-й ошибке
+        } else if (failed > 5) {
+            lockMs = 10 * 60 * 1000;    // 10 минут на всех повторных ошибках
         }
 
         if (lockMs > 0) {
@@ -2204,7 +2147,7 @@
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 if (data && data.status === 'ok') {
-                    var unlockUntil = Date.now() + FOUR_DAYS_MS;
+                    var unlockUntil = Date.now() + AUTH_TOKEN_VALIDITY_MS;
                     localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
                     localStorage.setItem('mb_user_role', data.role || 'student');
                     localStorage.setItem('mb_user_name', data.name || 'Ученик');
@@ -2560,14 +2503,14 @@
     function formatLifetimeTime(totalSeconds) {
         var s = Math.max(0, parseInt(totalSeconds, 10) || 0);
         var hrs = Math.floor(s / 3600);
-        var mins = Math.floor((s % 3600) / 60);
-        if (hrs === 0 && mins === 0 && s > 0) {
-            mins = 1;
-        }
-        if (hrs > 0) {
-            return hrs + ' Ч ' + (mins < 10 ? '0' : '') + mins + ' МИН В ПРАКТИКЕ';
-        }
-        return mins + ' МИН В ПРАКТИКЕ';
+        var rem = s % 3600;
+        var mins = Math.floor(rem / 60);
+        var secs = rem % 60;
+
+        var hStr = hrs < 10 ? '0' + hrs : '' + hrs;
+        var mStr = mins < 10 ? '0' + mins : '' + mins;
+        var sStr = secs < 10 ? '0' + secs : '' + secs;
+        return hStr + ':' + mStr + ':' + sStr;
     }
 
     function renderLifetimeDisplay() {
@@ -3455,10 +3398,7 @@
         var pl = buildPipeline();
         pl.forEach(function(st) { totalSec += st.duration; });
         var totalMin = Math.round(totalSec / 60);
-        if (els.bottomLabel) {
-            els.bottomLabel.textContent = 'ВРЕМЯ ПРАКТИКИ: ~' + totalMin + ' МИН';
-            els.bottomLabel.style.display = 'block';
-        }
+        if (els.bottomLabel) els.bottomLabel.style.display = 'none';
         var bannerVal = document.getElementById('settingsTotalVal');
         if (bannerVal) {
             bannerVal.textContent = '~' + totalMin + ' МИНУТ (' + totalSec + ' С)';
