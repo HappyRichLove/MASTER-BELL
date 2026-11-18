@@ -52,10 +52,19 @@
             overflow: hidden;
             overscroll-behavior: none;
             -webkit-overflow-scrolling: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         body {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -66,7 +75,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            height: 100vh;
+            height: 100%;
             height: 100dvh;
             width: 100vw;
             overflow: hidden;
@@ -74,6 +83,18 @@
             overscroll-behavior: none;
             user-select: none;
             -webkit-user-select: none;
+        }
+
+        /* TOP NOTCH SOLID SHIELD (PREVENTS SUBPIXEL iOS COMPOSITOR STRIPES) */
+        .notch-shield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: max(24px, env(safe-area-inset-top, 24px));
+            background: #0c0f24;
+            z-index: 1;
+            pointer-events: none;
         }
 
         /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
@@ -1376,6 +1397,9 @@
 </head>
 <body oncontextmenu="return false;">
 
+    <!-- TOP NOTCH SOLID SHIELD (SEAMLESS SAPPHIRE NOTCH BACKGROUND) -->
+    <div class="notch-shield"></div>
+
     <!-- ZEN AMBIENT PARTICLES LAYER -->
     <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
         <div class="zen-particle p1"></div>
@@ -1448,7 +1472,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.6</div>
+            <div class="version-tag">MASTER v1.8.7</div>
         </footer>
     </div>
 
@@ -1902,15 +1926,15 @@
         var pin = enteredPin.trim();
         if (!pin) return;
 
-        // 1. Сергей Поликанин (Архитектор / ПИН 777 или 7777) — мгновенный офлайн-вход
+        // 1. Сергей П (Архитектор / ПИН 777 или 7777) — мгновенный офлайн-вход
         if (pin === '777' || pin === '7777') {
             var unlockUntil = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
             localStorage.setItem('mb_user_role', 'architect');
-            localStorage.setItem('mb_user_name', 'Сергей Поликанин');
+            localStorage.setItem('mb_user_name', 'Сергей П (Архитектор)');
             localStorage.setItem('mb_user_pin', pin);
 
-            showToast('Сергей Поликанин ✨ Доступ открыт');
+            showToast('Сергей П (Архитектор) ✨ Доступ открыт');
             updateAuthSyncUI();
 
             setTimeout(function() {
@@ -1921,15 +1945,15 @@
             return;
         }
 
-        // 2. Мастер Макс (Мастер / ПИН 888 или 8888) — мгновенный офлайн-вход
+        // 2. Максим Б (Мастер / ПИН 888 или 8888) — мгновенный офлайн-вход
         if (pin === '888' || pin === '8888') {
             var unlockUntil888 = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil888.toString());
             localStorage.setItem('mb_user_role', 'master');
-            localStorage.setItem('mb_user_name', 'Макс');
+            localStorage.setItem('mb_user_name', 'Максим Б (Мастер)');
             localStorage.setItem('mb_user_pin', pin);
 
-            showToast('Макс ✨ Доступ открыт');
+            showToast('Максим Б (Мастер) ✨ Доступ открыт');
             updateAuthSyncUI();
 
             setTimeout(function() {
@@ -1970,7 +1994,7 @@
                     if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
                         currentMbTotal = data.totalSeconds;
                         try {
-                            localStorage.setItem(LIFETIME_KEY, currentMbTotal.toString());
+                            localStorage.setItem('mb_total', currentMbTotal.toString());
                         } catch(e) {}
                         renderLifetimeDisplay();
                     }
@@ -2159,11 +2183,19 @@
 
     function closeMasterDashboardModal(e) {
         if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) return;
+        if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+        }
         var modal = document.getElementById('masterDashboardModal');
         if (!modal) return;
         if (modal._isClosing) return;
         modal._isClosing = true;
         modal.classList.add('closing');
+
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+
         setTimeout(function() {
             modal.classList.remove('open');
             modal.classList.remove('closing');
@@ -2173,6 +2205,10 @@
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
             if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+            document.body.style.transform = 'translateZ(0)';
+            setTimeout(function() {
+                document.body.style.transform = '';
+            }, 50);
         }, 280);
     }
 
@@ -3378,11 +3414,19 @@
         if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) {
             return;
         }
+        if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+        }
         var modal = document.getElementById('settingsModal');
         if (!modal) return;
         if (modal._isClosing) return;
         modal._isClosing = true;
         modal.classList.add('closing');
+
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+
         setTimeout(function() {
             modal.classList.remove('open');
             modal.classList.remove('closing');
@@ -3392,6 +3436,10 @@
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
             if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+            document.body.style.transform = 'translateZ(0)';
+            setTimeout(function() {
+                document.body.style.transform = '';
+            }, 50);
         }, 280);
 
         var oldPipelineLength = pipeline.length;
@@ -3577,8 +3625,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.6)
-    var CURRENT_APP_VERSION = '1.8.6';
+    // PWA Version Tracking & Safe Cache Management (v1.8.7)
+    var CURRENT_APP_VERSION = '1.8.7';
 
     function checkPwaVersionMigration() {
         try {
@@ -3595,7 +3643,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.6...');
+        showToast('Обновление PWA v1.8.7...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3621,12 +3669,19 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.6)
+    // Service Worker registration (STABLE v1.8.7)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.6').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.7').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
+
+    // Prevent iOS document rubber-banding and status bar hairline separator
+    document.addEventListener('touchmove', function(e) {
+        if (!e.target.closest('.modal-scroll')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 
     // Initialize application
     document.addEventListener('DOMContentLoaded', function() {

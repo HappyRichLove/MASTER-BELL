@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v1.8.6 */
-var CACHE_NAME = 'master-prana-v1.8.6';
+/* Service Worker — MASTER v1.8.7 */
+var CACHE_NAME = 'master-prana-v1.8.7';
 var ASSETS = [
   './',
   './index.html',
