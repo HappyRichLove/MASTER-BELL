@@ -67,20 +67,6 @@
             -webkit-user-select: none;
         }
 
-        /* AMBIENT SAPPHIRE DEPTH (FOCUSED ONLY AROUND CENTER TIMER, TOP 120px IS 100% UNIFORM #0c0f24) */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 45%;
-            left: 50%;
-            width: min(100vw, 540px);
-            height: min(65vh, 480px);
-            transform: translate(-50%, -50%);
-            background: radial-gradient(ellipse at center, rgba(22, 28, 64, 0.8) 0%, rgba(12, 15, 36, 0.35) 55%, transparent 80%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
         /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
         .header-area {
             position: relative;
@@ -695,37 +681,9 @@
             z-index: 2;
         }
 
-        /* MEDITATIVE ZEN AMBIENT AURA & INTERACTIVE EFFECTS (OPTIONAL — DISABLED BY DEFAULT) */
+        /* MEDITATIVE ZEN AMBIENT AURA (DISABLED: PRISTINE CRYSTAL CLEAR NUMBERS) */
         body.zen-aura-on::before {
-            content: '';
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: min(94vw, 490px);
-            height: min(94vw, 490px);
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.28) 0%, rgba(212, 175, 55, 0.12) 38%, rgba(212, 175, 55, 0.03) 65%, transparent 75%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            animation: zenAuraPulse 7.2s ease-in-out infinite alternate;
-        }
-        @keyframes zenAuraPulse {
-            0% {
-                opacity: 0.55;
-                transform: translate(-50%, -50%) scale(0.92);
-                filter: blur(28px);
-            }
-            50% {
-                opacity: 0.95;
-                transform: translate(-50%, -50%) scale(1.08);
-                filter: blur(36px);
-            }
-            100% {
-                opacity: 0.65;
-                transform: translate(-50%, -50%) scale(0.96);
-                filter: blur(30px);
-            }
+            display: none !important;
         }
 
         /* 1. BREATHING PROGRESS BAR (DELICATE SHIMMER ONLY DURING ACTIVE PRACTICE) */
@@ -1453,7 +1411,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.2</div>
+            <div class="version-tag">MASTER v1.8.3</div>
         </footer>
     </div>
 
@@ -1579,7 +1537,7 @@
                 <!-- ДАШБОРД МАСТЕРА (ВИДЕН ДЛЯ 777 И 888) -->
                 <div class="setting-card" id="cardMasterDashboard" style="display:none; justify-content:space-between; align-items:center;">
                     <div>
-                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">📊 ДАШБОРД МАСТЕРА</div>
+                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">ДАШБОРД МАСТЕРА</div>
                         <div id="masterDashboardSubtitle" style="font-size:0.65rem; color:var(--gold); margin-top:3px;">Сводка по группе и практикам</div>
                     </div>
                     <button class="step-btn" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.18); border-color:var(--gold); color:var(--gold);" onclick="openMasterDashboardModal()">ОБЗОР</button>
@@ -1602,7 +1560,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.2 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.3 ↻</div>
                 </div>
             </div>
         </div>
@@ -1703,7 +1661,7 @@
     <div class="modal-overlay" id="masterDashboardModal" onclick="closeMasterDashboardModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <div class="modal-title">📊 ДАШБОРД МАСТЕРА</div>
+                <div class="modal-title">ДАШБОРД МАСТЕРА</div>
                 <button class="modal-close-btn" onclick="closeMasterDashboardModal()">Готово</button>
             </div>
             <div class="modal-scroll">
@@ -3349,8 +3307,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.2)
-    var CURRENT_APP_VERSION = '1.8.2';
+    // PWA Version Tracking & Safe Cache Management (v1.8.3)
+    var CURRENT_APP_VERSION = '1.8.3';
 
     function checkPwaVersionMigration() {
         try {
@@ -3367,7 +3325,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.2...');
+        showToast('Обновление PWA v1.8.3...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3393,9 +3351,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.2)
+    // Service Worker registration (STABLE v1.8.3)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.2').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.3').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
