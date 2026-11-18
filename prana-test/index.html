@@ -86,6 +86,38 @@
         }
 
         /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
+        
+        .header-settings-btn {
+            position: absolute;
+            top: max(16px, calc(env(safe-area-inset-top, 24px) + 8px));
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: #ffffff;
+            opacity: 0.45;
+            cursor: pointer;
+            z-index: 10;
+            transition: opacity 0.3s ease, transform 0.2s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .header-settings-btn:active {
+            opacity: 1;
+            color: var(--gold);
+            transform: scale(0.92);
+        }
+        @media (hover: hover) {
+            .header-settings-btn:hover {
+                opacity: 0.85;
+                color: var(--gold);
+            }
+        }
+
         .header-area {
             position: relative;
             display: flex;
@@ -303,10 +335,15 @@
         }
 
         .secondary-btns {
-            display: flex;
+            display: none;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             align-items: center;
+            transition: opacity 0.3s ease;
+        }
+        body.is-paused .secondary-btns,
+        body.is-completed .secondary-btns {
+            display: flex;
         }
 
         .icon-btn {
@@ -390,6 +427,20 @@
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             flex-shrink: 0;
+            transition: opacity 0.5s ease;
+        }
+        .bottom-time-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            color: var(--accent);
+            text-transform: uppercase;
+            transition: opacity 0.5s ease;
+        }
+        body.is-running .bottom-lifetime-capsule,
+        body.is-running .bottom-time-label {
+            opacity: 0;
+            pointer-events: none;
         }
         .lifetime-caption {
             font-size: 0.58rem;
@@ -446,14 +497,16 @@
             text-transform: uppercase;
         }
 
-        /* SETTINGS & DASHBOARD MODALS (FULL-SCREEN SEAMLESS SAPPHIRE VIEWS) */
+        /* SETTINGS & DASHBOARD MODALS (APPLE FLOATING BOTTOM SHEET) */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: #0c0f24;
+            background: rgba(6, 9, 24, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             display: none;
             justify-content: center;
             align-items: flex-end;
@@ -461,7 +514,7 @@
             opacity: 0;
             pointer-events: none;
             overscroll-behavior: contain;
-            transition: opacity 0.28s ease;
+            transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .modal-overlay.open,
         .modal-overlay.closing {
@@ -470,7 +523,6 @@
         .modal-overlay.open {
             opacity: 1;
             pointer-events: auto;
-            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .modal-overlay.closing {
             opacity: 0;
@@ -480,19 +532,20 @@
 
         .modal-sheet {
             background: #0c0f24;
-            border: none;
-            border-radius: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            border-radius: 26px 26px 0 0;
             width: 100%;
-            max-width: 520px;
-            height: 100%;
-            height: 100dvh;
-            max-height: 100dvh;
+            max-width: 540px;
+            height: auto;
+            max-height: 88dvh;
             display: flex;
             flex-direction: column;
-            box-shadow: none;
+            box-shadow: 0 -14px 45px rgba(0, 0, 0, 0.75);
             transform: translateY(100%);
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
+            overflow: hidden;
         }
         .modal-overlay.open .modal-sheet {
             transform: translateY(0);
@@ -502,8 +555,17 @@
             transition: transform 0.28s cubic-bezier(0.32, 1, 0.32, 1);
         }
 
+        .sheet-drag-handle {
+            width: 38px;
+            height: 5px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.28);
+            margin: 10px auto 4px auto;
+            flex-shrink: 0;
+        }
+
         .modal-header {
-            padding: max(16px, calc(env(safe-area-inset-top, 24px) + 12px)) 20px 14px;
+            padding: 8px 20px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -512,23 +574,95 @@
             flex-shrink: 0;
         }
         .modal-title {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             color: var(--text);
             text-transform: uppercase;
         }
         .modal-close-btn {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--border);
+            background: transparent;
+            border: none;
             color: var(--gold);
-            font-size: 0.68rem;
+            font-size: 0.82rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
-            padding: 6px 14px;
-            border-radius: 18px;
+            letter-spacing: 0.08em;
+            padding: 6px 12px;
             cursor: pointer;
             text-transform: uppercase;
+            transition: opacity 0.2s ease, transform 0.15s ease;
+        }
+        .modal-close-btn:active {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        /* 14-DAY GROUP PRACTICE DYNAMICS CHART */
+        .dash-chart-wrapper {
+            width: 100%;
+            padding: 12px 6px 6px;
+            background: rgba(6, 9, 24, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            margin-top: 6px;
+        }
+        .dash-chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 125px;
+            gap: 4px;
+            padding: 0 4px;
+        }
+        .dash-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .dash-bar-val {
+            font-size: 0.52rem;
+            color: var(--gold);
+            margin-bottom: 3px;
+            font-variant-numeric: tabular-nums;
+            opacity: 0.85;
+            font-weight: 700;
+        }
+        .dash-bar-pillar {
+            width: 100%;
+            max-width: 15px;
+            min-height: 4px;
+            background: linear-gradient(180deg, var(--gold) 0%, rgba(253, 172, 59, 0.35) 100%);
+            border-radius: 4px 4px 2px 2px;
+            box-shadow: 0 0 8px rgba(253, 172, 59, 0.2);
+            transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dash-bar-pillar.empty {
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: none;
+            min-height: 3px;
+        }
+        .dash-bar-date {
+            font-size: 0.5rem;
+            color: var(--accent);
+            margin-top: 5px;
+            opacity: 0.65;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+        .pin-lock-msg {
+            color: #ff6b6b;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            text-align: center;
+            margin: 8px 0 4px;
+            font-weight: 600;
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 6px 10px;
         }
 
         .modal-scroll {
@@ -889,7 +1023,7 @@
             transform: scale(0.96);
         }
 
-        /* PIN CODE MODAL (777 / 888 / 4-DIGIT STUDENT PINS) */
+        /* PIN CODE MODAL (ACCESS & AUTHENTICATION) */
         #pinModal {
             align-items: center;
             justify-content: center;
@@ -1409,6 +1543,16 @@
     <header class="header-area">
         <h1 class="master-title">МАСТЕР</h1>
         <div class="badge-brand" id="badgePrana" onclick="triggerPranaBreathe()" title="Дыхание Праны">PRANA</div>
+        <button class="header-settings-btn" id="btnHeaderSettings" onclick="openSettingsModal()" title="Настройки" aria-label="Настройки">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <circle cx="8" cy="6" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <circle cx="16" cy="12" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+                <circle cx="10" cy="18" r="2.5" fill="#0c0f24" stroke="currentColor" stroke-width="1.6"></circle>
+            </svg>
+        </button>
     </header>
 
     <!-- CENTER STAGE (TIMER & BREATH CUE) -->
@@ -1427,17 +1571,11 @@
         <!-- CONTROLS -->
         <div class="controls-area">
             <button class="btn-main" id="startBtn" onclick="togglePlay()">СТАРТ</button>
-            <div class="secondary-btns">
-                <button class="icon-btn" onclick="handleFullReset()" title="Сброс в начало">
+            <div class="secondary-btns" id="secondaryBtns">
+                <button class="icon-btn reset-btn" id="resetBtn" onclick="handleFullReset()" title="Сброс в начало" aria-label="Сброс в начало">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="1 4 1 10 7 10"></polyline>
                         <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                    </svg>
-                </button>
-                <button class="icon-btn" onclick="openSettingsModal()" title="Настройки практик">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                     </svg>
                 </button>
             </div>
@@ -1463,15 +1601,16 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.9</div>
+            <div class="version-tag">MASTER v2.0</div>
         </footer>
     </div>
 
-    <!-- SETTINGS MODAL -->
+    <!-- SETTINGS MODAL (APPLE FLOATING BOTTOM SHEET) -->
     <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-drag-handle"></div>
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">⚙️ НАСТРОЙКИ</div>
+                <div class="modal-title" id="modalTitle">НАСТРОЙКИ</div>
                 <button class="modal-close-btn" onclick="closeSettingsModal()">ГОТОВО</button>
             </div>
 
@@ -1603,7 +1742,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.5 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0 ↻</div>
                 </div>
             </div>
         </div>
@@ -1700,12 +1839,13 @@
         </div>
     </div>
 
-    <!-- MASTER DASHBOARD MODAL (FOR 777 / 888) -->
+    <!-- MASTER DASHBOARD MODAL (APPLE FLOATING BOTTOM SHEET) -->
     <div class="modal-overlay" id="masterDashboardModal" onclick="closeMasterDashboardModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-drag-handle"></div>
             <div class="modal-header">
-                <div class="modal-title">ДАШБОРД</div>
-                <button class="modal-close-btn" onclick="closeMasterDashboardModal()">Готово</button>
+                <div class="modal-title">ДАШБОРД МАСТЕРА</div>
+                <button class="modal-close-btn" onclick="closeMasterDashboardModal()">ГОТОВО</button>
             </div>
             <div class="modal-scroll">
                 <div class="setting-card" style="text-align:center; padding:16px 12px;">
@@ -1726,6 +1866,16 @@
                     </div>
                 </div>
 
+                <!-- 14-ДНЕВНЫЙ ГРАФИК ПРАКТИКИ ГРУППЫ -->
+                <div class="setting-card">
+                    <div class="setting-card-title">ДИНАМИКА ПРАКТИКИ ГРУППЫ (14 ДНЕЙ)</div>
+                    <div class="dash-chart-wrapper" id="dashChartWrapper">
+                        <div class="dash-chart-bars" id="dashChartBars">
+                            <div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Загрузка графика...</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="setting-card">
                     <div class="setting-card-title">ИНТЕГРАЦИЯ С GOOGLE ТАБЛИЦЕЙ</div>
                     <div style="font-size:0.72rem; line-height:1.45; color:rgba(255,255,255,0.75);" id="dashSyncStatusText">
@@ -1736,7 +1886,7 @@
         </div>
     </div>
 
-    <!-- PIN CODE MODAL (777 / 888 / 96 HOURS VALIDITY) -->
+    <!-- PIN CODE MODAL (STUDENT ACCESS & BRUTE-FORCE PROTECTION) -->
     <div class="modal-overlay" id="pinModal" onclick="closePinModalIfUnlocked(event)">
         <div class="pin-card" onclick="event.stopPropagation()" style="position:relative;">
             <button class="pin-close-btn" id="btnPinModalClose" onclick="closePinModalIfUnlocked()" style="position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.08); border:none; color:var(--accent); width:28px; height:28px; border-radius:50%; font-size:0.85rem; cursor:pointer; display:none; align-items:center; justify-content:center;">✕</button>
@@ -1750,7 +1900,8 @@
             </div>
 
             <h2 class="pin-title">ПРАНАЯМА</h2>
-            <p class="pin-desc">Введите пароль доступа</p>
+            <p class="pin-desc" id="pinModalDesc">Введите пароль доступа</p>
+            <div class="pin-lock-msg" id="pinLockMsg" style="display:none;"></div>
 
             <div class="pin-slots" id="pinSlots">
                 <div class="pin-dot" id="pinDot0"></div>
@@ -1781,12 +1932,100 @@
 
 <script>
     /* =====================================================
-       SECURITY CHECK: PIN AUTH (777 ARCHITECT / 888 MASTER)
+       SECURITY CHECK: PIN AUTH (DATABASE-DRIVEN ROLES)
        4 DAYS VALIDITY (345 600 000 MS)
        ===================================================== */
     var UNLOCK_KEY = 'prana_unlocked_until';
+    var FAILED_ATTEMPTS_KEY = 'mb_pin_failed_attempts';
+    var LOCK_UNTIL_KEY = 'mb_pin_lock_until';
     var FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
     var enteredPin = '';
+    var pinLockInterval = null;
+
+    function getPinLockRemainingMs() {
+        try {
+            var rawUntil = localStorage.getItem(LOCK_UNTIL_KEY);
+            if (!rawUntil) return 0;
+            var until = parseInt(rawUntil, 10);
+            if (isNaN(until)) return 0;
+            var diff = until - Date.now();
+            return diff > 0 ? diff : 0;
+        } catch(e) {
+            return 0;
+        }
+    }
+
+    function updatePinLockUI() {
+        var diff = getPinLockRemainingMs();
+        var lockMsg = document.getElementById('pinLockMsg');
+        var keys = document.querySelectorAll('.keypad-grid .key-btn');
+        if (diff > 0) {
+            var totalSec = Math.ceil(diff / 1000);
+            var mins = Math.floor(totalSec / 60);
+            var secs = totalSec % 60;
+            var timeStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+            if (lockMsg) {
+                lockMsg.style.display = 'block';
+                lockMsg.textContent = 'Блокировка клавиатуры. Повторите через ' + timeStr;
+            }
+            keys.forEach(function(k) {
+                k.disabled = true;
+                k.style.opacity = '0.35';
+                k.style.pointerEvents = 'none';
+            });
+            if (!pinLockInterval) {
+                pinLockInterval = setInterval(function() {
+                    var d = getPinLockRemainingMs();
+                    if (d <= 0) {
+                        clearInterval(pinLockInterval);
+                        pinLockInterval = null;
+                        try { localStorage.removeItem(LOCK_UNTIL_KEY); } catch(e){}
+                        updatePinLockUI();
+                    } else {
+                        updatePinLockUI();
+                    }
+                }, 1000);
+            }
+        } else {
+            if (lockMsg) {
+                lockMsg.style.display = 'none';
+                lockMsg.textContent = '';
+            }
+            keys.forEach(function(k) {
+                k.disabled = false;
+                k.style.opacity = '1';
+                k.style.pointerEvents = 'auto';
+            });
+            if (pinLockInterval) {
+                clearInterval(pinLockInterval);
+                pinLockInterval = null;
+            }
+        }
+    }
+
+    function registerFailedPinAttempt() {
+        var failed = 0;
+        try {
+            failed = (parseInt(localStorage.getItem(FAILED_ATTEMPTS_KEY), 10) || 0) + 1;
+            localStorage.setItem(FAILED_ATTEMPTS_KEY, failed.toString());
+        } catch(e) {}
+
+        var lockMs = 0;
+        if (failed >= 6) {
+            lockMs = 15 * 60 * 1000; // 15 минут
+        } else if (failed === 5) {
+            lockMs = 5 * 60 * 1000;  // 5 минут
+        } else if (failed === 4) {
+            lockMs = 60 * 1000;       // 1 минута
+        }
+
+        if (lockMs > 0) {
+            try {
+                localStorage.setItem(LOCK_UNTIL_KEY, (Date.now() + lockMs).toString());
+            } catch(e) {}
+            updatePinLockUI();
+        }
+    }
 
     function isPranaUnlocked() {
         try {
@@ -1810,6 +2049,7 @@
                 modal.classList.remove('closing');
                 modal.classList.add('open');
             }
+            updatePinLockUI();
         }
     }
 
@@ -1828,6 +2068,7 @@
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
+        updatePinLockUI();
     }
 
     function closePinModalIfUnlocked(e) {
@@ -1853,6 +2094,7 @@
     var pinAutoCheckTimer = null;
 
     function pressPin(digit) {
+        if (getPinLockRemainingMs() > 0) return;
         if (enteredPin.length >= 4) return;
         enteredPin += digit;
         renderPinDots();
@@ -1862,11 +2104,11 @@
             pinAutoCheckTimer = null;
         }
 
-        // Если введен мастер-код 777 или 888 из 3 цифр — даем короткую паузу и входим
-        if (enteredPin.length === 3 && (enteredPin === '777' || enteredPin === '888')) {
+        // Автоматическая проверка 3-значного ПИНа при паузе в 450 мс
+        if (enteredPin.length === 3) {
             pinAutoCheckTimer = setTimeout(function() {
                 checkPin();
-            }, 380);
+            }, 450);
             return;
         }
 
@@ -1877,6 +2119,7 @@
     }
 
     function backspacePin() {
+        if (getPinLockRemainingMs() > 0) return;
         if (pinAutoCheckTimer) {
             clearTimeout(pinAutoCheckTimer);
             pinAutoCheckTimer = null;
@@ -1911,7 +2154,7 @@
     }
 
     /* =====================================================
-       SECURITY PIN GATE & GOOGLE SHEETS AUTH
+       SECURITY PIN GATE & GOOGLE SHEETS AUTH (NO HARDCODE)
        ===================================================== */
     function syncInitialUserTimeToCloud(pin, totalSec) {
         if (!pin || !navigator.onLine) return;
@@ -1938,57 +2181,18 @@
     function checkPin() {
         var pin = enteredPin.trim();
         if (!pin) return;
+        if (getPinLockRemainingMs() > 0) return;
 
-        // 1. Сергей П (Архитектор / ПИН 777 или 7777) — мгновенный вход + авто-синхронизация часов
-        if (pin === '777' || pin === '7777') {
-            var unlockUntil = Date.now() + FOUR_DAYS_MS;
-            localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
-            localStorage.setItem('mb_user_role', 'architect');
-            localStorage.setItem('mb_user_name', 'Сергей П (Архитектор)');
-            localStorage.setItem('mb_user_pin', pin);
-
-            showToast('Сергей П (Архитектор) ✨ Доступ открыт');
-            updateAuthSyncUI();
-            syncInitialUserTimeToCloud(pin, currentMbTotal);
-
-            setTimeout(function() {
-                var modal = document.getElementById('pinModal');
-                if (modal) modal.classList.remove('open');
-                clearPin();
-            }, 250);
-            return;
-        }
-
-        // 2. Максим Б (Мастер / ПИН 888 или 8888) — мгновенный вход + авто-синхронизация часов
-        if (pin === '888' || pin === '8888') {
-            var unlockUntil888 = Date.now() + FOUR_DAYS_MS;
-            localStorage.setItem(UNLOCK_KEY, unlockUntil888.toString());
-            localStorage.setItem('mb_user_role', 'master');
-            localStorage.setItem('mb_user_name', 'Максим Б (Мастер)');
-            localStorage.setItem('mb_user_pin', pin);
-
-            showToast('Максим Б (Мастер) ✨ Доступ открыт');
-            updateAuthSyncUI();
-            syncInitialUserTimeToCloud(pin, currentMbTotal);
-
-            setTimeout(function() {
-                var modal = document.getElementById('pinModal');
-                if (modal) modal.classList.remove('open');
-                clearPin();
-            }, 250);
-            return;
-        }
-
-        // 3. Проверка через Google Таблицу (для учеников)
         if (!navigator.onLine) {
             var savedPin = localStorage.getItem('mb_user_pin');
             if (savedPin && savedPin === pin && isPranaUnlocked()) {
                 var modal = document.getElementById('pinModal');
                 if (modal) modal.classList.remove('open');
                 clearPin();
+                renderLifetimeDisplay();
                 return;
             }
-            showPinError('Для первого входа включите интернет');
+            showPinError('Для проверки входа включите интернет');
             return;
         }
 
@@ -2006,16 +2210,21 @@
                     localStorage.setItem('mb_user_name', data.name || 'Ученик');
                     localStorage.setItem('mb_user_pin', pin);
 
-                    // Если в таблице есть наработанные часы — подтягиваем, если на телефоне больше — пушим в таблицу
+                    try {
+                        localStorage.removeItem(FAILED_ATTEMPTS_KEY);
+                        localStorage.removeItem(LOCK_UNTIL_KEY);
+                    } catch(e) {}
+
+                    // Безусловная синхронизация и рендер наработанных часов
                     if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
                         currentMbTotal = data.totalSeconds;
                         try {
                             localStorage.setItem('mb_total', currentMbTotal.toString());
                         } catch(e) {}
-                        renderLifetimeDisplay();
                     } else if (currentMbTotal > 0) {
                         syncInitialUserTimeToCloud(pin, currentMbTotal);
                     }
+                    renderLifetimeDisplay();
 
                     showToast((data.name || 'Ученик') + ' ✨ Доступ открыт');
                     updateAuthSyncUI();
@@ -2035,14 +2244,16 @@
                         }
                         clearPin();
                     }, 250);
+                } else if (data && data.status === 'rate_limited') {
+                    showPinError(data.message || 'Слишком много попыток. Подождите минуту.');
                 } else if (data && data.status === 'blocked') {
                     showPinError('Доступ приостановлен');
                 } else {
+                    registerFailedPinAttempt();
                     showPinError('Неверный ПИН-код');
                 }
             })
             .catch(function(err) {
-                // Если Google заблокирован или офлайн
                 showPinError('Ошибка связи с сервером');
             });
     }
@@ -2167,16 +2378,23 @@
             modal.classList.add('open');
         }
 
-        var pin = localStorage.getItem('mb_user_pin') || '777';
+        var pin = localStorage.getItem('mb_user_pin') || '';
         var totalHoursEl = document.getElementById('dashGroupTotalHours');
         var activeCountEl = document.getElementById('dashActiveCount');
         var v1El = document.getElementById('dashV1Percent');
         var v2El = document.getElementById('dashV2Percent');
         var statusEl = document.getElementById('dashSyncStatusText');
+        var chartBarsEl = document.getElementById('dashChartBars');
 
         if (totalHoursEl) totalHoursEl.textContent = 'Подсчет...';
         if (activeCountEl) activeCountEl.textContent = '...';
         if (statusEl) statusEl.textContent = 'Подключение к Google Таблице...';
+        if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Загрузка графика...</div>';
+
+        if (!pin) {
+            if (statusEl) statusEl.textContent = 'Для просмотра дашборда войдите по ПИН-коду Мастера';
+            return;
+        }
 
         var url = GOOGLE_SHEETS_API_URL + '?action=get_master_dashboard&pin=' + encodeURIComponent(pin);
         fetch(url)
@@ -2188,15 +2406,60 @@
                     if (v1El) v1El.textContent = (data.v1Percent !== undefined ? data.v1Percent : 100) + '%';
                     if (v2El) v2El.textContent = (data.v2Percent !== undefined ? data.v2Percent : 0) + '%';
                     if (statusEl) statusEl.textContent = 'Данные успешно обновлены из Google Таблицы (' + (data.lastSync || 'сейчас') + ') ✨';
+
+                    // Рендер 14-дневного графика практик группы
+                    renderMasterChart(data.dailyHours || []);
                 } else {
                     if (totalHoursEl) totalHoursEl.textContent = '—';
                     if (statusEl) statusEl.textContent = data && data.message ? data.message : 'Таблица пока недоступна';
+                    if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">График недоступен</div>';
                 }
             })
             .catch(function(err) {
                 if (totalHoursEl) totalHoursEl.textContent = 'Офлайн';
                 if (statusEl) statusEl.textContent = 'Офлайн-режим. Подключитесь к сети для обновления дашборда.';
+                if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Офлайн</div>';
             });
+    }
+
+        function renderMasterChart(dailyHours) {
+        var container = document.getElementById('dashChartBars');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (!dailyHours || dailyHours.length === 0) {
+            container.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Нет данных о сессиях за 14 дней</div>';
+            return;
+        }
+
+        var maxHours = 0;
+        dailyHours.forEach(function(d) {
+            if (d.hours > maxHours) maxHours = d.hours;
+        });
+        if (maxHours <= 0) maxHours = 1;
+
+        dailyHours.forEach(function(item) {
+            var col = document.createElement('div');
+            col.className = 'dash-bar-col';
+
+            var valEl = document.createElement('div');
+            valEl.className = 'dash-bar-val';
+            valEl.textContent = item.hours > 0 ? (item.hours + 'ч') : '';
+
+            var pillar = document.createElement('div');
+            pillar.className = 'dash-bar-pillar' + (item.hours === 0 ? ' empty' : '');
+            var pct = Math.max(3, Math.round((item.hours / maxHours) * 80));
+            pillar.style.height = (item.hours > 0 ? pct : 3) + 'px';
+
+            var dateEl = document.createElement('div');
+            dateEl.className = 'dash-bar-date';
+            dateEl.textContent = item.date || '';
+
+            col.appendChild(valEl);
+            col.appendChild(pillar);
+            col.appendChild(dateEl);
+            container.appendChild(col);
+        });
     }
 
     function closeMasterDashboardModal(e) {
@@ -2297,14 +2560,14 @@
     function formatLifetimeTime(totalSeconds) {
         var s = Math.max(0, parseInt(totalSeconds, 10) || 0);
         var hrs = Math.floor(s / 3600);
-        var rem = s % 3600;
-        var mins = Math.floor(rem / 60);
-        var secs = rem % 60;
-
-        var hStr = hrs < 10 ? '0' + hrs : '' + hrs;
-        var mStr = mins < 10 ? '0' + mins : '' + mins;
-        var sStr = secs < 10 ? '0' + secs : '' + secs;
-        return hStr + ':' + mStr + ':' + sStr;
+        var mins = Math.floor((s % 3600) / 60);
+        if (hrs === 0 && mins === 0 && s > 0) {
+            mins = 1;
+        }
+        if (hrs > 0) {
+            return hrs + ' Ч ' + (mins < 10 ? '0' : '') + mins + ' МИН В ПРАКТИКЕ';
+        }
+        return mins + ' МИН В ПРАКТИКЕ';
     }
 
     function renderLifetimeDisplay() {
@@ -2312,6 +2575,9 @@
         var el = document.getElementById('lifetimeValue');
         if (el) el.textContent = formatLifetimeTime(fresh);
     }
+
+    // Мгновенный синхронный рендер при старте скрипта (устранение мелькания 00:00:00)
+    renderLifetimeDisplay();
 
     /* =====================================================
        PRACTICE SETTINGS & DYNAMIC VARIANT PROFILES (MAKS SPECS)
@@ -2434,7 +2700,7 @@
         var modalTitle = document.getElementById('modalTitle');
 
         if (modalTitle) {
-            modalTitle.textContent = '⚙️ НАСТРОЙКИ';
+            modalTitle.textContent = 'НАСТРОЙКИ';
         }
 
         if (!container || !cardAnulom || !cardBhastrika || !cardKapala || !cardZamki) return;
@@ -3189,7 +3455,10 @@
         var pl = buildPipeline();
         pl.forEach(function(st) { totalSec += st.duration; });
         var totalMin = Math.round(totalSec / 60);
-        if (els.bottomLabel) els.bottomLabel.textContent = 'ОБЩЕЕ ВРЕМЯ ~' + totalMin + ' МИН';
+        if (els.bottomLabel) {
+            els.bottomLabel.textContent = 'ВРЕМЯ ПРАКТИКИ: ~' + totalMin + ' МИН';
+            els.bottomLabel.style.display = 'block';
+        }
         var bannerVal = document.getElementById('settingsTotalVal');
         if (bannerVal) {
             bannerVal.textContent = '~' + totalMin + ' МИНУТ (' + totalSec + ' С)';
@@ -3249,6 +3518,7 @@
         if (isRunning) return;
         isRunning = true;
         document.body.classList.add('is-running');
+        document.body.classList.remove('is-paused', 'is-completed');
         stageEndTime = Date.now() + (stageSecRemaining * 1000);
         lastTickTimestamp = Date.now();
         els.startBtn.textContent = 'ПАУЗА';
@@ -3264,6 +3534,7 @@
         if (!isRunning) return;
         isRunning = false;
         document.body.classList.remove('is-running');
+        document.body.classList.add('is-paused');
         clearInterval(timerInterval);
         timerInterval = null;
         releaseScreenLock();
@@ -3346,7 +3617,8 @@
     function finishSession(delayedGong) {
         pauseTimer();
         cancelStillnessTimer();
-        document.body.classList.remove('is-running');
+        document.body.classList.remove('is-running', 'is-paused');
+        document.body.classList.add('is-completed');
         updateTimerDisplay(0);
         els.practiceTitle.textContent = 'ПРАКТИКА ЗАВЕРШЕНА';
         els.practiceTitle.classList.remove('is-rest');
@@ -3385,7 +3657,7 @@
         }
         pauseTimer();
         cancelStillnessTimer();
-        document.body.classList.remove('is-running');
+        document.body.classList.remove('is-running', 'is-paused', 'is-completed');
         currentStageIdx = 0;
         pipeline = buildPipeline();
         loadStage(0, false);
