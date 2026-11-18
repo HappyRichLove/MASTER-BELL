@@ -51,8 +51,8 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 50% 50%, #1a224a 0%, #111636 42%, #0c0f24 75%);
             background-color: #0c0f24;
-            background: #0c0f24;
             color: var(--text);
             display: flex;
             flex-direction: column;
@@ -153,6 +153,8 @@
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
         .center-stage {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -386,6 +388,28 @@
             letter-spacing: 0.06em;
             color: var(--gold);
             text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .dash-pill-btn {
+            font-size: 0.58rem;
+            letter-spacing: 0.18em;
+            color: var(--gold);
+            opacity: 0.65;
+            cursor: pointer;
+            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(253, 172, 59, 0.25);
+            background: rgba(253, 172, 59, 0.08);
+            margin-top: 3px;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .dash-pill-btn:active {
+            opacity: 1;
+            background: rgba(253, 172, 59, 0.2);
+            transform: scale(0.96);
         }
 
         /* FOOTER */
@@ -1409,9 +1433,11 @@
             <span class="lifetime-digits" id="lifetimeValue">00:00:00</span>
         </div>
 
+        <div class="dash-pill-btn" id="btnMainDashboard" onclick="openMasterDashboardModal()" style="display:none;" title="Дашборд">дашборд</div>
+
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.3</div>
+            <div class="version-tag">MASTER v1.8.4</div>
         </footer>
     </div>
 
@@ -1525,22 +1551,10 @@
                     </div>
                 </div>
 
-                <!-- ДОСТУП И СИНХРОНИЗАЦИЯ -->
-                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">СИНХРОНИЗАЦИЯ И ДОСТУП</div>
-                        <div id="authSyncStatus" style="font-size:0.65rem; color:var(--accent); margin-top:3px;">Локальный режим • Нажмите для ввода ПИН</div>
-                    </div>
+                <!-- СИНХРОНИЗАЦИЯ -->
+                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
+                    <div id="authSyncName" style="font-size:0.85rem; font-weight:600; color:var(--text); letter-spacing:0.04em;">Синхронизация</div>
                     <button class="step-btn" id="btnAuthSyncAction" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openPinAuthModal()">ПИН-КОД</button>
-                </div>
-
-                <!-- ДАШБОРД МАСТЕРА (ВИДЕН ДЛЯ 777 И 888) -->
-                <div class="setting-card" id="cardMasterDashboard" style="display:none; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">ДАШБОРД МАСТЕРА</div>
-                        <div id="masterDashboardSubtitle" style="font-size:0.65rem; color:var(--gold); margin-top:3px;">Сводка по группе и практикам</div>
-                    </div>
-                    <button class="step-btn" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.18); border-color:var(--gold); color:var(--gold);" onclick="openMasterDashboardModal()">ОБЗОР</button>
                 </div>
 
                 <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
@@ -1560,7 +1574,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.3 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.4 ↻</div>
                 </div>
             </div>
         </div>
@@ -1661,7 +1675,7 @@
     <div class="modal-overlay" id="masterDashboardModal" onclick="closeMasterDashboardModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <div class="modal-title">ДАШБОРД МАСТЕРА</div>
+                <div class="modal-title">ДАШБОРД</div>
                 <button class="modal-close-btn" onclick="closeMasterDashboardModal()">Готово</button>
             </div>
             <div class="modal-scroll">
@@ -1828,7 +1842,7 @@
             var unlockUntil = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
             localStorage.setItem('mb_user_role', 'architect');
-            localStorage.setItem('mb_user_name', 'Сергей');
+            localStorage.setItem('mb_user_name', 'Сергей Поликанин');
 
             // Тестовая загрузка: 2 года практики по 30 мин/день = 730 дней * 1800 сек = 1 314 000 сек (365 часов)
             currentMbTotal = 1314000;
@@ -1837,7 +1851,7 @@
             } catch(e) {}
             renderLifetimeDisplay();
 
-            showToast('Приветствуем, Сергей ✨ Загружено: 365 ч');
+            showToast('Сергей Поликанин ✨ Загружено: 365 ч');
             updateAuthSyncUI();
 
             setTimeout(function() {
@@ -1855,7 +1869,7 @@
             localStorage.setItem('mb_user_role', 'master');
             localStorage.setItem('mb_user_name', 'Макс');
 
-            showToast('Приветствуем, Макс ✨');
+            showToast('Макс ✨ Доступ открыт');
             updateAuthSyncUI();
 
             setTimeout(function() {
@@ -1882,28 +1896,34 @@
     }
 
     function updateAuthSyncUI() {
-        var statusEl = document.getElementById('authSyncStatus');
+        var nameEl = document.getElementById('authSyncName');
         var btnEl = document.getElementById('btnAuthSyncAction');
-        var dashCard = document.getElementById('cardMasterDashboard');
-        var dashSub = document.getElementById('masterDashboardSubtitle');
-        if (!statusEl) return;
+        var mainDashBtn = document.getElementById('btnMainDashboard');
 
         var role = localStorage.getItem('mb_user_role') || '';
         var name = localStorage.getItem('mb_user_name') || '';
 
-        if (role === 'architect' || role === 'master') {
-            statusEl.textContent = name + ' (' + (role === 'architect' ? 'Архитектор' : 'Мастер') + ') • Доступ активен ✨';
-            statusEl.style.color = '#fdac3b';
-            if (btnEl) btnEl.textContent = 'Сменить';
-            if (dashCard) {
-                dashCard.style.display = 'flex';
-                if (dashSub) dashSub.textContent = name + ', доступ к сводке группы открыт';
+        if (name && (role === 'architect' || role === 'master')) {
+            if (nameEl) {
+                nameEl.textContent = name;
+                nameEl.style.color = '#fdac3b';
             }
+            if (btnEl) btnEl.textContent = 'Сменить';
+            if (mainDashBtn) mainDashBtn.style.display = 'inline-block';
+        } else if (name) {
+            if (nameEl) {
+                nameEl.textContent = name;
+                nameEl.style.color = '#ffffff';
+            }
+            if (btnEl) btnEl.textContent = 'Сменить';
+            if (mainDashBtn) mainDashBtn.style.display = 'none';
         } else {
-            statusEl.textContent = 'Локальный режим • Нажмите для ввода ПИН';
-            statusEl.style.color = 'var(--accent)';
+            if (nameEl) {
+                nameEl.textContent = 'Синхронизация';
+                nameEl.style.color = 'var(--text)';
+            }
             if (btnEl) btnEl.textContent = 'ПИН-КОД';
-            if (dashCard) dashCard.style.display = 'none';
+            if (mainDashBtn) mainDashBtn.style.display = 'none';
         }
     }
 
@@ -3307,8 +3327,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.3)
-    var CURRENT_APP_VERSION = '1.8.3';
+    // PWA Version Tracking & Safe Cache Management (v1.8.4)
+    var CURRENT_APP_VERSION = '1.8.4';
 
     function checkPwaVersionMigration() {
         try {
@@ -3325,7 +3345,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.3...');
+        showToast('Обновление PWA v1.8.4...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3351,9 +3371,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.3)
+    // Service Worker registration (STABLE v1.8.4)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.4').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
