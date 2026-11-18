@@ -24,7 +24,13 @@
 
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        *:focus {
+            outline: none !important;
+        }
         :root {
             --bg: #0c0f24;
             --surface: #141938;
@@ -44,6 +50,8 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: auto;
         }
 
         body {
@@ -63,6 +71,7 @@
             width: 100vw;
             overflow: hidden;
             touch-action: none;
+            overscroll-behavior: none;
             user-select: none;
             -webkit-user-select: none;
         }
@@ -433,13 +442,18 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(4, 6, 18, 0.78);
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: flex-end;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
+            overscroll-behavior: contain;
             transition: opacity 0.28s ease;
+        }
+        .modal-overlay.open,
+        .modal-overlay.closing {
+            display: flex;
         }
         .modal-overlay.open {
             opacity: 1;
@@ -509,6 +523,7 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-y;
+            overscroll-behavior: contain;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -1433,7 +1448,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.5</div>
+            <div class="version-tag">MASTER v1.8.6</div>
         </footer>
     </div>
 
@@ -1680,26 +1695,26 @@
             <div class="modal-scroll">
                 <div class="setting-card" style="text-align:center; padding:16px 12px;">
                     <div style="font-size:0.68rem; letter-spacing:0.14em; color:var(--accent); text-transform:uppercase;">Накоплено группой на курсе</div>
-                    <div style="font-size:2rem; font-weight:800; color:var(--gold); margin:6px 0; font-variant-numeric:tabular-nums;" id="dashGroupTotalHours">365 ч 00 мин</div>
-                    <div style="font-size:0.68rem; color:rgba(255,255,255,0.6);">Всего практиков: <b id="dashActiveCount" style="color:#ffffff;">2</b> (Сергей, Макс)</div>
+                    <div style="font-size:1.9rem; font-weight:800; color:var(--gold); margin:6px 0; font-variant-numeric:tabular-nums;" id="dashGroupTotalHours">—</div>
+                    <div style="font-size:0.68rem; color:rgba(255,255,255,0.6);">Всего активных практиков: <b id="dashActiveCount" style="color:#ffffff;">—</b></div>
                 </div>
 
                 <div class="setting-card">
                     <div class="setting-card-title">РАСПРЕДЕЛЕНИЕ ПРАКТИК</div>
                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
                         <span>Вариант 1 (с Анулом-Вилом):</span>
-                        <b style="color:var(--gold);">100%</b>
+                        <b style="color:var(--gold);" id="dashV1Percent">—</b>
                     </div>
                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0;">
                         <span>Вариант 2 (с Бхастрики):</span>
-                        <b style="color:var(--accent);">0%</b>
+                        <b style="color:var(--accent);" id="dashV2Percent">—</b>
                     </div>
                 </div>
 
                 <div class="setting-card">
                     <div class="setting-card-title">ИНТЕГРАЦИЯ С GOOGLE ТАБЛИЦЕЙ</div>
-                    <div style="font-size:0.72rem; line-height:1.45; color:rgba(255,255,255,0.75);">
-                        Архитектура готова к синхронизации. Данные об учениках, часах и выбранной практике будут подтягиваться прямо из вашей дублирующей Google Таблицы через Webhook.
+                    <div style="font-size:0.72rem; line-height:1.45; color:rgba(255,255,255,0.75);" id="dashSyncStatusText">
+                        Синхронизация с базой Google Таблицы...
                     </div>
                 </div>
             </div>
@@ -1775,24 +1790,46 @@
             var modal = document.getElementById('pinModal');
             var closeBtn = document.getElementById('btnPinModalClose');
             if (closeBtn) closeBtn.style.display = 'none';
-            if (modal) modal.classList.add('open');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('closing');
+                modal.classList.add('open');
+            }
         }
     }
 
     function openPinAuthModal() {
         unlockAudioSession();
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
         clearPin();
         var modal = document.getElementById('pinModal');
         var closeBtn = document.getElementById('btnPinModalClose');
         if (closeBtn) closeBtn.style.display = isPranaUnlocked() ? 'flex' : 'none';
-        if (modal) modal.classList.add('open');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.classList.remove('closing');
+            modal.classList.add('open');
+        }
     }
 
     function closePinModalIfUnlocked(e) {
         if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('pin-close-btn') && !e.target.closest('.pin-close-btn')) return;
         if (isPranaUnlocked()) {
             var modal = document.getElementById('pinModal');
-            if (modal) modal.classList.remove('open');
+            if (modal) {
+                modal.classList.add('closing');
+                setTimeout(function() {
+                    modal.classList.remove('open');
+                    modal.classList.remove('closing');
+                    modal.style.display = 'none';
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                }, 280);
+            }
             clearPin();
         }
     }
@@ -1943,7 +1980,17 @@
 
                     setTimeout(function() {
                         var modal = document.getElementById('pinModal');
-                        if (modal) modal.classList.remove('open');
+                        if (modal) {
+                            modal.classList.add('closing');
+                            setTimeout(function() {
+                                modal.classList.remove('open');
+                                modal.classList.remove('closing');
+                                modal.style.display = 'none';
+                                window.scrollTo(0, 0);
+                                document.body.scrollTop = 0;
+                                document.documentElement.scrollTop = 0;
+                            }, 280);
+                        }
                         clearPin();
                     }, 250);
                 } else if (data && data.status === 'blocked') {
@@ -1974,18 +2021,63 @@
         }
     }
 
-    function syncPracticeWithGoogleSheets(addSec) {
-        var pin = localStorage.getItem('mb_user_pin');
-        if (!pin || !navigator.onLine || !addSec || addSec <= 0) return;
+    /* =====================================================
+       ZERO DATA LOSS OFFLINE BUFFER FOR GOOGLE SHEETS
+       ===================================================== */
+    var PENDING_SYNC_KEY = 'mb_pending_sync_sec';
 
+    function queuePracticeSecondsForSync(sec) {
+        if (!sec || sec <= 0) return;
+        var curPending = 0;
+        try {
+            curPending = parseInt(localStorage.getItem(PENDING_SYNC_KEY), 10) || 0;
+        } catch(e) {}
+        curPending += sec;
+        try {
+            localStorage.setItem(PENDING_SYNC_KEY, curPending.toString());
+        } catch(e) {}
+        flushOfflineSyncBuffer();
+    }
+
+    var isSyncingBuffer = false;
+    function flushOfflineSyncBuffer() {
+        if (isSyncingBuffer) return;
+        var pin = localStorage.getItem('mb_user_pin');
+        if (!pin || !navigator.onLine) return;
+
+        var pendingSec = 0;
+        try {
+            pendingSec = parseInt(localStorage.getItem(PENDING_SYNC_KEY), 10) || 0;
+        } catch(e) {}
+
+        if (pendingSec <= 0) return;
+
+        isSyncingBuffer = true;
+        var secToSend = pendingSec;
         var url = GOOGLE_SHEETS_API_URL + '?action=sync&pin=' + encodeURIComponent(pin) +
-                  '&addSeconds=' + encodeURIComponent(addSec) +
+                  '&addSeconds=' + encodeURIComponent(secToSend) +
                   '&variant=' + encodeURIComponent(currentVariant || 'v1');
 
-        try {
-            fetch(url, { mode: 'no-cors' }).catch(function(){});
-        } catch(e) {}
+        fetch(url)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                isSyncingBuffer = false;
+                if (data && (data.status === 'success' || data.status === 'ok')) {
+                    try {
+                        var nowPending = parseInt(localStorage.getItem(PENDING_SYNC_KEY), 10) || 0;
+                        nowPending = Math.max(0, nowPending - secToSend);
+                        localStorage.setItem(PENDING_SYNC_KEY, nowPending.toString());
+                    } catch(e) {}
+                }
+            })
+            .catch(function() {
+                isSyncingBuffer = false;
+            });
     }
+
+    window.addEventListener('online', function() {
+        flushOfflineSyncBuffer();
+    });
 
     function updateAuthSyncUI() {
         var nameEl = document.getElementById('authSyncName');
@@ -2021,21 +2113,66 @@
 
     function openMasterDashboardModal() {
         unlockAudioSession();
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+
         var modal = document.getElementById('masterDashboardModal');
         if (modal) {
+            modal.style.display = 'flex';
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
+
+        var pin = localStorage.getItem('mb_user_pin') || '777';
+        var totalHoursEl = document.getElementById('dashGroupTotalHours');
+        var activeCountEl = document.getElementById('dashActiveCount');
+        var v1El = document.getElementById('dashV1Percent');
+        var v2El = document.getElementById('dashV2Percent');
+        var statusEl = document.getElementById('dashSyncStatusText');
+
+        if (totalHoursEl) totalHoursEl.textContent = 'Подсчет...';
+        if (activeCountEl) activeCountEl.textContent = '...';
+        if (statusEl) statusEl.textContent = 'Подключение к Google Таблице...';
+
+        var url = GOOGLE_SHEETS_API_URL + '?action=get_master_dashboard&pin=' + encodeURIComponent(pin);
+        fetch(url)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data && data.status === 'ok') {
+                    if (totalHoursEl) totalHoursEl.textContent = data.totalGroupHoursText || '0 ч 00 мин';
+                    if (activeCountEl) activeCountEl.textContent = data.activeCount || '0';
+                    if (v1El) v1El.textContent = (data.v1Percent !== undefined ? data.v1Percent : 100) + '%';
+                    if (v2El) v2El.textContent = (data.v2Percent !== undefined ? data.v2Percent : 0) + '%';
+                    if (statusEl) statusEl.textContent = 'Данные успешно обновлены из Google Таблицы (' + (data.lastSync || 'сейчас') + ') ✨';
+                } else {
+                    if (totalHoursEl) totalHoursEl.textContent = '—';
+                    if (statusEl) statusEl.textContent = data && data.message ? data.message : 'Таблица пока недоступна';
+                }
+            })
+            .catch(function(err) {
+                if (totalHoursEl) totalHoursEl.textContent = 'Офлайн';
+                if (statusEl) statusEl.textContent = 'Офлайн-режим. Подключитесь к сети для обновления дашборда.';
+            });
     }
 
     function closeMasterDashboardModal(e) {
         if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) return;
         var modal = document.getElementById('masterDashboardModal');
         if (!modal) return;
+        if (modal._isClosing) return;
+        modal._isClosing = true;
         modal.classList.add('closing');
         setTimeout(function() {
             modal.classList.remove('open');
             modal.classList.remove('closing');
+            modal.style.display = 'none';
+            modal._isClosing = false;
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
         }, 280);
     }
 
@@ -2089,7 +2226,7 @@
     function syncAccumulatedTime() {
         flushGlobalPracticeTime();
         if (sessionPracticeSecToSync > 0) {
-            syncPracticeWithGoogleSheets(sessionPracticeSecToSync);
+            queuePracticeSecondsForSync(sessionPracticeSecToSync);
             sessionPracticeSecToSync = 0;
         }
     }
@@ -3222,11 +3359,16 @@
        ===================================================== */
     function openSettingsModal() {
         unlockAudioSession();
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
         syncVariantUI(true);
         syncZenAuraUI();
         syncStepperDisplays();
         var modal = document.getElementById('settingsModal');
         if (modal) {
+            modal.style.display = 'flex';
             modal.classList.remove('closing');
             modal.classList.add('open');
         }
@@ -3244,7 +3386,12 @@
         setTimeout(function() {
             modal.classList.remove('open');
             modal.classList.remove('closing');
+            modal.style.display = 'none';
             modal._isClosing = false;
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
         }, 280);
 
         var oldPipelineLength = pipeline.length;
@@ -3430,8 +3577,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.5)
-    var CURRENT_APP_VERSION = '1.8.5';
+    // PWA Version Tracking & Safe Cache Management (v1.8.6)
+    var CURRENT_APP_VERSION = '1.8.6';
 
     function checkPwaVersionMigration() {
         try {
@@ -3448,7 +3595,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.5...');
+        showToast('Обновление PWA v1.8.6...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3474,9 +3621,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.5)
+    // Service Worker registration (STABLE v1.8.6)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.5').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.6').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -3485,10 +3632,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         initApp();
         checkStandaloneUI();
+        flushOfflineSyncBuffer();
     });
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initApp();
         checkStandaloneUI();
+        flushOfflineSyncBuffer();
     }
 
         /* =====================================================
