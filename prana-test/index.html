@@ -39,8 +39,8 @@
         }
 
         html {
-            background-color: var(--bg);
-            background: var(--bg);
+            background-color: #0c0f24;
+            background: #0c0f24;
             height: 100%;
             width: 100%;
             overflow: hidden;
@@ -51,8 +51,8 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: radial-gradient(circle at 50% 35%, #181e42 0%, #0c0f24 65%, #070914 100%);
-            background-color: var(--bg);
+            background-color: #0c0f24;
+            background: #0c0f24;
             color: var(--text);
             display: flex;
             flex-direction: column;
@@ -67,7 +67,21 @@
             -webkit-user-select: none;
         }
 
-        /* TOP HEADER ZONE — CRYSTAL CLEAN (NO VIGNETTE / NO TOP GLOW OUT OF NOTCH) */
+        /* AMBIENT SAPPHIRE DEPTH (FOCUSED ONLY AROUND CENTER TIMER, TOP 120px IS 100% UNIFORM #0c0f24) */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 45%;
+            left: 50%;
+            width: min(100vw, 540px);
+            height: min(65vh, 480px);
+            transform: translate(-50%, -50%);
+            background: radial-gradient(ellipse at center, rgba(22, 28, 64, 0.8) 0%, rgba(12, 15, 36, 0.35) 55%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* TOP HEADER ZONE — SEAMLESS SAPPHIRE NOTCH ALIGNMENT */
         .header-area {
             position: relative;
             display: flex;
@@ -75,9 +89,10 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: max(32px, calc(env(safe-area-inset-top, 20px) + 16px));
+            padding-top: max(40px, calc(env(safe-area-inset-top, 24px) + 20px));
             padding-bottom: 6px;
             flex-shrink: 0;
+            z-index: 2;
         }
 
         .master-title {
@@ -265,13 +280,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.15s, background-color 0.25s, color 0.25s, border-color 0.25s;
+            transition: transform 0.12s ease-out, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
             text-transform: uppercase;
             letter-spacing: 0.12em;
             -webkit-tap-highlight-color: transparent;
         }
         .btn-main:active {
-            transform: scale(0.96);
+            transform: scale(0.98);
+            filter: brightness(0.96);
         }
         .btn-main.paused {
             background: transparent;
@@ -772,13 +788,14 @@
             }
         }
 
-        /* 6. MAGNETIC BUTTON PRESS */
+        /* 6. CALM SOLID BUTTON INTERACTION (NO HARSH DIP / NO BOUNCE) */
         body.zen-aura-on .btn-main {
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+            transition: transform 0.12s ease-out, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
         body.zen-aura-on .btn-main:active {
-            transform: scale(0.93) translateY(2px);
-            box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(212, 175, 55, 0.3) !important;
+            transform: scale(0.98);
+            filter: brightness(0.96);
+            box-shadow: 0 4px 16px var(--gold-glow) !important;
         }
 
         /* 7. FLOATING ZEN PARTICLES (ULTRA-DELICATE TEMPLE SUNBEAM DUST) */
@@ -1436,7 +1453,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v1.8.1</div>
+            <div class="version-tag">MASTER v1.8.2</div>
         </footer>
     </div>
 
@@ -1550,6 +1567,24 @@
                     </div>
                 </div>
 
+                <!-- ДОСТУП И СИНХРОНИЗАЦИЯ -->
+                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">СИНХРОНИЗАЦИЯ И ДОСТУП</div>
+                        <div id="authSyncStatus" style="font-size:0.65rem; color:var(--accent); margin-top:3px;">Локальный режим • Нажмите для ввода ПИН</div>
+                    </div>
+                    <button class="step-btn" id="btnAuthSyncAction" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openPinAuthModal()">ПИН-КОД</button>
+                </div>
+
+                <!-- ДАШБОРД МАСТЕРА (ВИДЕН ДЛЯ 777 И 888) -->
+                <div class="setting-card" id="cardMasterDashboard" style="display:none; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="setting-card-title" style="margin:0; font-size:0.82rem; letter-spacing:0.06em;">📊 ДАШБОРД МАСТЕРА</div>
+                        <div id="masterDashboardSubtitle" style="font-size:0.65rem; color:var(--gold); margin-top:3px;">Сводка по группе и практикам</div>
+                    </div>
+                    <button class="step-btn" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.18); border-color:var(--gold); color:var(--gold);" onclick="openMasterDashboardModal()">ОБЗОР</button>
+                </div>
+
                 <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
                 <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -1567,7 +1602,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.1 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v1.8.2 ↻</div>
                 </div>
             </div>
         </div>
@@ -1664,9 +1699,46 @@
         </div>
     </div>
 
-    <!-- PIN CODE MODAL (888 / 72 HOURS VALIDITY) -->
-    <div class="modal-overlay" id="pinModal">
-        <div class="pin-card" onclick="event.stopPropagation()">
+    <!-- MASTER DASHBOARD MODAL (FOR 777 / 888) -->
+    <div class="modal-overlay" id="masterDashboardModal" onclick="closeMasterDashboardModal(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">📊 ДАШБОРД МАСТЕРА</div>
+                <button class="modal-close-btn" onclick="closeMasterDashboardModal()">Готово</button>
+            </div>
+            <div class="modal-scroll">
+                <div class="setting-card" style="text-align:center; padding:16px 12px;">
+                    <div style="font-size:0.68rem; letter-spacing:0.14em; color:var(--accent); text-transform:uppercase;">Накоплено группой на курсе</div>
+                    <div style="font-size:2rem; font-weight:800; color:var(--gold); margin:6px 0; font-variant-numeric:tabular-nums;" id="dashGroupTotalHours">365 ч 00 мин</div>
+                    <div style="font-size:0.68rem; color:rgba(255,255,255,0.6);">Всего практиков: <b id="dashActiveCount" style="color:#ffffff;">2</b> (Сергей, Макс)</div>
+                </div>
+
+                <div class="setting-card">
+                    <div class="setting-card-title">РАСПРЕДЕЛЕНИЕ ПРАКТИК</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <span>Вариант 1 (с Анулом-Вилом):</span>
+                        <b style="color:var(--gold);">100%</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0;">
+                        <span>Вариант 2 (с Бхастрики):</span>
+                        <b style="color:var(--accent);">0%</b>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <div class="setting-card-title">ИНТЕГРАЦИЯ С GOOGLE ТАБЛИЦЕЙ</div>
+                    <div style="font-size:0.72rem; line-height:1.45; color:rgba(255,255,255,0.75);">
+                        Архитектура готова к синхронизации. Данные об учениках, часах и выбранной практике будут подтягиваться прямо из вашей дублирующей Google Таблицы через Webhook.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN CODE MODAL (777 / 888 / 96 HOURS VALIDITY) -->
+    <div class="modal-overlay" id="pinModal" onclick="closePinModalIfUnlocked(event)">
+        <div class="pin-card" onclick="event.stopPropagation()" style="position:relative;">
+            <button class="pin-close-btn" id="btnPinModalClose" onclick="closePinModalIfUnlocked()" style="position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.08); border:none; color:var(--accent); width:28px; height:28px; border-radius:50%; font-size:0.85rem; cursor:pointer; display:none; align-items:center; justify-content:center;">✕</button>
             <div class="pin-lotus-badge">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3c-2.5 4-3.5 8-3.5 12 2.5-1 4.5-1 7 0 0-4-1-8-3.5-12z"/>
@@ -1707,10 +1779,11 @@
 
 <script>
     /* =====================================================
-       SECURITY CHECK: PIN CODE 888 (72 HOURS VALIDITY)
+       SECURITY CHECK: PIN AUTH (777 ARCHITECT / 888 MASTER)
+       4 DAYS VALIDITY (345 600 000 MS)
        ===================================================== */
     var UNLOCK_KEY = 'prana_unlocked_until';
-    var THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+    var FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
     var enteredPin = '';
 
     function isPranaUnlocked() {
@@ -1728,7 +1801,27 @@
     function checkPinGate() {
         if (!isPranaUnlocked()) {
             var modal = document.getElementById('pinModal');
+            var closeBtn = document.getElementById('btnPinModalClose');
+            if (closeBtn) closeBtn.style.display = 'none';
             if (modal) modal.classList.add('open');
+        }
+    }
+
+    function openPinAuthModal() {
+        unlockAudioSession();
+        clearPin();
+        var modal = document.getElementById('pinModal');
+        var closeBtn = document.getElementById('btnPinModalClose');
+        if (closeBtn) closeBtn.style.display = isPranaUnlocked() ? 'flex' : 'none';
+        if (modal) modal.classList.add('open');
+    }
+
+    function closePinModalIfUnlocked(e) {
+        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('pin-close-btn') && !e.target.closest('.pin-close-btn')) return;
+        if (isPranaUnlocked()) {
+            var modal = document.getElementById('pinModal');
+            if (modal) modal.classList.remove('open');
+            clearPin();
         }
     }
 
@@ -1769,29 +1862,111 @@
     }
 
     /* =====================================================
-       SECURITY PIN GATE (CANONICAL 888 PIN)
+       SECURITY PIN GATE (777 ARCHITECT / 888 MASTER)
        ===================================================== */
     function checkPin() {
-        if (enteredPin === '888') {
-            var unlockUntil = Date.now() + THREE_DAYS_MS;
+        // 777 = Творец / Сергей (Архитектор)
+        if (enteredPin === '777') {
+            var unlockUntil = Date.now() + FOUR_DAYS_MS;
             localStorage.setItem(UNLOCK_KEY, unlockUntil.toString());
-            var modal = document.getElementById('pinModal');
-            if (modal) modal.classList.remove('open');
-            clearPin();
-        } else {
-            for (var i = 0; i < 3; i++) {
-                var dot = document.getElementById('pinDot' + i);
-                if (dot) dot.classList.add('error');
-            }
-            var card = document.querySelector('.pin-card');
-            if (card) {
-                card.classList.add('shake');
-                setTimeout(function() {
-                    card.classList.remove('shake');
-                    clearPin();
-                }, 400);
-            }
+            localStorage.setItem('mb_user_role', 'architect');
+            localStorage.setItem('mb_user_name', 'Сергей');
+
+            // Тестовая загрузка: 2 года практики по 30 мин/день = 730 дней * 1800 сек = 1 314 000 сек (365 часов)
+            currentMbTotal = 1314000;
+            try {
+                localStorage.setItem(LIFETIME_KEY, currentMbTotal.toString());
+            } catch(e) {}
+            renderLifetimeDisplay();
+
+            showToast('Приветствуем, Сергей ✨ Загружено: 365 ч');
+            updateAuthSyncUI();
+
+            setTimeout(function() {
+                var modal = document.getElementById('pinModal');
+                if (modal) modal.classList.remove('open');
+                clearPin();
+            }, 250);
+            return;
         }
+
+        // 888 = Мастер Макс
+        if (enteredPin === '888') {
+            var unlockUntil888 = Date.now() + FOUR_DAYS_MS;
+            localStorage.setItem(UNLOCK_KEY, unlockUntil888.toString());
+            localStorage.setItem('mb_user_role', 'master');
+            localStorage.setItem('mb_user_name', 'Макс');
+
+            showToast('Приветствуем, Макс ✨');
+            updateAuthSyncUI();
+
+            setTimeout(function() {
+                var modal = document.getElementById('pinModal');
+                if (modal) modal.classList.remove('open');
+                clearPin();
+            }, 250);
+            return;
+        }
+
+        // Неверный ПИН
+        for (var i = 0; i < 3; i++) {
+            var dot = document.getElementById('pinDot' + i);
+            if (dot) dot.classList.add('error');
+        }
+        var card = document.querySelector('.pin-card');
+        if (card) {
+            card.classList.add('shake');
+            setTimeout(function() {
+                card.classList.remove('shake');
+                clearPin();
+            }, 400);
+        }
+    }
+
+    function updateAuthSyncUI() {
+        var statusEl = document.getElementById('authSyncStatus');
+        var btnEl = document.getElementById('btnAuthSyncAction');
+        var dashCard = document.getElementById('cardMasterDashboard');
+        var dashSub = document.getElementById('masterDashboardSubtitle');
+        if (!statusEl) return;
+
+        var role = localStorage.getItem('mb_user_role') || '';
+        var name = localStorage.getItem('mb_user_name') || '';
+
+        if (role === 'architect' || role === 'master') {
+            statusEl.textContent = name + ' (' + (role === 'architect' ? 'Архитектор' : 'Мастер') + ') • Доступ активен ✨';
+            statusEl.style.color = '#fdac3b';
+            if (btnEl) btnEl.textContent = 'Сменить';
+            if (dashCard) {
+                dashCard.style.display = 'flex';
+                if (dashSub) dashSub.textContent = name + ', доступ к сводке группы открыт';
+            }
+        } else {
+            statusEl.textContent = 'Локальный режим • Нажмите для ввода ПИН';
+            statusEl.style.color = 'var(--accent)';
+            if (btnEl) btnEl.textContent = 'ПИН-КОД';
+            if (dashCard) dashCard.style.display = 'none';
+        }
+    }
+
+    function openMasterDashboardModal() {
+        unlockAudioSession();
+        var modal = document.getElementById('masterDashboardModal');
+        if (modal) {
+            modal.classList.remove('closing');
+            modal.classList.add('open');
+        }
+    }
+
+    function closeMasterDashboardModal(e) {
+        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) return;
+        var modal = document.getElementById('masterDashboardModal');
+        if (!modal) return;
+        modal.classList.add('closing');
+        setTimeout(function() {
+            modal.classList.remove('open');
+            modal.classList.remove('closing');
+        }, 280);
     }
 
     // Keyboard support for PIN
@@ -2642,6 +2817,7 @@
         syncStepperDisplays();
         renderLifetimeDisplay();
         checkPinGate();
+        updateAuthSyncUI();
         initStillnessTracker();
 
         // Авто-анимация глубокого осознанного вдоха PRANA через 1.8 секунды после входа
@@ -3173,8 +3349,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v1.8.1)
-    var CURRENT_APP_VERSION = '1.8.1';
+    // PWA Version Tracking & Safe Cache Management (v1.8.2)
+    var CURRENT_APP_VERSION = '1.8.2';
 
     function checkPwaVersionMigration() {
         try {
@@ -3191,7 +3367,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v1.8.1...');
+        showToast('Обновление PWA v1.8.2...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3217,9 +3393,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v1.8.1)
+    // Service Worker registration (STABLE v1.8.2)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=1.8.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=1.8.2').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
