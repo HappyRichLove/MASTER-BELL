@@ -97,12 +97,12 @@
             padding-top: max(40px, calc(env(safe-area-inset-top, 24px) + 20px));
             padding-bottom: 6px;
             flex-shrink: 0;
-            z-index: 2;
+            z-index: 10;
         }
 
         .master-title {
             position: relative;
-            z-index: 1;
+            z-index: 10;
             font-size: clamp(1.85rem, 6.5vw, 2.5rem);
             font-weight: 200;
             letter-spacing: 0.32em;
@@ -113,20 +113,21 @@
             margin: 0;
             opacity: 1;
             line-height: 1;
-            text-shadow: none;
+            text-shadow: none !important;
+            filter: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            pointer-events: auto !important;
-            cursor: pointer;
+            pointer-events: none;
             user-select: none;
             -webkit-user-select: none;
-            transition: color 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.25, 1);
         }
 
-        /* LUMINESCENT GOLD BRAND BADGE (LAMP EFFECT & GENTLE BREATH TOUCH) */
+        /* LUMINESCENT GOLD BRAND BADGE (CRISP SAPPHIRE AMBER, NO BLUR VEIL) */
         .badge-brand {
             position: relative;
-            margin-top: 6px;
+            margin-top: 10px;
             font-size: 0.62rem;
             letter-spacing: 0.28em;
             text-indent: 0.28em;
@@ -137,37 +138,30 @@
             border-radius: 20px;
             background: rgba(253, 172, 59, 0.12);
             border: 1px solid rgba(253, 172, 59, 0.5);
-            box-shadow: 0 0 14px rgba(253, 172, 59, 0.35), inset 0 0 8px rgba(253, 172, 59, 0.15);
-            text-shadow: 0 0 8px rgba(253, 172, 59, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 0 10px rgba(253, 172, 59, 0.25);
+            text-shadow: none;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             pointer-events: auto;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            transition: all 4.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.3s ease, background 0.3s ease;
         }
 
-        /* Expands touch target on mobile to 48px without changing visual appearance */
-        .badge-brand::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            bottom: -10px;
-            left: -16px;
-            right: -16px;
+        .badge-brand:active {
+            transform: scale(0.96);
         }
 
-        /* Deep, slow conscious inhale: ~3.2 seconds gentle swelling of light */
+        /* Deep, slow conscious inhale: gentle swelling of amber light without blur */
         .badge-brand.prana-breathe {
             color: #ffffff;
             background: rgba(253, 172, 59, 0.28);
             border-color: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 0 24px rgba(253, 172, 59, 0.75), inset 0 0 12px rgba(255, 255, 255, 0.35);
-            text-shadow: 0 0 12px #ffffff, 0 0 18px rgba(253, 172, 59, 0.8);
+            box-shadow: 0 0 16px rgba(253, 172, 59, 0.5);
             transform: scale(1.04);
-            transition: all 3.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -930,14 +924,6 @@
             100% { transform: translate3d(-22px, -16px, 0); opacity: 0.14; }
         }
 
-        /* 8. MASTER TITLE LONG-TOUCH REACTION */
-        body.zen-aura-on .master-title.master-held {
-            color: #fff6d6 !important;
-            text-shadow: 0 0 25px rgba(212, 175, 55, 0.95), 0 0 45px rgba(255, 255, 255, 0.6) !important;
-            transform: scale(1.03);
-            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
         /* 2. TIMER COLON (STATIC & SOLID) */
         .timer-colon {
             display: inline-block;
@@ -951,7 +937,7 @@
             pointer-events: none;
         }
         body.zen-aura-on.is-stillness .header-area {
-            opacity: 0.88; /* «МАСТЕР» сохраняет благородное чистое сияние */
+            opacity: 1; /* «МАСТЕР» сохраняет 100% кристальную четкость */
             transition: opacity 1.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .header-area, .secondary-btns, .bottom-zone {
@@ -1474,8 +1460,8 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- ZEN AMBIENT PARTICLES LAYER -->
-    <div class="zen-particles-layer" style="position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;">
+    <!-- ZEN AMBIENT PARTICLES LAYER (STARTS BELOW HEADER TO ENSURE CRYSTAL CLARITY OF TITLE) -->
+    <div class="zen-particles-layer" style="position:fixed; top:140px; left:0; right:0; bottom:0; pointer-events:none; z-index:0; overflow:hidden;">
         <div class="zen-particle p1"></div>
         <div class="zen-particle p2"></div>
         <div class="zen-particle p3"></div>
@@ -3306,25 +3292,6 @@
         checkPinGate();
         updateAuthSyncUI();
         initStillnessTracker();
-
-        // Авто-анимация глубокого осознанного вдоха PRANA через 1.8 секунды после входа
-        setTimeout(function() {
-            triggerPranaBreathe();
-        }, 1800);
-
-        var masterTitleEl = document.querySelector('.master-title');
-        if (masterTitleEl) {
-            var releaseMasterGlow = function() {
-                masterTitleEl.classList.remove('master-held');
-            };
-            masterTitleEl.addEventListener('pointerdown', function() {
-                if (!isZenAuraActive) return;
-                masterTitleEl.classList.add('master-held');
-            });
-            masterTitleEl.addEventListener('pointerup', releaseMasterGlow);
-            masterTitleEl.addEventListener('pointercancel', releaseMasterGlow);
-            masterTitleEl.addEventListener('pointerleave', releaseMasterGlow);
-        }
     }
 
     function loadStage(idx, autoStart) {
@@ -3914,9 +3881,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0)
+    // Service Worker registration (STABLE v2.0.1)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
