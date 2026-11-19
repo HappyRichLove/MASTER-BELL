@@ -1514,7 +1514,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.1</div>
+            <div class="version-tag">MASTER v2.0.2</div>
         </footer>
     </div>
 
@@ -1655,7 +1655,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.1 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.2 ↻</div>
                 </div>
             </div>
         </div>
@@ -3793,7 +3793,7 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.1)
+    // PWA Version Tracking & Safe Cache Management (v2.0.2)
     var CURRENT_APP_VERSION = '2.0.1';
 
     function checkPwaVersionMigration() {
@@ -3804,7 +3804,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.1') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.2') {
                                 caches.delete(k);
                             }
                         });
@@ -3820,7 +3820,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.1...');
+        showToast('Обновление PWA v2.0.2...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3846,9 +3846,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.1)
+    // Service Worker registration (STABLE v2.0.2)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.1').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.2').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
