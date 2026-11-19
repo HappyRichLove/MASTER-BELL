@@ -94,7 +94,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: max(54px, calc(env(safe-area-inset-top, 47px) + 14px));
+            padding-top: max(74px, calc(env(safe-area-inset-top, 47px) + 32px));
             padding-bottom: 6px;
             flex-shrink: 0;
             z-index: 10;
@@ -426,27 +426,32 @@
             right: 0;
             bottom: 0;
             background: rgba(6, 9, 24, 0.65);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: flex-end;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             overscroll-behavior: contain;
-            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.36s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.36s ease;
         }
         .modal-overlay.open {
-            display: flex;
+            visibility: visible;
             opacity: 1;
             pointer-events: auto;
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
         }
         .modal-overlay.closing {
-            display: flex;
+            visibility: visible;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.26s cubic-bezier(0.32, 1, 0.32, 1);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            transition: opacity 0.3s cubic-bezier(0.32, 1, 0.32, 1), visibility 0.3s ease;
         }
 
         .modal-sheet {
@@ -463,7 +468,7 @@
             flex-direction: column;
             box-shadow: 0 -14px 45px rgba(0, 0, 0, 0.75);
             transform: translateY(100%);
-            transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
             overflow: hidden;
         }
@@ -472,7 +477,7 @@
         }
         .modal-overlay.closing .modal-sheet {
             transform: translateY(100%);
-            transition: transform 0.28s cubic-bezier(0.32, 1, 0.32, 1);
+            transition: transform 0.3s cubic-bezier(0.32, 1, 0.32, 1);
         }
 
         .sheet-drag-handle {
@@ -1509,7 +1514,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0</div>
+            <div class="version-tag">MASTER v2.0.1</div>
         </footer>
     </div>
 
@@ -1650,7 +1655,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.1 ↻</div>
                 </div>
             </div>
         </div>
@@ -1967,6 +1972,7 @@
         if (closeBtn) closeBtn.style.display = isPranaUnlocked() ? 'flex' : 'none';
         if (modal) {
             modal.classList.remove('closing');
+            void modal.offsetWidth;
             modal.classList.add('open');
         }
         updatePinLockUI();
@@ -1977,10 +1983,11 @@
         if (isPranaUnlocked()) {
             var modal = document.getElementById('pinModal');
             if (modal) {
+                modal.classList.remove('open');
                 modal.classList.add('closing');
                 setTimeout(function() {
-                    modal.classList.remove('open', 'closing');
-                }, 280);
+                    modal.classList.remove('closing');
+                }, 300);
             }
             clearPin();
         }
@@ -2280,6 +2287,7 @@
         var modal = document.getElementById('masterDashboardModal');
         if (modal) {
             modal.classList.remove('closing');
+            void modal.offsetWidth;
             modal.classList.add('open');
         }
 
@@ -2375,12 +2383,13 @@
         var modal = document.getElementById('masterDashboardModal');
         if (!modal || modal._isClosing) return;
         modal._isClosing = true;
+        modal.classList.remove('open');
         modal.classList.add('closing');
 
         setTimeout(function() {
-            modal.classList.remove('open', 'closing');
+            modal.classList.remove('closing');
             modal._isClosing = false;
-        }, 280);
+        }, 300);
     }
 
     // Keyboard support for PIN
@@ -3572,6 +3581,7 @@
         var modal = document.getElementById('settingsModal');
         if (modal) {
             modal.classList.remove('closing');
+            void modal.offsetWidth;
             modal.classList.add('open');
         }
     }
@@ -3586,12 +3596,13 @@
         var modal = document.getElementById('settingsModal');
         if (!modal || modal._isClosing) return;
         modal._isClosing = true;
+        modal.classList.remove('open');
         modal.classList.add('closing');
 
         setTimeout(function() {
-            modal.classList.remove('open', 'closing');
+            modal.classList.remove('closing');
             modal._isClosing = false;
-        }, 280);
+        }, 300);
 
         var oldPipelineLength = pipeline.length;
         pipeline = buildPipeline();
@@ -3776,8 +3787,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0)
-    var CURRENT_APP_VERSION = '2.0';
+    // PWA Version Tracking & Safe Cache Management (v2.0.1)
+    var CURRENT_APP_VERSION = '2.0.1';
 
     function checkPwaVersionMigration() {
         try {
@@ -3787,7 +3798,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.1') {
                                 caches.delete(k);
                             }
                         });
@@ -3803,7 +3814,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0...');
+        showToast('Обновление PWA v2.0.1...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3829,9 +3840,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0)
+    // Service Worker registration (STABLE v2.0.1)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.1').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
