@@ -147,21 +147,21 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 4.0s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .badge-brand:active {
             transform: scale(0.96);
         }
 
-        /* Deep, slow conscious inhale: gentle swelling of amber light without blur */
+        /* Deep, slow conscious breath: gentle swelling of amber light without blur */
         .badge-brand.prana-breathe {
             color: #ffffff;
             background: rgba(253, 172, 59, 0.28);
             border-color: rgba(255, 255, 255, 0.85);
             box-shadow: 0 0 18px rgba(253, 172, 59, 0.55);
             transform: scale(1.04);
-            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 3.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* CENTER STAGE (TIMER & BREATH CUE) */
@@ -2256,9 +2256,9 @@
                         name.toLowerCase().indexOf('мастер') !== -1 ||
                         pin === '777' || pin === '888');
 
-        if (name && isMaster) {
+        if (isMaster) {
             if (nameEl) {
-                nameEl.textContent = name;
+                nameEl.textContent = name || (id === 'MP-001' ? 'Сергей (Архитектор)' : (id === 'MP-002' ? 'Максим (Мастер)' : 'Мастер'));
                 nameEl.style.color = '#fdac3b';
             }
             if (btnEl) btnEl.textContent = 'Сменить';
@@ -2286,12 +2286,15 @@
 
         var modal = document.getElementById('masterDashboardModal');
         if (modal) {
+            modal._isClosing = false;
             modal.classList.remove('closing');
             void modal.offsetWidth;
             modal.classList.add('open');
         }
 
         var pin = localStorage.getItem('mb_user_pin') || '';
+        var id = localStorage.getItem('mb_user_id') || '';
+        var role = localStorage.getItem('mb_user_role') || '';
         var totalHoursEl = document.getElementById('dashGroupTotalHours');
         var activeCountEl = document.getElementById('dashActiveCount');
         var v1El = document.getElementById('dashV1Percent');
@@ -2304,12 +2307,14 @@
         if (statusEl) statusEl.textContent = 'Подключение к Google Таблице...';
         if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Загрузка графика...</div>';
 
-        if (!pin) {
+        if (!pin && !id) {
             if (statusEl) statusEl.textContent = 'Для просмотра дашборда войдите по ПИН-коду Мастера';
             return;
         }
 
-        var url = GOOGLE_SHEETS_API_URL + '?action=get_master_dashboard&pin=' + encodeURIComponent(pin);
+        var url = GOOGLE_SHEETS_API_URL + '?action=get_master_dashboard&pin=' + encodeURIComponent(pin) +
+                  '&id=' + encodeURIComponent(id) +
+                  '&role=' + encodeURIComponent(role);
         fetch(url)
             .then(function(res) { return res.json(); })
             .then(function(data) {
@@ -3578,8 +3583,10 @@
         syncVariantUI(true);
         syncZenAuraUI();
         syncStepperDisplays();
+        updateAuthSyncUI();
         var modal = document.getElementById('settingsModal');
         if (modal) {
+            modal._isClosing = false;
             modal.classList.remove('closing');
             void modal.offsetWidth;
             modal.classList.add('open');
@@ -3891,7 +3898,7 @@
         pranaBreathTimer = setTimeout(function() {
             el.classList.remove('prana-breathe');
             pranaBreathTimer = null;
-        }, 550);
+        }, 3600);
     }
 
 </script>
