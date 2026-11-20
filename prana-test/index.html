@@ -522,61 +522,25 @@
             transform: scale(0.95);
         }
 
-        /* 14-DAY GROUP PRACTICE DYNAMICS CHART */
-        .dash-chart-wrapper {
-            width: 100%;
-            padding: 12px 6px 6px;
-            background: rgba(6, 9, 24, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            margin-top: 6px;
-        }
-        .dash-chart-bars {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 125px;
-            gap: 4px;
-            padding: 0 4px;
-        }
-        .dash-bar-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .header-pwa-icon-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            padding: 3px 7px;
+            cursor: pointer;
+            line-height: 1;
+            display: inline-flex;
             align-items: center;
-            height: 100%;
-            justify-content: flex-end;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
-        .dash-bar-val {
-            font-size: 0.52rem;
-            color: var(--gold);
-            margin-bottom: 3px;
-            font-variant-numeric: tabular-nums;
-            opacity: 0.85;
-            font-weight: 700;
+        .header-pwa-icon-btn:active {
+            transform: scale(0.92);
+            background: rgba(253, 172, 59, 0.18);
+            border-color: rgba(253, 172, 59, 0.4);
         }
-        .dash-bar-pillar {
-            width: 100%;
-            max-width: 15px;
-            min-height: 4px;
-            background: linear-gradient(180deg, var(--gold) 0%, rgba(253, 172, 59, 0.35) 100%);
-            border-radius: 4px 4px 2px 2px;
-            box-shadow: 0 0 8px rgba(253, 172, 59, 0.2);
-            transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .dash-bar-pillar.empty {
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: none;
-            min-height: 3px;
-        }
-        .dash-bar-date {
-            font-size: 0.5rem;
-            color: var(--accent);
-            margin-top: 5px;
-            opacity: 0.65;
-            letter-spacing: -0.02em;
-            white-space: nowrap;
-        }
+
         .pin-lock-msg {
             color: #ff6b6b;
             font-size: 0.72rem;
@@ -1539,7 +1503,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.4</div>
+            <div class="version-tag">MASTER v2.0.5</div>
         </footer>
     </div>
 
@@ -1548,7 +1512,10 @@
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="sheet-drag-handle"></div>
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">НАСТРОЙКИ</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="modal-title" id="modalTitle">НАСТРОЙКИ</div>
+                    <button id="btnHeaderInstallPwa" class="header-pwa-icon-btn" onclick="handleInstallPwaClick()" title="Установить приложение" aria-label="Установить приложение">📲</button>
+                </div>
                 <button class="modal-close-btn" onclick="closeSettingsModal()">ГОТОВО</button>
             </div>
 
@@ -1689,33 +1656,15 @@
                     </div>
                 </div>
 
-                <!-- SUMMARY TOTAL CONFIGURED TIME BANNER (ВЫШЕ УСТАНОВКИ И АВТОРИЗАЦИИ) -->
+                <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
                 <div class="settings-total-banner">
                     <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
                     <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (НАД АВТОРИЗАЦИЕЙ) -->
-                <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div class="setting-card-title" style="margin:0; font-size:0.82rem;">📲 ПРИЛОЖЕНИЕ НА ТЕЛЕФОН</div>
-                        <div style="font-size:0.62rem; color:var(--accent); margin-top:3px;">Иконка на рабочий стол без рамок браузера</div>
-                    </div>
-                    <button class="install-pwa-btn" style="margin:0; padding:6px 14px;" onclick="handleInstallPwaClick()">Установить</button>
-                </div>
-
-                <!-- АВТОРИЗАЦИЯ (В САМОМ НИЗУ) -->
-                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
-                    <div id="authSyncName" style="font-size:0.85rem; font-weight:600; color:var(--text); letter-spacing:0.04em;">Авторизация</div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <button class="step-btn" id="btnSettingsDashboard" style="display:none; width:auto; padding:6px 12px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.14); border-color:rgba(253,172,59,0.4); color:var(--gold);" onclick="openMasterDashboardModal()">Дашборд</button>
-                        <button class="step-btn" id="btnAuthSyncAction" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openPinAuthModal()">ПИН-КОД</button>
-                    </div>
-                </div>
-
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.4 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.5 ↻</div>
                 </div>
             </div>
         </div>
@@ -1806,53 +1755,6 @@
                         <img src="img/android-step3.jpeg" alt="Шаг 3" loading="lazy">
                         <div class="install-img-caption">Шаг 4: Подтвердите установку</div>
                         <img src="img/android-step4.jpeg" alt="Шаг 4" loading="lazy">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MASTER DASHBOARD MODAL (APPLE FLOATING BOTTOM SHEET) -->
-    <div class="modal-overlay" id="masterDashboardModal" onclick="closeMasterDashboardModal(event)">
-        <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div class="sheet-drag-handle"></div>
-            <div class="modal-header">
-                <div class="modal-title">ДАШБОРД МАСТЕРА</div>
-                <button class="modal-close-btn" onclick="closeMasterDashboardModal()">ГОТОВО</button>
-            </div>
-            <div class="modal-scroll">
-                <div class="setting-card" style="text-align:center; padding:16px 12px;">
-                    <div style="font-size:0.68rem; letter-spacing:0.14em; color:var(--accent); text-transform:uppercase;">Накоплено группой на курсе</div>
-                    <div style="font-size:1.9rem; font-weight:800; color:var(--gold); margin:6px 0; font-variant-numeric:tabular-nums;" id="dashGroupTotalHours">—</div>
-                    <div style="font-size:0.68rem; color:rgba(255,255,255,0.6);">Всего активных практиков: <b id="dashActiveCount" style="color:#ffffff;">—</b></div>
-                </div>
-
-                <div class="setting-card">
-                    <div class="setting-card-title">РАСПРЕДЕЛЕНИЕ ПРАКТИК</div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-                        <span>Вариант 1 (с Анулом-Вилом):</span>
-                        <b style="color:var(--gold);" id="dashV1Percent">—</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; padding:6px 0;">
-                        <span>Вариант 2 (с Бхастрики):</span>
-                        <b style="color:var(--accent);" id="dashV2Percent">—</b>
-                    </div>
-                </div>
-
-                <!-- 14-ДНЕВНЫЙ ГРАФИК ПРАКТИКИ ГРУППЫ -->
-                <div class="setting-card">
-                    <div class="setting-card-title">ДИНАМИКА ПРАКТИКИ ГРУППЫ (14 ДНЕЙ)</div>
-                    <div class="dash-chart-wrapper" id="dashChartWrapper">
-                        <div class="dash-chart-bars" id="dashChartBars">
-                            <div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Загрузка графика...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-card">
-                    <div class="setting-card-title">ИНТЕГРАЦИЯ С GOOGLE ТАБЛИЦЕЙ</div>
-                    <div style="font-size:0.72rem; line-height:1.45; color:rgba(255,255,255,0.75);" id="dashSyncStatusText">
-                        Синхронизация с базой Google Таблицы...
                     </div>
                 </div>
             </div>
@@ -2333,158 +2235,7 @@
     }
 
     function updateAuthSyncUI() {
-        var nameEl = document.getElementById('authSyncName');
-        var btnEl = document.getElementById('btnAuthSyncAction');
-        var settingsDashBtn = document.getElementById('btnSettingsDashboard');
-
-        var role = (localStorage.getItem('mb_user_role') || '').toLowerCase();
-        var name = (localStorage.getItem('mb_user_name') || '');
-        var pin = (localStorage.getItem('mb_user_pin') || '').trim();
-        var id = (localStorage.getItem('mb_user_id') || '').toUpperCase().trim();
-
-        var isMaster = checkIsMasterUser();
-
-        if (isMaster) {
-            if (nameEl) {
-                nameEl.textContent = name || (id === 'MP-001' ? 'Сергей (Архитектор)' : (id === 'MP-002' ? 'Максим (Мастер)' : 'Мастер'));
-                nameEl.style.color = '#fdac3b';
-            }
-            if (btnEl) btnEl.textContent = 'Сменить';
-            if (settingsDashBtn) settingsDashBtn.style.display = 'inline-block';
-        } else if (name) {
-            if (nameEl) {
-                nameEl.textContent = name;
-                nameEl.style.color = '#ffffff';
-            }
-            if (btnEl) btnEl.textContent = 'Сменить';
-            if (settingsDashBtn) settingsDashBtn.style.display = 'none';
-        } else {
-            if (nameEl) {
-                nameEl.textContent = 'Авторизация';
-                nameEl.style.color = 'var(--text)';
-            }
-            if (btnEl) btnEl.textContent = 'ПИН-КОД';
-            if (settingsDashBtn) settingsDashBtn.style.display = 'none';
-        }
-
         syncBhastrikaVipUI();
-    }
-
-    function openMasterDashboardModal() {
-        unlockAudioSession();
-        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-
-        var modal = document.getElementById('masterDashboardModal');
-        if (modal) {
-            modal._isClosing = false;
-            modal.classList.remove('closing');
-            void modal.offsetWidth;
-            modal.classList.add('open');
-        }
-
-        var pin = localStorage.getItem('mb_user_pin') || '';
-        var id = localStorage.getItem('mb_user_id') || '';
-        var role = localStorage.getItem('mb_user_role') || '';
-        var totalHoursEl = document.getElementById('dashGroupTotalHours');
-        var activeCountEl = document.getElementById('dashActiveCount');
-        var v1El = document.getElementById('dashV1Percent');
-        var v2El = document.getElementById('dashV2Percent');
-        var statusEl = document.getElementById('dashSyncStatusText');
-        var chartBarsEl = document.getElementById('dashChartBars');
-
-        if (totalHoursEl) totalHoursEl.textContent = 'Подсчет...';
-        if (activeCountEl) activeCountEl.textContent = '...';
-        if (statusEl) statusEl.textContent = 'Подключение к Google Таблице...';
-        if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Загрузка графика...</div>';
-
-        if (!pin && !id) {
-            if (statusEl) statusEl.textContent = 'Для просмотра дашборда войдите по ПИН-коду Мастера';
-            return;
-        }
-
-        var url = GOOGLE_SHEETS_API_URL + '?action=get_master_dashboard&pin=' + encodeURIComponent(pin) +
-                  '&id=' + encodeURIComponent(id) +
-                  '&role=' + encodeURIComponent(role);
-        fetch(url)
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (data && data.status === 'ok') {
-                    if (totalHoursEl) totalHoursEl.textContent = data.totalGroupHoursText || '0 ч 00 мин';
-                    if (activeCountEl) activeCountEl.textContent = data.activeCount || '0';
-                    if (v1El) v1El.textContent = (data.v1Percent !== undefined ? data.v1Percent : 100) + '%';
-                    if (v2El) v2El.textContent = (data.v2Percent !== undefined ? data.v2Percent : 0) + '%';
-                    if (statusEl) statusEl.textContent = 'Данные успешно обновлены из Google Таблицы (' + (data.lastSync || 'сейчас') + ') ✨';
-
-                    // Рендер 14-дневного графика практик группы
-                    renderMasterChart(data.dailyHours || []);
-                } else {
-                    if (totalHoursEl) totalHoursEl.textContent = '—';
-                    if (statusEl) statusEl.textContent = data && data.message ? data.message : 'Таблица пока недоступна';
-                    if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">График недоступен</div>';
-                }
-            })
-            .catch(function(err) {
-                if (totalHoursEl) totalHoursEl.textContent = 'Офлайн';
-                if (statusEl) statusEl.textContent = 'Офлайн-режим. Подключитесь к сети для обновления дашборда.';
-                if (chartBarsEl) chartBarsEl.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Офлайн</div>';
-            });
-    }
-
-        function renderMasterChart(dailyHours) {
-        var container = document.getElementById('dashChartBars');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (!dailyHours || dailyHours.length === 0) {
-            container.innerHTML = '<div style="font-size:0.68rem; color:var(--accent); text-align:center; width:100%; padding:20px 0;">Нет данных о сессиях за 14 дней</div>';
-            return;
-        }
-
-        var maxHours = 0;
-        dailyHours.forEach(function(d) {
-            if (d.hours > maxHours) maxHours = d.hours;
-        });
-        if (maxHours <= 0) maxHours = 1;
-
-        dailyHours.forEach(function(item) {
-            var col = document.createElement('div');
-            col.className = 'dash-bar-col';
-
-            var valEl = document.createElement('div');
-            valEl.className = 'dash-bar-val';
-            valEl.textContent = item.hours > 0 ? (item.hours + 'ч') : '';
-
-            var pillar = document.createElement('div');
-            pillar.className = 'dash-bar-pillar' + (item.hours === 0 ? ' empty' : '');
-            var pct = Math.max(3, Math.round((item.hours / maxHours) * 80));
-            pillar.style.height = (item.hours > 0 ? pct : 3) + 'px';
-
-            var dateEl = document.createElement('div');
-            dateEl.className = 'dash-bar-date';
-            dateEl.textContent = item.date || '';
-
-            col.appendChild(valEl);
-            col.appendChild(pillar);
-            col.appendChild(dateEl);
-            container.appendChild(col);
-        });
-    }
-
-    function closeMasterDashboardModal(e) {
-        if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn') && !e.target.closest('.modal-close-btn')) return;
-        if (document.activeElement && document.activeElement.blur) {
-            document.activeElement.blur();
-        }
-        var modal = document.getElementById('masterDashboardModal');
-        if (!modal || modal._isClosing) return;
-        modal._isClosing = true;
-        modal.classList.remove('open');
-        modal.classList.add('closing');
-
-        setTimeout(function() {
-            modal.classList.remove('closing');
-            modal._isClosing = false;
-        }, 300);
     }
 
     // Keyboard support for PIN
@@ -3743,6 +3494,7 @@
         syncZenAuraUI();
         syncStepperDisplays();
         updateAuthSyncUI();
+        checkStandaloneUI();
         var modal = document.getElementById('settingsModal');
         if (modal) {
             modal._isClosing = false;
@@ -3890,12 +3642,12 @@
     }
 
     function checkStandaloneUI() {
-        if (isStandaloneMode()) {
-            var btn1 = document.getElementById('installPwaBtn');
-            var card1 = document.getElementById('settingInstallCard');
-            if (btn1) btn1.style.display = 'none';
-            if (card1) card1.style.display = 'none';
+        var headerBtn = document.getElementById('btnHeaderInstallPwa');
+        if (headerBtn) {
+            headerBtn.style.display = isStandaloneMode() ? 'none' : 'inline-flex';
         }
+        var btn1 = document.getElementById('installPwaBtn');
+        if (btn1 && isStandaloneMode()) btn1.style.display = 'none';
     }
 
     function handleInstallPwaClick() {
@@ -3961,8 +3713,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.4)
-    var CURRENT_APP_VERSION = '2.0.4';
+    // PWA Version Tracking & Safe Cache Management (v2.0.5)
+    var CURRENT_APP_VERSION = '2.0.5';
 
     function checkPwaVersionMigration() {
         try {
@@ -3972,7 +3724,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.4') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.5') {
                                 caches.delete(k);
                             }
                         });
@@ -3988,7 +3740,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.4...');
+        showToast('Обновление PWA v2.0.5...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -4014,9 +3766,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.4)
+    // Service Worker registration (STABLE v2.0.5)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.4').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.5').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
