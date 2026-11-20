@@ -1514,7 +1514,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.2</div>
+            <div class="version-tag">MASTER v2.0.3</div>
         </footer>
     </div>
 
@@ -1629,16 +1629,13 @@
                     </div>
                 </div>
 
-                <!-- СИНХРОНИЗАЦИЯ -->
-                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
-                    <div id="authSyncName" style="font-size:0.85rem; font-weight:600; color:var(--text); letter-spacing:0.04em;">Синхронизация</div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <button class="step-btn" id="btnSettingsDashboard" style="display:none; width:auto; padding:6px 12px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.14); border-color:rgba(253,172,59,0.4); color:var(--gold);" onclick="openMasterDashboardModal()">Дашборд</button>
-                        <button class="step-btn" id="btnAuthSyncAction" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openPinAuthModal()">ПИН-КОД</button>
-                    </div>
+                <!-- SUMMARY TOTAL CONFIGURED TIME BANNER (ВЫШЕ УСТАНОВКИ И АВТОРИЗАЦИИ) -->
+                <div class="settings-total-banner">
+                    <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
+                    <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
                 </div>
 
-                <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (ИСЧЕЗАЕТ В STANDALONE) -->
+                <!-- КАРТОЧКА УСТАНОВКИ ПРИЛОЖЕНИЯ В НАСТРОЙКАХ (НАД АВТОРИЗАЦИЕЙ) -->
                 <div class="setting-card install-pwa-card" id="settingInstallCard" style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <div class="setting-card-title" style="margin:0; font-size:0.82rem;">📲 ПРИЛОЖЕНИЕ НА ТЕЛЕФОН</div>
@@ -1647,15 +1644,18 @@
                     <button class="install-pwa-btn" style="margin:0; padding:6px 14px;" onclick="handleInstallPwaClick()">Установить</button>
                 </div>
 
-                <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
-                <div class="settings-total-banner">
-                    <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
-                    <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
+                <!-- АВТОРИЗАЦИЯ (В САМОМ НИЗУ) -->
+                <div class="setting-card" id="cardAuthSync" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
+                    <div id="authSyncName" style="font-size:0.85rem; font-weight:600; color:var(--text); letter-spacing:0.04em;">Авторизация</div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="step-btn" id="btnSettingsDashboard" style="display:none; width:auto; padding:6px 12px; font-size:0.75rem; border-radius:12px; background:rgba(253,172,59,0.14); border-color:rgba(253,172,59,0.4); color:var(--gold);" onclick="openMasterDashboardModal()">Дашборд</button>
+                        <button class="step-btn" id="btnAuthSyncAction" style="width:auto; padding:6px 14px; font-size:0.75rem; border-radius:12px;" onclick="openPinAuthModal()">ПИН-КОД</button>
+                    </div>
                 </div>
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.2 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.3 ↻</div>
                 </div>
             </div>
         </div>
@@ -2086,15 +2086,10 @@
         if (!pin) return;
         if (getPinLockRemainingMs() > 0) return;
 
+        // ВАЖНО: всегда идём в таблицу для проверки ПИН-кода.
+        // Офлайн-шорткат намеренно убран: если человека удалили из таблицы,
+        // он не должен заходить по старому кэшу.
         if (!navigator.onLine) {
-            var savedPin = localStorage.getItem('mb_user_pin');
-            if (savedPin && savedPin === pin && isPranaUnlocked()) {
-                var modal = document.getElementById('pinModal');
-                if (modal) modal.classList.remove('open');
-                clearPin();
-                renderLifetimeDisplay();
-                return;
-            }
             showPinError('Для проверки входа включите интернет');
             return;
         }
@@ -2271,7 +2266,7 @@
             if (settingsDashBtn) settingsDashBtn.style.display = 'none';
         } else {
             if (nameEl) {
-                nameEl.textContent = 'Синхронизация';
+                nameEl.textContent = 'Авторизация';
                 nameEl.style.color = 'var(--text)';
             }
             if (btnEl) btnEl.textContent = 'ПИН-КОД';
@@ -2855,7 +2850,7 @@
                 title: 'АНУЛОМ', sub: '',
                 duration: s.anulomTime,
                 hasTick: true,
-                tickVolume: 0.30,
+                tickVolume: 0.50, // Звук на ануломе в Варианте 2 увеличен на 20% (до 0.50) по запросу
                 bellAtEnd: false,
                 isRest: false,
                 isLast: true
@@ -3473,7 +3468,7 @@
             if (elapsedInZamki > 0 && (elapsedInZamki % stage.cycleSec === 0) && stageSecRemaining > 0) {
                 if (lastRepIndexAnnounced !== currentRep) {
                     lastRepIndexAnnounced = currentRep;
-                    playRepBell();
+                    // playRepBell() отключен по запросу: сигнал после каждого замка убран
                 }
             }
         }
@@ -3793,8 +3788,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.2)
-    var CURRENT_APP_VERSION = '2.0.1';
+    // PWA Version Tracking & Safe Cache Management (v2.0.3)
+    var CURRENT_APP_VERSION = '2.0.3';
 
     function checkPwaVersionMigration() {
         try {
@@ -3804,7 +3799,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.2') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.3') {
                                 caches.delete(k);
                             }
                         });
@@ -3820,7 +3815,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.2...');
+        showToast('Обновление PWA v2.0.3...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3846,9 +3841,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.2)
+    // Service Worker registration (STABLE v2.0.3)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.2').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.3').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
