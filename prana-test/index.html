@@ -619,6 +619,31 @@
             text-transform: uppercase;
         }
 
+        /* VIP MASTER LAB EXCLUSIVE STYLING */
+        .setting-card.vip-master-glow {
+            border: 1px solid rgba(253, 172, 59, 0.75) !important;
+            box-shadow: 0 0 18px rgba(253, 172, 59, 0.38), inset 0 0 14px rgba(253, 172, 59, 0.12) !important;
+            background: linear-gradient(145deg, rgba(253, 172, 59, 0.12) 0%, #141838 75%) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .master-vip-badge {
+            font-size: 0.58rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: #fdac3b;
+            background: rgba(253, 172, 59, 0.18);
+            border: 1px solid rgba(253, 172, 59, 0.45);
+            border-radius: 8px;
+            padding: 3px 8px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(253, 172, 59, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .stepper-row {
             display: flex;
             justify-content: space-between;
@@ -1514,7 +1539,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.3</div>
+            <div class="version-tag">MASTER v2.0.4</div>
         </footer>
     </div>
 
@@ -1564,13 +1589,48 @@
 
                     <!-- БХАСТРИКА -->
                     <div class="setting-card" id="cardBhastrika">
-                        <div class="setting-card-title" id="title_bhastrika">2. БХАСТРИКА</div>
-                        <div class="stepper-row">
-                            <span class="stepper-label">Время дыхания:</span>
-                            <div class="stepper-ctrls">
-                                <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
-                                <span class="step-value" id="val_bhastrikaTime">3:00</span>
-                                <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
+                        <div class="setting-card-title-row" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="setting-card-title" id="title_bhastrika">2. БХАСТРИКА</div>
+                            <span class="master-vip-badge" id="badgeBhastrikaVip" style="display:none;">✨ ТОЛЬКО ДЛЯ МАКСА</span>
+                        </div>
+
+                        <!-- СТАНДАРТНАЯ БХАСТРИКА (ДЛЯ ВСЕХ ОСТАЛЬНЫХ / БЕЗ ПИН-КОДА) -->
+                        <div id="bhastrikaStandardRows">
+                            <div class="stepper-row">
+                                <span class="stepper-label">Время дыхания:</span>
+                                <div class="stepper-ctrls">
+                                    <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
+                                    <span class="step-value" id="val_bhastrikaTime">3:00</span>
+                                    <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- VIP НАСТРОЙКИ ЦИКЛОВ (ТОЛЬКО ДЛЯ АДМИНОВ MP-001 И MP-002) -->
+                        <div id="bhastrikaVipRows" style="display:none; flex-direction:column; gap:6px;">
+                            <div class="stepper-row">
+                                <span class="stepper-label">Количество циклов:</span>
+                                <div class="stepper-ctrls">
+                                    <button class="step-btn" onclick="stepChange('bhastrikaCycles', -1)">−</button>
+                                    <span class="step-value" id="val_bhastrikaCycles">3</span>
+                                    <button class="step-btn" onclick="stepChange('bhastrikaCycles', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="stepper-row">
+                                <span class="stepper-label">Время одного цикла:</span>
+                                <div class="stepper-ctrls">
+                                    <button class="step-btn" onclick="stepChange('bhastrikaCycleTime', -15)">−</button>
+                                    <span class="step-value" id="val_bhastrikaCycleTime">2:00</span>
+                                    <button class="step-btn" onclick="stepChange('bhastrikaCycleTime', 15)">+</button>
+                                </div>
+                            </div>
+                            <div class="stepper-row">
+                                <span class="stepper-label">Отдых между циклами:</span>
+                                <div class="stepper-ctrls">
+                                    <button class="step-btn" onclick="stepChange('bhastrikaRestSec', -15)">−</button>
+                                    <span class="step-value" id="val_bhastrikaRestSec">60 с</span>
+                                    <button class="step-btn" onclick="stepChange('bhastrikaRestSec', 15)">+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1655,7 +1715,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.3 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.4 ↻</div>
                 </div>
             </div>
         </div>
@@ -2233,6 +2293,45 @@
         flushOfflineSyncBuffer();
     });
 
+    function checkIsMasterUser() {
+        try {
+            var role = (localStorage.getItem('mb_user_role') || '').toLowerCase();
+            var name = (localStorage.getItem('mb_user_name') || '').toLowerCase();
+            var id = (localStorage.getItem('mb_user_id') || '').toUpperCase().trim();
+            return (id === 'MP-001' || id === 'MP-002' ||
+                    role === 'architect' || role === 'master' || 
+                    name.indexOf('сергей') !== -1 || 
+                    name.indexOf('макс') !== -1 ||
+                    name.indexOf('архитектор') !== -1 || 
+                    name.indexOf('мастер') !== -1);
+        } catch(e) {
+            return false;
+        }
+    }
+
+    function syncBhastrikaVipUI() {
+        var isMaster = checkIsMasterUser();
+        var cardBhastrika = document.getElementById('cardBhastrika');
+        var badgeVip = document.getElementById('badgeBhastrikaVip');
+        var stdRows = document.getElementById('bhastrikaStandardRows');
+        var vipRows = document.getElementById('bhastrikaVipRows');
+        var restRow = document.getElementById('rowRestBhastrika');
+
+        if (isMaster) {
+            if (cardBhastrika) cardBhastrika.classList.add('vip-master-glow');
+            if (badgeVip) badgeVip.style.display = 'inline-flex';
+            if (stdRows) stdRows.style.display = 'none';
+            if (vipRows) vipRows.style.display = 'flex';
+            if (restRow) restRow.style.display = 'none';
+        } else {
+            if (cardBhastrika) cardBhastrika.classList.remove('vip-master-glow');
+            if (badgeVip) badgeVip.style.display = 'none';
+            if (stdRows) stdRows.style.display = 'block';
+            if (vipRows) vipRows.style.display = 'none';
+            if (restRow) restRow.style.display = 'flex';
+        }
+    }
+
     function updateAuthSyncUI() {
         var nameEl = document.getElementById('authSyncName');
         var btnEl = document.getElementById('btnAuthSyncAction');
@@ -2243,12 +2342,7 @@
         var pin = (localStorage.getItem('mb_user_pin') || '').trim();
         var id = (localStorage.getItem('mb_user_id') || '').toUpperCase().trim();
 
-        var isMaster = (id === 'MP-001' || id === 'MP-002' ||
-                        role === 'architect' || role === 'master' || 
-                        name.toLowerCase().indexOf('сергей') !== -1 || 
-                        name.toLowerCase().indexOf('макс') !== -1 ||
-                        name.toLowerCase().indexOf('архитектор') !== -1 ||
-                        name.toLowerCase().indexOf('мастер') !== -1);
+        var isMaster = checkIsMasterUser();
 
         if (isMaster) {
             if (nameEl) {
@@ -2272,6 +2366,8 @@
             if (btnEl) btnEl.textContent = 'ПИН-КОД';
             if (settingsDashBtn) settingsDashBtn.style.display = 'none';
         }
+
+        syncBhastrikaVipUI();
     }
 
     function openMasterDashboardModal() {
@@ -2493,26 +2589,32 @@
     } catch(e) {}
 
     var defaultSettingsV1 = {
-        anulomTime: 600,      // 10:00
-        restAnulom: 60,       // 60s
-        bhastrikaTime: 180,   // 3:00
-        rest1: 60,            // 60s (отдых после Бхастрики)
-        kapalaCycles: 3,      // 3 cycles
-        kapalaCycleTime: 120, // 2:00
-        kapalaRestSec: 60,    // 60s rest between cycles
-        zamkiReps: 7,         // 7 reps
-        zamkiHoldTime: 25     // STRICT 25s
+        anulomTime: 600,         // 10:00
+        restAnulom: 60,          // 60s
+        bhastrikaTime: 180,      // 3:00
+        bhastrikaCycles: 3,      // 3 cycles (VIP Master Lab)
+        bhastrikaCycleTime: 120, // 2:00 (VIP Master Lab)
+        bhastrikaRestSec: 60,    // 60s (VIP Master Lab)
+        rest1: 60,               // 60s (отдых после Бхастрики)
+        kapalaCycles: 3,         // 3 cycles
+        kapalaCycleTime: 120,    // 2:00
+        kapalaRestSec: 60,       // 60s rest between cycles
+        zamkiReps: 7,            // 7 reps
+        zamkiHoldTime: 25        // STRICT 25s
     };
 
     var defaultSettingsV2 = {
-        bhastrikaTime: 180,   // 3:00
-        rest1: 60,            // 60s (отдых после Бхастрики)
-        kapalaCycles: 3,      // 3 cycles
-        kapalaCycleTime: 120, // 2:00
-        kapalaRestSec: 60,    // 60s rest between cycles
-        zamkiReps: 7,         // 7 reps
-        zamkiHoldTime: 25,    // STRICT 25s
-        anulomTime: 600       // 10:00
+        bhastrikaTime: 180,      // 3:00
+        bhastrikaCycles: 3,      // 3 cycles (VIP Master Lab)
+        bhastrikaCycleTime: 120, // 2:00 (VIP Master Lab)
+        bhastrikaRestSec: 60,    // 60s (VIP Master Lab)
+        rest1: 60,               // 60s (отдых после Бхастрики)
+        kapalaCycles: 3,         // 3 cycles
+        kapalaCycleTime: 120,    // 2:00
+        kapalaRestSec: 60,       // 60s rest between cycles
+        zamkiReps: 7,            // 7 reps
+        zamkiHoldTime: 25,       // STRICT 25s
+        anulomTime: 600          // 10:00
     };
 
     var settingsV1 = Object.assign({}, defaultSettingsV1);
@@ -2642,6 +2744,7 @@
                 rowRestAnulom.style.display = 'none';
             }
         }
+        syncBhastrikaVipUI();
     }
 
     function syncVariantUI(isImmediate) {
@@ -2717,25 +2820,56 @@
             }
 
             // 2. БХАСТРИКА
-            list.push({
-                id: 'bhastrika', mainIndex: 1,
-                title: 'БХАСТРИКА', sub: '',
-                duration: s.bhastrikaTime,
-                hasTick: true,
-                bellAtEnd: true,
-                isRest: false
-            });
+            if (checkIsMasterUser()) {
+                var bCycles1 = Math.max(1, s.bhastrikaCycles || 3);
+                var bCycleTime1 = s.bhastrikaCycleTime || 120;
+                var bRestSec1 = (typeof s.bhastrikaRestSec !== 'undefined') ? s.bhastrikaRestSec : 60;
 
-            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
-            if (s.rest1 > 0) {
+                for (var bc1 = 1; bc1 <= bCycles1; bc1++) {
+                    var isLastB1 = (bc1 === bCycles1);
+                    list.push({
+                        id: 'bhastrika_' + bc1, mainIndex: 1,
+                        title: 'БХАСТРИКА',
+                        sub: 'ЦИКЛ ' + bc1 + ' ИЗ ' + bCycles1,
+                        duration: bCycleTime1,
+                        hasTick: true,
+                        bellAtEnd: true,
+                        isRest: false
+                    });
+
+                    if (bRestSec1 > 0) {
+                        list.push({
+                            id: 'bhastrika_rest_' + bc1, mainIndex: 1,
+                            title: 'ОТДЫХ',
+                            sub: isLastB1 ? 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ' : '',
+                            duration: bRestSec1,
+                            hasTick: false,
+                            bellAtEnd: true,
+                            isRest: true
+                        });
+                    }
+                }
+            } else {
                 list.push({
-                    id: 'rest_bhastrika', mainIndex: 1,
-                    title: 'ОТДЫХ', sub: '',
-                    duration: s.rest1,
-                    hasTick: false,
+                    id: 'bhastrika', mainIndex: 1,
+                    title: 'БХАСТРИКА', sub: '',
+                    duration: s.bhastrikaTime,
+                    hasTick: true,
                     bellAtEnd: true,
-                    isRest: true
+                    isRest: false
                 });
+
+                // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
+                if (s.rest1 > 0) {
+                    list.push({
+                        id: 'rest_bhastrika', mainIndex: 1,
+                        title: 'ОТДЫХ', sub: '',
+                        duration: s.rest1,
+                        hasTick: false,
+                        bellAtEnd: true,
+                        isRest: true
+                    });
+                }
             }
 
             // 3. КАПАЛАБХАТИ
@@ -2783,25 +2917,56 @@
             // ВАРИАНТ 2: НАЧИНАЕМ С БХАСТРИКИ
 
             // 1. БХАСТРИКА
-            list.push({
-                id: 'bhastrika', mainIndex: 0,
-                title: 'БХАСТРИКА', sub: '',
-                duration: s.bhastrikaTime,
-                hasTick: true,
-                bellAtEnd: true,
-                isRest: false
-            });
+            if (checkIsMasterUser()) {
+                var bCycles2 = Math.max(1, s.bhastrikaCycles || 3);
+                var bCycleTime2 = s.bhastrikaCycleTime || 120;
+                var bRestSec2 = (typeof s.bhastrikaRestSec !== 'undefined') ? s.bhastrikaRestSec : 60;
 
-            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
-            if (s.rest1 > 0) {
+                for (var bc2 = 1; bc2 <= bCycles2; bc2++) {
+                    var isLastB2 = (bc2 === bCycles2);
+                    list.push({
+                        id: 'bhastrika_' + bc2, mainIndex: 0,
+                        title: 'БХАСТРИКА',
+                        sub: 'ЦИКЛ ' + bc2 + ' ИЗ ' + bCycles2,
+                        duration: bCycleTime2,
+                        hasTick: true,
+                        bellAtEnd: true,
+                        isRest: false
+                    });
+
+                    if (bRestSec2 > 0) {
+                        list.push({
+                            id: 'bhastrika_rest_' + bc2, mainIndex: 0,
+                            title: 'ОТДЫХ',
+                            sub: isLastB2 ? 'ВОССТАНОВЛЕНИЕ ДЫХАНИЯ' : '',
+                            duration: bRestSec2,
+                            hasTick: false,
+                            bellAtEnd: true,
+                            isRest: true
+                        });
+                    }
+                }
+            } else {
                 list.push({
-                    id: 'rest_bhastrika', mainIndex: 0,
-                    title: 'ОТДЫХ', sub: '',
-                    duration: s.rest1,
-                    hasTick: false,
+                    id: 'bhastrika', mainIndex: 0,
+                    title: 'БХАСТРИКА', sub: '',
+                    duration: s.bhastrikaTime,
+                    hasTick: true,
                     bellAtEnd: true,
-                    isRest: true
+                    isRest: false
                 });
+
+                // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
+                if (s.rest1 > 0) {
+                    list.push({
+                        id: 'rest_bhastrika', mainIndex: 0,
+                        title: 'ОТДЫХ', sub: '',
+                        duration: s.rest1,
+                        hasTick: false,
+                        bellAtEnd: true,
+                        isRest: true
+                    });
+                }
             }
 
             // 2. КАПАЛАБХАТИ
@@ -3623,12 +3788,14 @@
 
         if (key === 'anulomTime') {
             val = Math.max(60, Math.min(3600, Math.round(val / 60) * 60));
-        } else if (key === 'kapalaCycles') {
+        } else if (key === 'kapalaCycles' || key === 'bhastrikaCycles') {
             val = Math.max(1, Math.min(10, val));
         } else if (key === 'zamkiReps') {
             val = Math.max(1, Math.min(20, val));
-        } else if (key === 'rest1' || key === 'restAnulom' || key === 'kapalaRestSec') {
+        } else if (key === 'rest1' || key === 'restAnulom' || key === 'kapalaRestSec' || key === 'bhastrikaRestSec') {
             val = Math.max(0, Math.min(300, val));
+        } else if (key === 'bhastrikaCycleTime') {
+            val = Math.max(15, Math.min(600, val));
         } else {
             val = Math.max(30, Math.min(3600, val));
         }
@@ -3653,6 +3820,12 @@
 
         var zSec = s.zamkiReps * 25;
         setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + s.zamkiReps + ' × 25 с)');
+
+        // VIP Master Lab Steppers
+        setValText('val_bhastrikaCycles', s.bhastrikaCycles || 3);
+        setValText('val_bhastrikaCycleTime', formatMMSS(s.bhastrikaCycleTime || 120));
+        var bRest = (typeof s.bhastrikaRestSec !== 'undefined') ? s.bhastrikaRestSec : 60;
+        setValText('val_bhastrikaRestSec', bRest + ' с');
     }
 
     function formatMMSS(s) {
@@ -3788,8 +3961,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.3)
-    var CURRENT_APP_VERSION = '2.0.3';
+    // PWA Version Tracking & Safe Cache Management (v2.0.4)
+    var CURRENT_APP_VERSION = '2.0.4';
 
     function checkPwaVersionMigration() {
         try {
@@ -3799,7 +3972,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.3') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.4') {
                                 caches.delete(k);
                             }
                         });
@@ -3815,7 +3988,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.3...');
+        showToast('Обновление PWA v2.0.4...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3841,9 +4014,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.3)
+    // Service Worker registration (STABLE v2.0.4)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.3').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.4').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
