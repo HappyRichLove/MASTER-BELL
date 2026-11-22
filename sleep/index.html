@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050713">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MASTER SLEEP">
+  <meta name="description" content="Медитативный поток Spiritus Sancti Gratia для глубокого сна с таймером до 3 часов">
+  
+  <title>MASTER SLEEP • Spiritus</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+
+  <style>
+    :root {
+      --bg-deep: #050713;
+      --bg-surface: rgba(14, 18, 38, 0.72);
+      --bg-card: rgba(19, 25, 52, 0.55);
+      --border-subtle: rgba(253, 172, 59, 0.16);
+      --border-active: rgba(253, 172, 59, 0.48);
+      --gold: #fdac3b;
+      --gold-bright: #ffe299;
+      --gold-glow: rgba(253, 172, 59, 0.32);
+      --gold-faint: rgba(253, 172, 59, 0.08);
+      --text-main: #f0f3ff;
+      --text-muted: #848ea8;
+      --text-dim: #4b5472;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 50% 12%, rgba(253, 172, 59, 0.09) 0%, transparent 48%),
+        radial-gradient(circle at 50% 80%, rgba(18, 28, 65, 0.35) 0%, transparent 60%),
+        linear-gradient(180deg, #070919 0%, #050713 60%, #020308 100%);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transition: background-color 0.8s ease;
+    }
+
+    /* Container */
+    .app-viewport {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom)) 20px;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Header */
+    .header-zone {
+      text-align: center;
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    .badge-subtle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: rgba(253, 172, 59, 0.08);
+      border: 1px solid rgba(253, 172, 59, 0.22);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .badge-subtle::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .title-main {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .title-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+      font-weight: 400;
+    }
+
+    /* Center Visual Disc / Play button */
+    .disc-container {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+      cursor: pointer;
+    }
+
+    /* Outer glowing ripples */
+    .disc-ripple {
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      opacity: 0.5;
+      transition: all 0.8s ease;
+      pointer-events: none;
+    }
+
+    .disc-ripple-outer {
+      position: absolute;
+      inset: -28px;
+      border-radius: 50%;
+      border: 1px dashed rgba(253, 172, 59, 0.12);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .app-playing .disc-ripple {
+      animation: pulseAura 6s ease-in-out infinite;
+      border-color: rgba(253, 172, 59, 0.42);
+      box-shadow: 0 0 35px var(--gold-glow);
+    }
+
+    .app-playing .disc-ripple-outer {
+      animation: rotateAura 60s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes pulseAura {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.45;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+      }
+    }
+
+    @keyframes rotateAura {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Main circular button */
+    .disc-body {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #1e264e 0%, #0d122b 65%, #070918 100%);
+      border: 1.5px solid var(--border-active);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 20px rgba(253, 172, 59, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.25, 1), box-shadow 0.3s ease;
+    }
+
+    .disc-container:active .disc-body {
+      transform: scale(0.95);
+    }
+
+    .disc-icon {
+      width: 44px;
+      height: 44px;
+      fill: var(--gold);
+      filter: drop-shadow(0 2px 8px rgba(253, 172, 59, 0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .disc-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .app-playing .disc-label {
+      color: var(--gold);
+    }
+
+    /* Status indicator */
+    .status-text {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      min-height: 18px;
+      transition: color 0.3s ease;
+    }
+
+    .app-playing .status-text {
+      color: var(--gold-bright);
+    }
+
+    /* Timer Card */
+    .card-timer {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 18px 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      margin: 12px 0;
+    }
+
+    .card-timer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .timer-readout {
+      font-size: 32px;
+      font-weight: 200;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      text-align: center;
+      margin: 6px 0 14px 0;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 16px var(--gold-glow);
+    }
+
+    /* Timer Presets */
+    .timer-chips-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .timer-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 10px 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .timer-chip:active {
+      transform: scale(0.94);
+    }
+
+    .timer-chip.active {
+      background: var(--gold-faint);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+      box-shadow: 0 0 12px rgba(253, 172, 59, 0.22);
+      font-weight: 600;
+    }
+
+    /* Fine adjustment row */
+    .timer-adjust-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-adjust {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 8px 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-adjust:active {
+      background: rgba(253, 172, 59, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: scale(0.96);
+    }
+
+    .timer-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.4;
+      padding: 0 6px;
+    }
+
+    /* Volume Slider */
+    .volume-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+      padding: 0 6px;
+    }
+
+    .vol-icon {
+      font-size: 16px;
+      color: var(--text-dim);
+      opacity: 0.8;
+      cursor: pointer;
+    }
+
+    .volume-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* Bottom Actions / Night & PWA */
+    .bottom-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-night-mode {
+      width: 100%;
+      background: rgba(8, 12, 28, 0.85);
+      border: 1px solid rgba(253, 172, 59, 0.28);
+      color: var(--gold-bright);
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-night-mode:active {
+      transform: scale(0.97);
+      border-color: var(--gold);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+    }
+
+    .toggle-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #8b95b3;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    input:checked + .slider {
+      background-color: var(--gold-glow);
+      border: 1px solid var(--gold);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+      background-color: var(--gold);
+    }
+
+    .btn-install {
+      background: transparent;
+      border: 1px dashed rgba(253, 172, 59, 0.28);
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-install:active {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* BLACKOUT / OLED DEEP SLEEP MODE */
+    body.blackout-active {
+      background: #000000 !important;
+      overflow: hidden;
+    }
+
+    body.blackout-active .app-viewport {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* The single microscopic breathing dot in blackout mode */
+    #blackoutWakeLayer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #000000;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    body.blackout-active #blackoutWakeLayer {
+      display: flex;
+    }
+
+    .blackout-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(253, 172, 59, 0.6);
+      opacity: 0.15;
+      animation: sleepPulse 6s ease-in-out infinite;
+    }
+
+    .blackout-hint {
+      position: absolute;
+      bottom: max(30px, env(safe-area-inset-bottom));
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.12);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @keyframes sleepPulse {
+      0%, 100% { transform: scale(1); opacity: 0.08; }
+      50% { transform: scale(1.4); opacity: 0.25; }
+    }
+
+    /* Modal for iOS / Android install */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 380px;
+      background: #0a0d1e;
+      border: 1px solid var(--border-active);
+      border-radius: 20px;
+      padding: 24px 20px;
+      color: var(--text-main);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      color: var(--gold-bright);
+      margin-bottom: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-step {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .modal-step strong {
+      color: var(--text-main);
+    }
+
+    .modal-step-num {
+      background: rgba(253, 172, 59, 0.18);
+      color: var(--gold);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .btn-modal-close {
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--gold);
+      color: #060814;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: max(32px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: rgba(14, 18, 38, 0.94);
+      border: 1px solid var(--border-active);
+      color: var(--gold-bright);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.25, 1);
+      z-index: 9999;
+      white-space: nowrap;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element (Primary seamless 10m track with gapless loop) -->
+  <audio id="sleepAudio" loop playsinline preload="auto" src="audio/spiritus_10m.mp3"></audio>
+
+  <!-- Blackout Touch Layer (OLED 100% black) -->
+  <div id="blackoutWakeLayer" onclick="exitBlackout()" title="Коснитесь для пробуждения экрана">
+    <div class="blackout-dot"></div>
+    <div class="blackout-hint">Коснитесь экрана для пробуждения</div>
+  </div>
+
+  <div class="app-viewport" id="appViewport">
+    
+    <!-- Top Header -->
+    <header class="header-zone">
+      <div class="badge-subtle">MASTER SLEEP</div>
+      <h1 class="title-main">Spiritus Sancti Gratia</h1>
+      <p class="title-sub">Священный поток покоя • Бесшовный сон</p>
+    </header>
+
+    <!-- Center Play/Pause Aura Disc -->
+    <div class="disc-container" id="discContainer" onclick="togglePlayback()">
+      <div class="disc-ripple-outer"></div>
+      <div class="disc-ripple"></div>
+      <div class="disc-body">
+        <svg class="disc-icon" id="discIcon" viewBox="0 0 24 24">
+          <!-- Play Icon -->
+          <polygon points="6 4 20 12 6 20 6 4" id="playPoly"></polygon>
+        </svg>
+        <span class="disc-label" id="discLabel">ВКЛЮЧИТЬ</span>
+      </div>
+    </div>
+
+    <!-- Status feedback -->
+    <div class="status-text" id="statusText">Коснитесь диска, чтобы начать медитацию</div>
+
+    <!-- Sleep Timer Card -->
+    <section class="card-timer">
+      <div class="card-timer-header">
+        <span class="card-title">Таймер сна (до 3 часов)</span>
+        <span class="card-title" id="timerModeBadge" style="color: var(--gold);">3 ЧАСА</span>
+      </div>
+
+      <div class="timer-readout" id="timerDisplay">03:00:00</div>
+
+      <!-- Presets -->
+      <div class="timer-chips-grid">
+        <button class="timer-chip" onclick="setTimerPreset(15)">15 м</button>
+        <button class="timer-chip" onclick="setTimerPreset(30)">30 м</button>
+        <button class="timer-chip" onclick="setTimerPreset(45)">45 м</button>
+        <button class="timer-chip" onclick="setTimerPreset(60)">1 ч</button>
+        <button class="timer-chip" onclick="setTimerPreset(120)">2 ч</button>
+        <button class="timer-chip active" id="chip3h" onclick="setTimerPreset(180)">3 ч</button>
+        <button class="timer-chip" onclick="setTimerPreset(0)" style="grid-column: span 2;">∞ Без таймера</button>
+      </div>
+
+      <!-- Adjustment buttons -->
+      <div class="timer-adjust-row">
+        <button class="btn-adjust" onclick="adjustTimer(-15)">− 15 мин</button>
+        <button class="btn-adjust" onclick="adjustTimer(15)">+ 15 мин</button>
+      </div>
+
+      <!-- Volume control -->
+      <div class="volume-row" style="margin-top: 14px;">
+        <span class="vol-icon" onclick="toggleMute()" id="volIcon">🔈</span>
+        <input type="range" class="volume-slider" id="volSlider" min="0" max="1" step="0.01" value="0.8" oninput="changeVolume(this.value)">
+      </div>
+
+      <p class="timer-hint">Через выбранное время звук плавно угаснет (60с fade-out), а экран телефона спокойно уснёт.</p>
+    </section>
+
+    <!-- Bottom Actions -->
+    <footer class="bottom-actions">
+      <!-- Blackout Mode Button -->
+      <button class="btn-night-mode" onclick="enterBlackout()">
+        <span>🌙</span>
+        <span>Режим «Тёмная ночь» (OLED Black)</span>
+      </button>
+
+      <!-- WakeLock Toggle -->
+      <div class="toggle-row">
+        <span class="toggle-label">Держать экран активным во время таймера</span>
+        <label class="switch">
+          <input type="checkbox" id="wakeLockToggle" checked onchange="handleWakeLockChange()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Install to Home Screen Button -->
+      <button class="btn-install" id="installBtn" onclick="openInstallGuide()">
+        <span>📲</span>
+        <span>Добавить на экран «Домой»</span>
+      </button>
+    </footer>
+
+  </div>
+
+  <!-- iOS / Android Install Modal -->
+  <div class="modal-overlay" id="installModal" onclick="closeInstallGuide(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 class="modal-title">📲 Установка MASTER SLEEP</h3>
+      
+      <div id="iosGuide">
+        <div class="modal-step">
+          <span class="modal-step-num">1</span>
+          <span>В браузере <strong>Safari</strong> нажмите значок <strong>«Поделиться»</strong> (квадрат со стрелкой ⎋) внизу экрана.</span>
+        </div>
+        <div class="modal-step">
+          <span class="modal-step-num">2</span>
+          <span>Прокрутите список вниз и выберите <strong>«На экран „Домой“»</strong> ⊞.</span>
+        </div>
+        <div class="modal-step">
+          <span class="modal-step-num">3</span>
+          <span>Нажмите <strong>«Добавить»</strong> в правом верхнем углу.</span>
+        </div>
+      </div>
+
+      <div id="androidGuide" style="display: none;">
+        <div class="modal-step">
+          <span class="modal-step-num">1</span>
+          <span>Нажмите кнопку «Установить» ниже или в меню Chrome (три точки ⋮) выберите <strong>«Установить приложение»</strong>.</span>
+        </div>
+        <button class="btn-modal-close" style="margin-bottom: 10px;" id="androidInstallActionBtn" onclick="triggerAndroidInstall()">Установить сейчас</button>
+      </div>
+
+      <button class="btn-modal-close" onclick="closeInstallGuide()">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-msg" id="toastMsg"></div>
+
+  <script>
+    // App State
+    let isPlaying = false;
+    let timerPresetMinutes = 180; // Default 3 hours per user request
+    let totalTimerSeconds = 180 * 60;
+    let timerRemainingSeconds = totalTimerSeconds;
+    let timerInterval = null;
+    let lastTickTimestamp = null;
+    let userVolume = 0.8;
+    let isFadingOut = false;
+    let wakeLockSentinel = null;
+    let deferredPrompt = null;
+
+    const audioEl = document.getElementById('sleepAudio');
+    const discIcon = document.getElementById('discIcon');
+    const discLabel = document.getElementById('discLabel');
+    const statusText = document.getElementById('statusText');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerModeBadge = document.getElementById('timerModeBadge');
+    const volSlider = document.getElementById('volSlider');
+    const volIcon = document.getElementById('volIcon');
+    const wakeLockToggle = document.getElementById('wakeLockToggle');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // SVGs for Play / Pause
+    const PLAY_SVG = '<polygon points="6 4 20 12 6 20 6 4"></polygon>';
+    const PAUSE_SVG = '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
+
+    // Show Toast
+    function showToast(text, duration = 3000) {
+      toastMsg.textContent = text;
+      toastMsg.classList.add('show');
+      setTimeout(() => toastMsg.classList.remove('show'), duration);
+    }
+
+    // Format Seconds to HH:MM:SS or MM:SS
+    function formatTime(sec) {
+      if (sec <= 0) return '00:00:00';
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = Math.floor(sec % 60);
+      const pad = (n) => String(n).padStart(2, '0');
+      if (h > 0) {
+        return `${pad(h)}:${pad(m)}:${pad(s)}`;
+      }
+      return `${pad(m)}:${pad(s)}`;
+    }
+
+    // Update Timer Display
+    function updateTimerUI() {
+      if (timerPresetMinutes === 0) {
+        timerDisplay.textContent = '∞';
+        timerModeBadge.textContent = 'БЕСКОНЕЧНО';
+        return;
+      }
+      timerDisplay.textContent = formatTime(timerRemainingSeconds);
+      if (timerPresetMinutes >= 60) {
+        const hours = (timerPresetMinutes / 60).toFixed(timerPresetMinutes % 60 === 0 ? 0 : 1);
+        timerModeBadge.textContent = `${hours} Ч`;
+      } else {
+        timerModeBadge.textContent = `${timerPresetMinutes} МИН`;
+      }
+    }
+
+    // Set Timer Preset
+    function setTimerPreset(mins) {
+      timerPresetMinutes = mins;
+      totalTimerSeconds = mins * 60;
+      timerRemainingSeconds = totalTimerSeconds;
+
+      document.querySelectorAll('.timer-chip').forEach(ch => ch.classList.remove('active'));
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+      }
+
+      updateTimerUI();
+      if (mins === 0) {
+        showToast('Таймер отключен: бесконечный поток');
+      } else {
+        showToast(`Таймер сна установлен на ${mins >= 60 ? (mins/60)+' ч' : mins+' мин'}`);
+      }
+
+      // If active, reset fading state
+      if (isPlaying) {
+        isFadingOut = false;
+        audioEl.volume = userVolume;
+        lastTickTimestamp = Date.now();
+      }
+    }
+
+    // Adjust Timer by +/- 15 mins
+    function adjustTimer(deltaMinutes) {
+      if (timerPresetMinutes === 0) timerPresetMinutes = 30;
+      let newMins = Math.max(15, Math.min(180, timerPresetMinutes + deltaMinutes));
+      setTimerPreset(newMins);
+    }
+
+    // Audio Playback Toggle
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      audioEl.volume = userVolume;
+      isFadingOut = false;
+
+      audioEl.play().then(() => {
+        isPlaying = true;
+        document.body.classList.add('app-playing');
+        discIcon.innerHTML = PAUSE_SVG;
+        discLabel.textContent = 'ПАУЗА';
+        statusText.textContent = 'Поток играет • Звук зациклен бесшовно';
+
+        // Start countdown
+        lastTickTimestamp = Date.now();
+        clearInterval(timerInterval);
+        timerInterval = setInterval(handleTimerTick, 1000);
+
+        // Request WakeLock if enabled
+        requestWakeLock();
+
+        // Setup MediaSession
+        setupMediaSession();
+      }).catch((err) => {
+        console.error('Play failed:', err);
+        showToast('Нажмите ещё раз для запуска звука');
+      });
+    }
+
+    function pausePlayback() {
+      audioEl.pause();
+      isPlaying = false;
+      document.body.classList.remove('app-playing');
+      discIcon.innerHTML = PLAY_SVG;
+      discLabel.textContent = 'ВКЛЮЧИТЬ';
+      statusText.textContent = 'Пауза медитации';
+
+      clearInterval(timerInterval);
+      releaseWakeLock();
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+    }
+
+    // Timer Tick Logic with timestamp delta
+    function handleTimerTick() {
+      if (!isPlaying || timerPresetMinutes === 0) return;
+
+      const now = Date.now();
+      const deltaSec = Math.round((now - lastTickTimestamp) / 1000);
+      lastTickTimestamp = now;
+
+      timerRemainingSeconds = Math.max(0, timerRemainingSeconds - deltaSec);
+      updateTimerUI();
+
+      // Soft Fade-out during the final 60 seconds
+      if (timerRemainingSeconds <= 60 && timerRemainingSeconds > 0) {
+        isFadingOut = true;
+        const fadeRatio = timerRemainingSeconds / 60;
+        audioEl.volume = Math.max(0.02, userVolume * fadeRatio);
+        statusText.textContent = `Плавное затухание сна... (${timerRemainingSeconds}с)`;
+      }
+
+      // Timer Finished
+      if (timerRemainingSeconds <= 0) {
+        finishSleepTimer();
+      }
+    }
+
+    // When Sleep Timer expires
+    function finishSleepTimer() {
+      clearInterval(timerInterval);
+      audioEl.volume = 0;
+      pausePlayback();
+      statusText.textContent = 'Медитация завершена • Сладких снов';
+      showToast('Таймер истек: телефон переходит в сон');
+
+      // Reset timer to preset for next time
+      timerRemainingSeconds = totalTimerSeconds;
+      updateTimerUI();
+
+      // Release screen wake lock so the phone screen naturally turns off and sleeps!
+      releaseWakeLock();
+    }
+
+    // Volume Control
+    function changeVolume(val) {
+      userVolume = parseFloat(val);
+      if (!isFadingOut) {
+        audioEl.volume = userVolume;
+      }
+      volIcon.textContent = userVolume === 0 ? '🔇' : (userVolume < 0.5 ? '🔉' : '🔊');
+    }
+
+    function toggleMute() {
+      if (audioEl.volume > 0) {
+        audioEl.volume = 0;
+        volSlider.value = 0;
+        volIcon.textContent = '🔇';
+      } else {
+        audioEl.volume = userVolume || 0.8;
+        volSlider.value = audioEl.volume;
+        volIcon.textContent = '🔊';
+      }
+    }
+
+    // Screen Wake Lock API
+    async function requestWakeLock() {
+      if (!wakeLockToggle.checked) return;
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLockSentinel = await navigator.wakeLock.request('screen');
+          wakeLockSentinel.addEventListener('release', () => {
+            wakeLockSentinel = null;
+          });
+        } catch (err) {
+          console.warn('Wake Lock request error:', err);
+        }
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLockSentinel) {
+        wakeLockSentinel.release().catch(() => {});
+        wakeLockSentinel = null;
+      }
+    }
+
+    function handleWakeLockChange() {
+      if (wakeLockToggle.checked) {
+        if (isPlaying) requestWakeLock();
+        showToast('Экран не погаснет, пока идёт таймер');
+      } else {
+        releaseWakeLock();
+        showToast('Экран может гаснуть по системному тайм-ауту');
+      }
+    }
+
+    // MediaSession for Lock Screen & Background Playback on iOS & Android
+    function setupMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Spiritus Sancti Gratia',
+          artist: 'MASTER SLEEP',
+          album: 'Медитация на сон (до 3 часов)',
+          artwork: [
+            { src: 'img/icon-192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'img/icon-512.png', sizes: '512x512', type: 'image/png' }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => startPlayback());
+        navigator.mediaSession.setActionHandler('pause', () => pausePlayback());
+        navigator.mediaSession.setActionHandler('stop', () => pausePlayback());
+        navigator.mediaSession.playbackState = 'playing';
+      }
+    }
+
+    // OLED Blackout Mode (100% black screen)
+    function enterBlackout() {
+      document.body.classList.add('blackout-active');
+      showToast('Экран погас. Коснитесь в любом месте, чтобы вернуть свет');
+      // If not yet playing, start
+      if (!isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function exitBlackout() {
+      document.body.classList.remove('blackout-active');
+    }
+
+    // Install Guide / PWA
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('installBtn');
+      if (btn) btn.style.display = 'flex';
+      const androidGuide = document.getElementById('androidGuide');
+      const iosGuide = document.getElementById('iosGuide');
+      if (androidGuide) androidGuide.style.display = 'block';
+      if (iosGuide) iosGuide.style.display = 'none';
+    });
+
+    function openInstallGuide() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const androidGuide = document.getElementById('androidGuide');
+      const iosGuide = document.getElementById('iosGuide');
+
+      if (isIOS) {
+        if (iosGuide) iosGuide.style.display = 'block';
+        if (androidGuide) androidGuide.style.display = 'none';
+      } else if (deferredPrompt) {
+        triggerAndroidInstall();
+        return;
+      } else {
+        if (androidGuide) androidGuide.style.display = 'block';
+        if (iosGuide) iosGuide.style.display = 'none';
+      }
+
+      document.getElementById('installModal').classList.add('open');
+    }
+
+    function triggerAndroidInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            showToast('Приложение установлено!');
+          }
+          deferredPrompt = null;
+          closeInstallGuide();
+        });
+      }
+    }
+
+    function closeInstallGuide(e) {
+      document.getElementById('installModal').classList.remove('open');
+    }
+
+    // Hide install button if running in standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      const installBtn = document.getElementById('installBtn');
+      if (installBtn) installBtn.style.display = 'none';
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js', { scope: './' })
+          .then((reg) => console.log('[SW] Registered in scope:', reg.scope))
+          .catch((err) => console.warn('[SW] Registration failed:', err));
+      });
+    }
+
+    // Initial setup
+    updateTimerUI();
+  </script>
+</body>
+</html>

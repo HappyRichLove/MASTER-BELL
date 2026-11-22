@@ -1,0 +1,25 @@
+{
+  "name": "MASTER SLEEP • Spiritus",
+  "short_name": "MASTER SLEEP",
+  "description": "Медитативный поток Spiritus Sancti Gratia для глубокого сна с таймером до 3 часов",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050713",
+  "theme_color": "#050713",
+  "icons": [
+    {
+      "src": "img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
