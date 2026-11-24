@@ -581,6 +581,9 @@
             letter-spacing: 0.08em;
             color: var(--gold);
             text-transform: uppercase;
+            line-height: 1.25;
+            margin: 0;
+            flex-shrink: 0;
         }
         .setting-card.setting-card-compact {
             flex-direction: row;
@@ -592,7 +595,26 @@
         .setting-card.setting-card-compact .setting-card-title {
             margin: 0;
             font-size: 0.82rem;
+            font-weight: 800;
             letter-spacing: 0.08em;
+            color: var(--gold);
+            text-transform: uppercase;
+            line-height: 1.25;
+            flex-shrink: 0;
+        }
+
+        /* ХИРУРГИЧЕСКИ ЕДИНЫЙ СТИЛЬ НАЗВАНИЙ ВСЕХ 4 ПРАКТИК (ГРУДЬ, ЖИВОТ, ЗАМКИ, АНУЛОМ) */
+        #title_bhastrika,
+        #title_kapala,
+        #title_zamki,
+        #title_anulom {
+            font-size: 0.82rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.08em !important;
+            color: var(--gold) !important;
+            text-transform: uppercase !important;
+            line-height: 1.25 !important;
+            flex-shrink: 0 !important;
         }
 
         .stepper-row {
@@ -1490,7 +1512,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.8</div>
+            <div class="version-tag">MASTER v2.0.9</div>
         </footer>
     </div>
 
@@ -1610,7 +1632,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.8 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.9 ↻</div>
                 </div>
             </div>
         </div>
@@ -3563,8 +3585,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.8)
-    var CURRENT_APP_VERSION = '2.0.8';
+    // PWA Version Tracking & Safe Cache Management (v2.0.9)
+    var CURRENT_APP_VERSION = '2.0.9';
 
     function checkPwaVersionMigration() {
         try {
@@ -3574,7 +3596,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.8') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.9') {
                                 caches.delete(k);
                             }
                         });
@@ -3590,7 +3612,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.8...');
+        showToast('Обновление PWA v2.0.9...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3616,9 +3638,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.8)
+    // Service Worker registration (STABLE v2.0.9)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.8').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.9').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
