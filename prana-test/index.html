@@ -582,6 +582,16 @@
             color: var(--gold);
             text-transform: uppercase;
         }
+        .setting-card.setting-card-compact {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            padding: 8px 14px;
+        }
+        .setting-card.setting-card-compact .setting-card-title {
+            margin: 0;
+        }
 
         .stepper-row {
             display: flex;
@@ -1464,9 +1474,9 @@
         <section class="stage-indicator-zone">
             <div class="bottom-time-label" id="bottomLabel" style="display:none !important;"></div>
             <div class="dots-row">
-                <div class="stage-dot active" id="dot0" title="Анулом-Вилом"></div>
-                <div class="stage-dot" id="dot1" title="Бхастрика"></div>
-                <div class="stage-dot" id="dot2" title="Капалабхати"></div>
+                <div class="stage-dot active" id="dot0" title="Анулом"></div>
+                <div class="stage-dot" id="dot1" title="Грудь"></div>
+                <div class="stage-dot" id="dot2" title="Живот"></div>
                 <div class="stage-dot" id="dot3" title="Замки"></div>
             </div>
         </section>
@@ -1478,7 +1488,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.6</div>
+            <div class="version-tag">MASTER v2.0.7</div>
         </footer>
     </div>
 
@@ -1507,15 +1517,12 @@
                 <!-- ДИНАМИЧЕСКИЙ КОНТЕЙНЕР ПОРЯДКА ПРАКТИК -->
                 <div id="settingsCardsContainer" style="display:flex; flex-direction:column; gap:10px;">
                     <!-- АНУЛОМ -->
-                    <div class="setting-card" id="cardAnulom">
+                    <div class="setting-card setting-card-compact" id="cardAnulom">
                         <div class="setting-card-title" id="title_anulom">1. АНУЛОМ</div>
-                        <div class="stepper-row">
-                            <span class="stepper-label">Время дыхания:</span>
-                            <div class="stepper-ctrls">
-                                <button class="step-btn" onclick="stepChange('anulomTime', -60)">−</button>
-                                <span class="step-value" id="val_anulomTime">10 мин</span>
-                                <button class="step-btn" onclick="stepChange('anulomTime', 60)">+</button>
-                            </div>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('anulomTime', -30)">−</button>
+                            <span class="step-value" id="val_anulomTime">10:00</span>
+                            <button class="step-btn" onclick="stepChange('anulomTime', 30)">+</button>
                         </div>
                     </div>
 
@@ -1524,21 +1531,18 @@
                         <div class="rest-compact-label">ОТДЫХ</div>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('restAnulom', -15)">−</button>
-                            <span class="step-value" id="val_restAnulom">60 с</span>
+                            <span class="step-value" id="val_restAnulom">01:00</span>
                             <button class="step-btn" onclick="stepChange('restAnulom', 15)">+</button>
                         </div>
                     </div>
 
-                    <!-- БХАСТРИКА -->
-                    <div class="setting-card" id="cardBhastrika">
-                        <div class="setting-card-title" id="title_bhastrika">2. БХАСТРИКА</div>
-                        <div class="stepper-row">
-                            <span class="stepper-label">Время дыхания:</span>
-                            <div class="stepper-ctrls">
-                                <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
-                                <span class="step-value" id="val_bhastrikaTime">3:00</span>
-                                <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
-                            </div>
+                    <!-- ГРУДЬ (БХАСТРИКА) -->
+                    <div class="setting-card setting-card-compact" id="cardBhastrika">
+                        <div class="setting-card-title" id="title_bhastrika">2. ГРУДЬ</div>
+                        <div class="stepper-ctrls">
+                            <button class="step-btn" onclick="stepChange('bhastrikaTime', -30)">−</button>
+                            <span class="step-value" id="val_bhastrikaTime">03:00</span>
+                            <button class="step-btn" onclick="stepChange('bhastrikaTime', 30)">+</button>
                         </div>
                     </div>
 
@@ -1547,14 +1551,14 @@
                         <div class="rest-compact-label">ОТДЫХ</div>
                         <div class="stepper-ctrls">
                             <button class="step-btn" onclick="stepChange('rest1', -15)">−</button>
-                            <span class="step-value" id="val_rest1">60 с</span>
+                            <span class="step-value" id="val_rest1">01:00</span>
                             <button class="step-btn" onclick="stepChange('rest1', 15)">+</button>
                         </div>
                     </div>
 
-                    <!-- КАПАЛАБХАТИ -->
+                    <!-- ЖИВОТ (КАПАЛАБХАТИ) -->
                     <div class="setting-card" id="cardKapala">
-                        <div class="setting-card-title" id="title_kapala">3. КАПАЛАБХАТИ</div>
+                        <div class="setting-card-title" id="title_kapala">3. ЖИВОТ</div>
                         <div class="stepper-row">
                             <span class="stepper-label">Количество циклов:</span>
                             <div class="stepper-ctrls">
@@ -1567,7 +1571,7 @@
                             <span class="stepper-label">Время одного цикла:</span>
                             <div class="stepper-ctrls">
                                 <button class="step-btn" onclick="stepChange('kapalaCycleTime', -15)">−</button>
-                                <span class="step-value" id="val_kapalaCycleTime">2:00</span>
+                                <span class="step-value" id="val_kapalaCycleTime">02:00</span>
                                 <button class="step-btn" onclick="stepChange('kapalaCycleTime', 15)">+</button>
                             </div>
                         </div>
@@ -1575,7 +1579,7 @@
                             <span class="stepper-label">Отдых между циклами:</span>
                             <div class="stepper-ctrls">
                                 <button class="step-btn" onclick="stepChange('kapalaRestSec', -15)">−</button>
-                                <span class="step-value" id="val_kapalaRestSec">60 с</span>
+                                <span class="step-value" id="val_kapalaRestSec">01:00</span>
                                 <button class="step-btn" onclick="stepChange('kapalaRestSec', 15)">+</button>
                             </div>
                         </div>
@@ -1592,19 +1596,19 @@
                                 <button class="step-btn" onclick="stepChange('zamkiReps', 1)">+</button>
                             </div>
                         </div>
-                        <div class="fixed-time-note" id="note_zamkiTotal">Общее время: 2:55 (7 × 25 с)</div>
+                        <div class="fixed-time-note" id="note_zamkiTotal">Общее время: 02:55 (7 × 25 с)</div>
                     </div>
                 </div>
 
                 <!-- SUMMARY TOTAL CONFIGURED TIME BANNER -->
                 <div class="settings-total-banner">
                     <div class="settings-total-label">ИТОГОВОЕ ВРЕМЯ ПО НАСТРОЙКАМ:</div>
-                    <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ (1555 С)</div>
+                    <div class="settings-total-value" id="settingsTotalVal">~26 МИНУТ</div>
                 </div>
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.6 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.7 ↻</div>
                 </div>
             </div>
         </div>
@@ -2372,10 +2376,10 @@
         if (!container || !cardAnulom || !cardBhastrika || !cardKapala || !cardZamki) return;
 
         if (currentVariant === 'v1') {
-            // Порядок Варианта 1: Анулом -> Отдых -> Бхастрика -> Отдых -> Капалабхати -> Замки
+            // Порядок Варианта 1: Анулом -> Отдых -> Грудь -> Отдых -> Живот -> Замки
             setValText('title_anulom', '1. АНУЛОМ');
-            setValText('title_bhastrika', '2. БХАСТРИКА');
-            setValText('title_kapala', '3. КАПАЛАБХАТИ');
+            setValText('title_bhastrika', '2. ГРУДЬ');
+            setValText('title_kapala', '3. ЖИВОТ');
             setValText('title_zamki', '4. ЗАМКИ');
 
             cardAnulom.style.order = '1';
@@ -2392,9 +2396,9 @@
             cardZamki.style.order = '6';
 
         } else {
-            // Порядок Варианта 2: Бхастрика -> Отдых -> Капалабхати -> Замки -> Анулом
-            setValText('title_bhastrika', '1. БХАСТРИКА');
-            setValText('title_kapala', '2. КАПАЛАБХАТИ');
+            // Порядок Варианта 2: Грудь -> Отдых -> Живот -> Замки -> Анулом
+            setValText('title_bhastrika', '1. ГРУДЬ');
+            setValText('title_kapala', '2. ЖИВОТ');
             setValText('title_zamki', '3. ЗАМКИ');
             setValText('title_anulom', '4. АНУЛОМ');
 
@@ -2431,12 +2435,12 @@
         if (els && els.dots && els.dots.length >= 4) {
             if (currentVariant === 'v1') {
                 if (els.dots[0]) els.dots[0].title = 'Анулом';
-                if (els.dots[1]) els.dots[1].title = 'Бхастрика';
-                if (els.dots[2]) els.dots[2].title = 'Капалабхати';
+                if (els.dots[1]) els.dots[1].title = 'Грудь';
+                if (els.dots[2]) els.dots[2].title = 'Живот';
                 if (els.dots[3]) els.dots[3].title = 'Замки';
             } else {
-                if (els.dots[0]) els.dots[0].title = 'Бхастрика';
-                if (els.dots[1]) els.dots[1].title = 'Капалабхати';
+                if (els.dots[0]) els.dots[0].title = 'Грудь';
+                if (els.dots[1]) els.dots[1].title = 'Живот';
                 if (els.dots[2]) els.dots[2].title = 'Замки';
                 if (els.dots[3]) els.dots[3].title = 'Анулом';
             }
@@ -2485,17 +2489,17 @@
                 });
             }
 
-            // 2. БХАСТРИКА
+            // 2. ГРУДЬ (БХАСТРИКА)
             list.push({
                 id: 'bhastrika', mainIndex: 1,
-                title: 'БХАСТРИКА', sub: '',
+                title: 'ГРУДЬ', sub: '',
                 duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
                 isRest: false
             });
 
-            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
+            // ОТДЫХ (ПОСЛЕ ГРУДИ)
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 1,
@@ -2507,12 +2511,12 @@
                 });
             }
 
-            // 3. КАПАЛАБХАТИ
+            // 3. ЖИВОТ (КАПАЛАБХАТИ)
             for (var c1 = 1; c1 <= kCycles; c1++) {
                 var isLastK1 = (c1 === kCycles);
                 list.push({
                     id: 'kapala_' + c1, mainIndex: 2,
-                    title: 'КАПАЛАБХАТИ',
+                    title: 'ЖИВОТ',
                     sub: '',
                     duration: s.kapalaCycleTime,
                     hasTick: true,
@@ -2549,19 +2553,19 @@
             });
 
         } else {
-            // ВАРИАНТ 2: НАЧИНАЕМ С БХАСТРИКИ
+            // ВАРИАНТ 2: НАЧИНАЕМ С ГРУДИ
 
-            // 1. БХАСТРИКА
+            // 1. ГРУДЬ (БХАСТРИКА)
             list.push({
                 id: 'bhastrika', mainIndex: 0,
-                title: 'БХАСТРИКА', sub: '',
+                title: 'ГРУДЬ', sub: '',
                 duration: s.bhastrikaTime,
                 hasTick: true,
                 bellAtEnd: true,
                 isRest: false
             });
 
-            // ОТДЫХ (ПОСЛЕ БХАСТРИКИ)
+            // ОТДЫХ (ПОСЛЕ ГРУДИ)
             if (s.rest1 > 0) {
                 list.push({
                     id: 'rest_bhastrika', mainIndex: 0,
@@ -2573,12 +2577,12 @@
                 });
             }
 
-            // 2. КАПАЛАБХАТИ
+            // 2. ЖИВОТ (КАПАЛАБХАТИ)
             for (var c2 = 1; c2 <= kCycles; c2++) {
                 var isLastK2 = (c2 === kCycles);
                 list.push({
                     id: 'kapala_' + c2, mainIndex: 1,
-                    title: 'КАПАЛАБХАТИ',
+                    title: 'ЖИВОТ',
                     sub: '',
                     duration: s.kapalaCycleTime,
                     hasTick: true,
@@ -3112,7 +3116,7 @@
         if (els.bottomLabel) els.bottomLabel.style.display = 'none';
         var bannerVal = document.getElementById('settingsTotalVal');
         if (bannerVal) {
-            bannerVal.textContent = '~' + totalMin + ' МИНУТ (' + totalSec + ' С)';
+            bannerVal.textContent = '~' + totalMin + ' МИНУТ';
         }
     }
 
@@ -3392,7 +3396,7 @@
         var val = s[key] + delta;
 
         if (key === 'anulomTime') {
-            val = Math.max(60, Math.min(3600, Math.round(val / 60) * 60));
+            val = Math.max(30, Math.min(3600, val));
         } else if (key === 'kapalaCycles') {
             val = Math.max(1, Math.min(10, val));
         } else if (key === 'zamkiReps') {
@@ -3411,15 +3415,14 @@
     function syncStepperDisplays() {
         var s = getActiveSettings();
         setValText('val_bhastrikaTime', formatMMSS(s.bhastrikaTime));
-        setValText('val_rest1', s.rest1 + ' с');
+        setValText('val_rest1', formatMMSS(s.rest1));
         var rAnulom = (typeof s.restAnulom !== 'undefined') ? s.restAnulom : s.rest1;
-        setValText('val_restAnulom', rAnulom + ' с');
+        setValText('val_restAnulom', formatMMSS(rAnulom));
         setValText('val_kapalaCycles', s.kapalaCycles);
         setValText('val_kapalaCycleTime', formatMMSS(s.kapalaCycleTime));
-        setValText('val_kapalaRestSec', s.kapalaRestSec + ' с');
+        setValText('val_kapalaRestSec', formatMMSS(s.kapalaRestSec));
         setValText('val_zamkiReps', s.zamkiReps);
-        var anulomMins = Math.max(1, Math.round(s.anulomTime / 60));
-        setValText('val_anulomTime', anulomMins + ' мин');
+        setValText('val_anulomTime', formatMMSS(s.anulomTime));
 
         var zSec = s.zamkiReps * 25;
         setValText('note_zamkiTotal', 'Общее время: ' + formatMMSS(zSec) + ' (' + s.zamkiReps + ' × 25 с)');
@@ -3558,8 +3561,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.6)
-    var CURRENT_APP_VERSION = '2.0.6';
+    // PWA Version Tracking & Safe Cache Management (v2.0.7)
+    var CURRENT_APP_VERSION = '2.0.7';
 
     function checkPwaVersionMigration() {
         try {
@@ -3569,7 +3572,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.6') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.7') {
                                 caches.delete(k);
                             }
                         });
@@ -3585,7 +3588,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.6...');
+        showToast('Обновление PWA v2.0.7...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3611,9 +3614,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.6)
+    // Service Worker registration (STABLE v2.0.7)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.6').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.7').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
