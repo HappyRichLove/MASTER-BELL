@@ -576,9 +576,9 @@
             gap: 6px;
         }
         .setting-card-title {
-            font-size: 0.7rem;
+            font-size: 0.82rem;
             font-weight: 800;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.08em;
             color: var(--gold);
             text-transform: uppercase;
         }
@@ -586,11 +586,13 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            min-height: 44px;
-            padding: 8px 14px;
+            min-height: 48px;
+            padding: 10px 14px;
         }
         .setting-card.setting-card-compact .setting-card-title {
             margin: 0;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
         }
 
         .stepper-row {
@@ -599,7 +601,7 @@
             align-items: center;
         }
         .stepper-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text);
             opacity: 0.85;
         }
@@ -1488,7 +1490,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.7</div>
+            <div class="version-tag">MASTER v2.0.8</div>
         </footer>
     </div>
 
@@ -1608,7 +1610,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.7 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.8 ↻</div>
                 </div>
             </div>
         </div>
@@ -3561,8 +3563,8 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.7)
-    var CURRENT_APP_VERSION = '2.0.7';
+    // PWA Version Tracking & Safe Cache Management (v2.0.8)
+    var CURRENT_APP_VERSION = '2.0.8';
 
     function checkPwaVersionMigration() {
         try {
@@ -3572,7 +3574,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.7') {
+                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.8') {
                                 caches.delete(k);
                             }
                         });
@@ -3588,7 +3590,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.7...');
+        showToast('Обновление PWA v2.0.8...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3614,9 +3616,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.7)
+    // Service Worker registration (STABLE v2.0.8)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.7').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.8').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
