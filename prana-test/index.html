@@ -1522,7 +1522,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="openPinAuthModal()" style="cursor:pointer;" title="Нажмите для ввода ПИН-кода">MASTER v2.0.13</div>
+            <div class="version-tag" onclick="openPinAuthModal()" style="cursor:pointer;" title="Нажмите для ввода ПИН-кода">MASTER v2.0.14</div>
         </footer>
     </div>
 
@@ -1642,7 +1642,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.13 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.14 ↻</div>
                 </div>
             </div>
         </div>
@@ -1956,17 +1956,9 @@
             pinAutoCheckTimer = null;
         }
 
-        // Автоматическая проверка 3-значного ПИНа при паузе в 450 мс
-        if (enteredPin.length === 3) {
-            pinAutoCheckTimer = setTimeout(function() {
-                checkPin();
-            }, 450);
-            return;
-        }
-
-        // При вводе 4 цифр — мгновенная проверка
+        // Проверка строго при вводе всех 4 цифр
         if (enteredPin.length === 4) {
-            setTimeout(checkPin, 100);
+            pinAutoCheckTimer = setTimeout(checkPin, 120);
         }
     }
 
@@ -2008,31 +2000,31 @@
     /* =====================================================
        SECURITY PIN GATE & GOOGLE SHEETS AUTH (NO HARDCODE)
        ===================================================== */
-    function syncInitialUserTimeToCloud(pin, totalSec) {
-        if (!pin || !navigator.onLine) return;
-        var secToSend = totalSec || currentMbTotal || 0;
-        var url = GOOGLE_SHEETS_API_URL + '?action=migrate_student&pin=' + encodeURIComponent(pin) +
-                  '&totalSeconds=' + encodeURIComponent(secToSend) +
-                  '&variant=' + encodeURIComponent(currentVariant || 'v1');
-        fetch(url)
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (data && data.status === 'success') {
-                    if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
-                        currentMbTotal = data.totalSeconds;
-                        try {
-                            localStorage.setItem('mb_total', currentMbTotal.toString());
-                        } catch(e) {}
-                        renderLifetimeDisplay();
-                    }
-                }
-            })
-            .catch(function() {});
+    function safeFetchJson(url, timeoutMs) {
+        var ms = timeoutMs || 12000;
+        var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        var signal = controller ? controller.signal : null;
+        var timer = null;
+        var fetchPromise = fetch(url, signal ? { signal: signal } : {});
+        var timeoutPromise = new Promise(function(_, reject) {
+            timer = setTimeout(function() {
+                if (controller) try { controller.abort(); } catch(e) {}
+                reject(new Error('Таймаут соединения с сервером'));
+            }, ms);
+        });
+        return Promise.race([fetchPromise, timeoutPromise]).then(function(res) {
+            if (timer) clearTimeout(timer);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        }).catch(function(err) {
+            if (timer) clearTimeout(timer);
+            throw err;
+        });
     }
 
     function checkPin() {
         var pin = enteredPin.trim();
-        if (!pin) return;
+        if (!pin || pin.length < 4) return;
         if (getPinLockRemainingMs() > 0) return;
 
         // ВАЖНО: всегда идём в таблицу для проверки ПИН-кода.
@@ -2047,8 +2039,7 @@
         var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin) +
                   '&clientTotalSeconds=' + encodeURIComponent(currentMbTotal);
 
-        fetch(url)
-            .then(function(res) { return res.json(); })
+        safeFetchJson(url, 12000)
             .then(function(data) {
                 if (data && data.status === 'ok') {
                     var unlockUntil = Date.now() + AUTH_TOKEN_VALIDITY_MS;
@@ -2070,14 +2061,17 @@
                         localStorage.removeItem(LOCK_UNTIL_KEY);
                     } catch(e) {}
 
-                    // Безусловная синхронизация и рендер наработанных часов
+                    // Синхронизация времени без риска удвоения
                     if (data.totalSeconds && data.totalSeconds > currentMbTotal) {
                         currentMbTotal = data.totalSeconds;
                         try {
                             localStorage.setItem('mb_total', currentMbTotal.toString());
                         } catch(e) {}
-                    } else if (currentMbTotal > 0) {
-                        syncInitialUserTimeToCloud(pin, currentMbTotal);
+                    } else if (currentMbTotal > (data.totalSeconds || 0)) {
+                        var diffSec = currentMbTotal - (data.totalSeconds || 0);
+                        if (diffSec > 0) {
+                            queuePracticeSecondsForSync(diffSec);
+                        }
                     }
                     renderLifetimeDisplay();
 
@@ -2161,8 +2155,7 @@
                   '&addSeconds=' + encodeURIComponent(secToSend) +
                   '&variant=' + encodeURIComponent(currentVariant || 'v1');
 
-        fetch(url)
-            .then(function(res) { return res.json(); })
+        safeFetchJson(url, 12000)
             .then(function(data) {
                 isSyncingBuffer = false;
                 if (data && (data.status === 'success' || data.status === 'ok')) {
@@ -2216,6 +2209,7 @@
             backspacePin();
         } else if (e.key === 'Escape') {
             clearPin();
+            closePinModalIfUnlocked();
         }
     });
 
@@ -3505,8 +3499,9 @@
                 var now = Date.now();
                 var elapsedSec = Math.max(0, Math.round((now - lastTickTimestamp) / 1000));
                 lastTickTimestamp = now;
-                if (elapsedSec > 0) {
-                    pendingSecToAdd += elapsedSec;
+                var effectiveElapsed = Math.min(elapsedSec, stageSecRemaining);
+                if (effectiveElapsed > 0) {
+                    pendingSecToAdd += effectiveElapsed;
                     flushGlobalPracticeTime();
                 }
                 stageSecRemaining = Math.max(0, Math.ceil((stageEndTime - now) / 1000));
@@ -3604,8 +3599,9 @@
         }
     }
 
-    // PWA Version Tracking & Safe Cache Management (v2.0.10)
-    var CURRENT_APP_VERSION = '2.0.10';
+    // PWA Version Tracking & Safe Cache Management (v2.0.14)
+    var CURRENT_APP_VERSION = '2.0.14';
+    var CURRENT_CACHE_NAME = 'master-prana-v2.0.14';
 
     function checkPwaVersionMigration() {
         try {
@@ -3615,7 +3611,7 @@
                 if ('caches' in window) {
                     caches.keys().then(function(keys) {
                         keys.forEach(function(k) {
-                            if (k.startsWith('master-prana-') && k !== 'master-prana-v2.0.10') {
+                            if (k.startsWith('master-prana-') && k !== CURRENT_CACHE_NAME) {
                                 caches.delete(k);
                             }
                         });
@@ -3631,7 +3627,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.13...');
+        showToast('Обновление PWA v2.0.14...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3657,9 +3653,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.13)
+    // Service Worker registration (STABLE v2.0.14)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.13').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.14').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -3682,8 +3678,7 @@
         if (localStorage.getItem('prana_cloud_total_synced') === 'true') return;
 
         var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
-        fetch(url)
-            .then(function(r) { return r.json(); })
+        safeFetchJson(url, 12000)
             .then(function(data) {
                 if (data && data.status === 'ok' && typeof data.totalSeconds === 'number') {
                     if (data.totalSeconds > currentMbTotal) {
@@ -3716,11 +3711,7 @@
             }
             showToast('Сверка с облаком...');
             var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
-            fetch(url)
-                .then(function(r) {
-                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                    return r.json();
-                })
+            safeFetchJson(url, 12000)
                 .then(function(data) {
                     if (data && data.status === 'ok') {
                         var cloudSec = parseInt(data.totalSeconds, 10) || 0;
