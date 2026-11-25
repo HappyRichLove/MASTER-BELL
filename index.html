@@ -652,17 +652,6 @@
         .migration-status.error { color: #e57373; }
         .migration-status.success { color: #81c784; }
         .migration-status.info { color: var(--gold); }
-        .migration-reset-btn {
-            background: transparent; border: 1px dashed var(--accent);
-            color: var(--accent); padding: 8px 14px; border-radius: 12px;
-            font-size: 0.72rem; cursor: pointer; margin-top: 12px;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-            display: inline-block;
-        }
-        .migration-reset-btn:active {
-            border-color: var(--gold); color: var(--gold);
-        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -1618,8 +1607,7 @@
             if (formContainer) formContainer.style.display = 'none';
             if (statusEl) {
                 statusEl.className = 'migration-status success';
-                statusEl.innerHTML = '✨ Часы уже перенесены в новый MASTER.<br>' +
-                    '<button class="migration-reset-btn" onclick="resetMigrationTest()">🔄 Сбросить статус (для теста)</button>';
+                statusEl.innerHTML = '✨ Часы уже перенесены в новый MASTER.';
             }
         } else {
             if (formContainer) formContainer.style.display = 'block';
@@ -1634,11 +1622,6 @@
             }
         }
         modal.classList.add('show');
-    }
-
-    function resetMigrationTest() {
-        localStorage.removeItem('mb_migrated_to_prana');
-        openMigrationModal();
     }
 
     function closeMigrationModal() {
@@ -1710,7 +1693,7 @@
                     }
                     var formContainer = document.getElementById('migFormContainer');
                     if (formContainer) formContainer.style.display = 'none';
-                    showMigStatus('✨ Часы успешно перенесены!<br>Практикующий: <b>' + (data.name || 'Участник') + '</b><br>Всего в облаке: ' + (data.formattedTime || formatTime(data.totalSeconds)) + '<br><button class="migration-reset-btn" onclick="resetMigrationTest()">🔄 Сбросить статус (для теста)</button>', 'success');
+                    showMigStatus('✨ Часы успешно перенесены!<br>Практикующий: <b>' + (data.name || 'Участник') + '</b><br>Всего в облаке: ' + (data.formattedTime || formatTime(data.totalSeconds)), 'success');
                 } else if (data && data.status === 'not_found') {
                     showMigStatus('ПИН-код не найден в реестре участников', 'error');
                 } else {
