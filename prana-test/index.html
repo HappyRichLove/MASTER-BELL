@@ -1522,7 +1522,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag" onclick="openPinAuthModal()" style="cursor:pointer;" title="Нажмите для ввода ПИН-кода">MASTER v2.0.12</div>
+            <div class="version-tag" onclick="openPinAuthModal()" style="cursor:pointer;" title="Нажмите для ввода ПИН-кода">MASTER v2.0.13</div>
         </footer>
     </div>
 
@@ -1642,7 +1642,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.12 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.13 ↻</div>
                 </div>
             </div>
         </div>
@@ -1742,7 +1742,7 @@
     <!-- PIN CODE MODAL (STUDENT ACCESS & BRUTE-FORCE PROTECTION) -->
     <div class="modal-overlay" id="pinModal" onclick="closePinModalIfUnlocked(event)">
         <div class="pin-card" onclick="event.stopPropagation()" style="position:relative;">
-            <button class="pin-close-btn" id="btnPinModalClose" onclick="closePinModalIfUnlocked()" style="position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.08); border:none; color:var(--accent); width:28px; height:28px; border-radius:50%; font-size:0.85rem; cursor:pointer; display:none; align-items:center; justify-content:center;">✕</button>
+            <button class="pin-close-btn" id="btnPinModalClose" onclick="closePinModalIfUnlocked()" style="position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.08); border:none; color:var(--accent); width:28px; height:28px; border-radius:50%; font-size:0.85rem; cursor:pointer; display:flex !important; align-items:center; justify-content:center;">✕</button>
             <div class="pin-lotus-badge">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3c-2.5 4-3.5 8-3.5 12 2.5-1 4.5-1 7 0 0-4-1-8-3.5-12z"/>
@@ -1752,7 +1752,7 @@
                 </svg>
             </div>
 
-            <h2 class="pin-title">ПРАНАЯМА</h2>
+            <h2 class="pin-title" onclick="resetPinLockForTest()" style="cursor:pointer;" title="Нажмите для сброса блокировки">ПРАНАЯМА</h2>
             <p class="pin-desc" id="pinModalDesc">Введите пароль доступа</p>
             <div class="pin-lock-msg" id="pinLockMsg" style="display:none;"></div>
 
@@ -1878,23 +1878,34 @@
         }
     }
 
+    function resetPinLockForTest() {
+        try {
+            localStorage.removeItem(FAILED_ATTEMPTS_KEY);
+            localStorage.removeItem(LOCK_UNTIL_KEY);
+        } catch(e) {}
+        updatePinLockUI();
+        showToast('Блокировка сброшена');
+    }
+
     function isPranaUnlocked() {
         try {
             var rawUntil = localStorage.getItem(UNLOCK_KEY);
-            if (!rawUntil) return false;
-            var until = parseInt(rawUntil, 10);
-            if (isNaN(until)) return false;
-            return Date.now() < until;
+            if (rawUntil) {
+                var until = parseInt(rawUntil, 10);
+                if (!isNaN(until) && Date.now() < until) return true;
+            }
+            if (localStorage.getItem('mb_user_pin')) return true;
+            return false;
         } catch(e) {
             return false;
         }
     }
 
     function checkPinGate() {
+        var closeBtn = document.getElementById('btnPinModalClose');
+        if (closeBtn) closeBtn.style.display = 'flex';
         if (!isPranaUnlocked()) {
             var modal = document.getElementById('pinModal');
-            var closeBtn = document.getElementById('btnPinModalClose');
-            if (closeBtn) closeBtn.style.display = 'none';
             if (modal) {
                 modal.classList.remove('closing');
                 modal.classList.add('open');
@@ -1909,7 +1920,7 @@
         clearPin();
         var modal = document.getElementById('pinModal');
         var closeBtn = document.getElementById('btnPinModalClose');
-        if (closeBtn) closeBtn.style.display = isPranaUnlocked() ? 'flex' : 'none';
+        if (closeBtn) closeBtn.style.display = 'flex';
         if (modal) {
             modal.classList.remove('closing');
             void modal.offsetWidth;
@@ -1920,17 +1931,15 @@
 
     function closePinModalIfUnlocked(e) {
         if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('pin-close-btn') && !e.target.closest('.pin-close-btn')) return;
-        if (isPranaUnlocked()) {
-            var modal = document.getElementById('pinModal');
-            if (modal) {
-                modal.classList.remove('open');
-                modal.classList.add('closing');
-                setTimeout(function() {
-                    modal.classList.remove('closing');
-                }, 300);
-            }
-            clearPin();
+        var modal = document.getElementById('pinModal');
+        if (modal) {
+            modal.classList.remove('open');
+            modal.classList.add('closing');
+            setTimeout(function() {
+                modal.classList.remove('closing');
+            }, 300);
         }
+        clearPin();
     }
 
     var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwAFT0Dz7_STSxk7xJVaNZV_mBrtkayI5vebcxuXCOqEhlo2UfTVurVxnxJSWP01SvJxA/exec';
@@ -3622,7 +3631,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.12...');
+        showToast('Обновление PWA v2.0.13...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3648,9 +3657,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.12)
+    // Service Worker registration (STABLE v2.0.13)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.12').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.13').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -3723,8 +3732,7 @@
                         localStorage.setItem('prana_cloud_total_synced', 'true');
                         showToast('✨ В облаке: ' + formatLifetimeTime(cloudSec));
                     } else if (data && data.status === 'not_found') {
-                        showToast('ПИН ' + pin + ' не найден в таблице');
-                        openPinAuthModal();
+                        showToast('ПИН не совпал с таблицей');
                     } else {
                         showToast((data && data.message) || 'Ошибка ответа');
                     }
