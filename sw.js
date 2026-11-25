@@ -1,5 +1,5 @@
-/* Service Worker — MASTER v20.24 (Stable) */
-var CACHE_NAME = 'master-v20.24';
+/* Service Worker — MASTER v20.25 (Stable) */
+var CACHE_NAME = 'master-v20.25';
 var ASSETS = [
   './',
   './index.html',
@@ -45,6 +45,12 @@ self.addEventListener('activate', function(e) {
 
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
+
+  /* External APIs & Cross-Origin bypass (Google Sheets, Nominatim etc.) */
+  if (!url.startsWith(self.location.origin) || url.includes('script.google.com') || url.includes('googleusercontent.com')) {
+    return;
+  }
+
   /* Media files: cache-first (audio from S3) */
   if (url.includes('.m4a') || url.includes('.mp3') || url.includes('.ogg')) {
     // Bypass SW for external audio to fix Safari Range request (The operation was aborted) error

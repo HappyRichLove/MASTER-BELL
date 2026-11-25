@@ -1,5 +1,5 @@
-/* Service Worker — MASTER PRANA v2.0.11 */
-var CACHE_NAME = 'master-prana-v2.0.11';
+/* Service Worker — MASTER PRANA v2.0.12 */
+var CACHE_NAME = 'master-prana-v2.0.12';
 var ASSETS = [
   './',
   './index.html',
@@ -48,6 +48,11 @@ self.addEventListener('message', function(e) {
 
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
+
+  /* External APIs & Cross-Origin bypass (Google Sheets, Nominatim etc.) */
+  if (!url.startsWith(self.location.origin) || url.includes('script.google.com') || url.includes('googleusercontent.com')) {
+    return;
+  }
 
   /* External audio bypass */
   if (url.includes('.m4a') || url.includes('.mp3') || url.includes('.ogg')) {

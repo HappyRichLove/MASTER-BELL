@@ -1522,7 +1522,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.11</div>
+            <div class="version-tag" onclick="openPinAuthModal()" style="cursor:pointer;" title="Нажмите для ввода ПИН-кода">MASTER v2.0.12</div>
         </footer>
     </div>
 
@@ -3696,27 +3696,42 @@
         bottomCapsule.style.cursor = 'pointer';
         bottomCapsule.addEventListener('click', function() {
             var pin = localStorage.getItem('mb_user_pin');
-            if (!pin || !navigator.onLine) {
+            if (!pin) {
+                openPinAuthModal();
+                showToast('Укажите ПИН-код для связи с таблицей');
+                return;
+            }
+            if (!navigator.onLine) {
                 showToast('Практика: ' + formatLifetimeTime(currentMbTotal));
                 return;
             }
             showToast('Сверка с облаком...');
             var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
-            fetch(url)
-                .then(function(r){ return r.json(); })
+            fetch(url, { redirect: 'follow' })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
                 .then(function(data) {
-                    if (data && data.status === 'ok' && typeof data.totalSeconds === 'number') {
-                        if (data.totalSeconds > currentMbTotal) {
-                            currentMbTotal = data.totalSeconds;
+                    if (data && data.status === 'ok') {
+                        var cloudSec = parseInt(data.totalSeconds, 10) || 0;
+                        if (cloudSec > currentMbTotal) {
+                            currentMbTotal = cloudSec;
                             try { localStorage.setItem('mb_total', currentMbTotal.toString()); } catch(e){}
                             renderLifetimeDisplay();
                         }
                         localStorage.setItem('prana_cloud_total_synced', 'true');
-                        showToast('✨ В облаке: ' + formatLifetimeTime(data.totalSeconds));
+                        showToast('✨ В облаке: ' + formatLifetimeTime(cloudSec));
+                    } else if (data && data.status === 'not_found') {
+                        showToast('ПИН ' + pin + ' не найден в таблице');
+                        openPinAuthModal();
+                    } else {
+                        showToast((data && data.message) || 'Ошибка ответа');
                     }
                 })
-                .catch(function(){
-                    showToast('Офлайн режим');
+                .catch(function(err) {
+                    console.error('Cloud check error:', err);
+                    showToast('Ошибка сети: ' + (err.message || 'нет связи'));
                 });
         });
     }
