@@ -1642,7 +1642,7 @@
 
                 <!-- PWA UPDATE ACTION IN SETTINGS ONLY (DISCRETE QUIET TAG) -->
                 <div style="padding: 18px 0 6px; display: flex; justify-content: center;">
-                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.10 ↻</div>
+                    <div class="version-tag modal-version-btn" onclick="forcePwaUpdate()" title="Нажмите для обновления PWA">MASTER v2.0.12 ↻</div>
                 </div>
             </div>
         </div>
@@ -3622,7 +3622,7 @@
             showToast('Нет сети. Обновление недоступно в офлайне');
             return;
         }
-        showToast('Обновление PWA v2.0.10...');
+        showToast('Обновление PWA v2.0.12...');
         if ('caches' in window) {
             caches.keys().then(function(keys) {
                 return Promise.all(keys.map(function(k) { return caches.delete(k); }));
@@ -3648,9 +3648,9 @@
         }
     }
 
-    // Service Worker registration (STABLE v2.0.10)
+    // Service Worker registration (STABLE v2.0.12)
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=2.0.10').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=2.0.12').then(function(reg) {
             reg.update();
         }).catch(function(){});
     }
@@ -3707,7 +3707,7 @@
             }
             showToast('Сверка с облаком...');
             var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
-            fetch(url, { redirect: 'follow' })
+            fetch(url)
                 .then(function(r) {
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     return r.json();
