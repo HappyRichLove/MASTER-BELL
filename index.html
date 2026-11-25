@@ -568,6 +568,9 @@
         .stat-value {
             font-size: 1.1rem; font-weight: 700; color: var(--gold);
             font-variant-numeric: tabular-nums;
+            cursor: pointer;
+            -webkit-user-select: none; user-select: none;
+            touch-action: manipulation;
         }
 
         .version-tag {
@@ -576,6 +579,79 @@
             -webkit-tap-highlight-color: transparent;
             padding: 6px 20px;
         }
+
+        /* Migration Modal Overlay */
+        #migrationOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); z-index: 5000;
+            display: none; -webkit-flex-direction: column; flex-direction: column;
+            -webkit-justify-content: center; justify-content: center;
+            -webkit-align-items: center; align-items: center;
+            padding: 20px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        }
+        #migrationOverlay.show { display: -webkit-flex; display: flex; }
+        .migration-card {
+            background: var(--surface); padding: 28px 22px; border-radius: 24px;
+            width: 100%; max-width: 360px; position: relative;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+            border: 1px solid var(--sandhya-border);
+            text-align: center;
+        }
+        .migration-close {
+            position: absolute; top: 14px; right: 16px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--text); cursor: pointer; opacity: 0.6; line-height: 1;
+            padding: 4px; -webkit-tap-highlight-color: transparent;
+        }
+        .migration-close:active { opacity: 1; }
+        .migration-title {
+            color: var(--gold); font-size: 1.15rem; font-weight: 800;
+            letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+        }
+        .migration-desc {
+            font-size: 0.8rem; color: var(--accent); line-height: 1.4;
+            margin-bottom: 18px;
+        }
+        .migration-time-box {
+            background: var(--circle-bg); border: 1px solid var(--sandhya-border);
+            border-radius: 16px; padding: 14px 10px; margin-bottom: 18px;
+        }
+        .migration-time-label {
+            font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em;
+            color: var(--accent); margin-bottom: 4px; font-weight: 700;
+        }
+        .migration-time-val {
+            font-size: 1.35rem; font-weight: 800; color: var(--gold);
+            font-variant-numeric: tabular-nums;
+        }
+        .migration-time-sub {
+            font-size: 0.78rem; color: var(--accent); margin-top: 2px;
+        }
+        .migration-pin-input {
+            width: 100%; max-width: 200px; padding: 12px 16px;
+            background: var(--bg); border: 1px solid var(--sandhya-border);
+            border-radius: 16px; color: var(--text); font-family: inherit;
+            font-size: 1.4rem; font-weight: 700; text-align: center;
+            letter-spacing: 0.25em; outline: none; margin-bottom: 14px;
+            -moz-appearance: textfield; -webkit-appearance: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .migration-pin-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 12px var(--glow);
+        }
+        .migration-pin-input::-webkit-outer-spin-button,
+        .migration-pin-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .migration-btn {
+            width: 100%; max-width: 240px; margin: 0 auto;
+        }
+        .migration-status {
+            margin-top: 14px; font-size: 0.82rem; font-weight: 600;
+            line-height: 1.45; min-height: 20px;
+        }
+        .migration-status.error { color: #e57373; }
+        .migration-status.success { color: #81c784; }
+        .migration-status.info { color: var(--gold); }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -678,7 +754,30 @@
         <div class="stat-value" id="statValue">00:00:00</div>
     </div>
 
-    <div class="version-tag" id="versionTag">v20.23 (Stable)</div>
+    <div class="version-tag" id="versionTag">v20.24 (Stable)</div>
+</div>
+
+<div id="migrationOverlay" onclick="handleMigrationOverlayClick(event)">
+    <div class="migration-card" onclick="event.stopPropagation()">
+        <button class="migration-close" onclick="closeMigrationModal()">×</button>
+        <div class="migration-title">СИНХРОНИЗАЦИЯ</div>
+        <div class="migration-desc">Перенос наработанных часов практики в облако нового MASTER</div>
+
+        <div class="migration-time-box">
+            <div class="migration-time-label">Найдено практики на этом устройстве</div>
+            <div class="migration-time-val" id="migTimeVal">00:00:00</div>
+            <div class="migration-time-sub" id="migTimeSub"></div>
+        </div>
+
+        <div id="migFormContainer">
+            <input type="tel" id="migPinInput" class="migration-pin-input" placeholder="ПИН" maxlength="4" autocomplete="off" inputmode="numeric">
+            <div>
+                <button id="migSubmitBtn" class="btn-main migration-btn" onclick="submitMigration()">ПЕРЕНЕСТИ</button>
+            </div>
+        </div>
+
+        <div id="migStatus" class="migration-status"></div>
+    </div>
 </div>
 
 <div id="installOverlay">
@@ -1445,6 +1544,171 @@
         setTimeout(function() {
             useGeolocation(false);
         }, 500);
+    }
+
+    /* =====================================================
+       SECRET MIGRATION MODULE (5 TAPS ON STAT VALUE)
+       ===================================================== */
+    var GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwAFT0Dz7_STSxk7xJVaNZV_mBrtkayI5vebcxuXCOqEhlo2UfTVurVxnxJSWP01SvJxA/exec';
+    var statTapCount = 0;
+    var statTapTimer = null;
+    var lastStatTapTime = 0;
+
+    function handleStatTap(e) {
+        var now = Date.now();
+        if (now - lastStatTapTime < 90) return; // Дебаунс touchstart + click
+        lastStatTapTime = now;
+
+        statTapCount++;
+        if (statTapTimer) clearTimeout(statTapTimer);
+
+        if (els.statValue) {
+            els.statValue.style.transition = 'transform 0.1s ease';
+            els.statValue.style.transform = 'scale(0.92)';
+            setTimeout(function() {
+                if (els.statValue) els.statValue.style.transform = '';
+            }, 110);
+        }
+
+        if (statTapCount >= 5) {
+            statTapCount = 0;
+            openMigrationModal();
+        } else {
+            statTapTimer = setTimeout(function() {
+                statTapCount = 0;
+            }, 1800);
+        }
+    }
+
+    if (els.statValue) {
+        els.statValue.addEventListener('click', handleStatTap);
+        els.statValue.addEventListener('touchend', handleStatTap);
+    }
+
+    function openMigrationModal() {
+        var modal = document.getElementById('migrationOverlay');
+        if (!modal) return;
+        var totalSec = parseInt(localStorage.getItem('mb_total'), 10) || state.totalSec || 0;
+
+        var timeValEl = document.getElementById('migTimeVal');
+        var timeSubEl = document.getElementById('migTimeSub');
+        if (timeValEl) timeValEl.textContent = formatTime(totalSec);
+        if (timeSubEl) {
+            var h = Math.floor(totalSec / 3600);
+            var m = Math.floor((totalSec % 3600) / 60);
+            timeSubEl.textContent = h + ' ч ' + m + ' мин практики';
+        }
+
+        var isMigrated = localStorage.getItem('mb_migrated_to_prana') === 'true';
+        var formContainer = document.getElementById('migFormContainer');
+        var statusEl = document.getElementById('migStatus');
+
+        if (isMigrated) {
+            if (formContainer) formContainer.style.display = 'none';
+            if (statusEl) {
+                statusEl.className = 'migration-status success';
+                statusEl.innerHTML = '✨ Часы уже перенесены в новый MASTER.<br>Повторный перенос не требуется.';
+            }
+        } else {
+            if (formContainer) formContainer.style.display = 'block';
+            if (statusEl) {
+                statusEl.className = 'migration-status';
+                statusEl.textContent = '';
+            }
+            var pinInput = document.getElementById('migPinInput');
+            if (pinInput) {
+                pinInput.value = '';
+                setTimeout(function() { pinInput.focus(); }, 300);
+            }
+        }
+        modal.classList.add('show');
+    }
+
+    function closeMigrationModal() {
+        var modal = document.getElementById('migrationOverlay');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function handleMigrationOverlayClick(e) {
+        if (e && e.target && e.target.id === 'migrationOverlay') {
+            closeMigrationModal();
+        }
+    }
+
+    function showMigStatus(text, type) {
+        var el = document.getElementById('migStatus');
+        if (!el) return;
+        el.className = 'migration-status ' + (type || '');
+        el.innerHTML = text;
+    }
+
+    function submitMigration() {
+        if (localStorage.getItem('mb_migrated_to_prana') === 'true') {
+            showMigStatus('✨ Часы уже перенесены в новый MASTER', 'success');
+            return;
+        }
+        var pinInput = document.getElementById('migPinInput');
+        var pin = (pinInput ? pinInput.value : '').trim();
+        if (!pin) {
+            showMigStatus('Введите ваш личный ПИН-код', 'error');
+            return;
+        }
+        if (!navigator.onLine) {
+            showMigStatus('Для переноса включите интернет', 'error');
+            return;
+        }
+
+        var totalSec = parseInt(localStorage.getItem('mb_total'), 10) || state.totalSec || 0;
+        if (totalSec <= 0) {
+            showMigStatus('Нет наработанного времени для переноса (0 сек)', 'error');
+            return;
+        }
+
+        var btn = document.getElementById('migSubmitBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'ПЕРЕНОС...';
+        }
+        showMigStatus('Связываемся с облаком...', 'info');
+
+        var url = GOOGLE_SHEETS_API_URL + '?action=migrate_student&pin=' + encodeURIComponent(pin) +
+                  '&totalSeconds=' + encodeURIComponent(totalSec);
+
+        fetch(url)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'ПЕРЕНЕСТИ';
+                }
+                if (data && data.status === 'success') {
+                    localStorage.setItem('mb_migrated_to_prana', 'true');
+                    var formContainer = document.getElementById('migFormContainer');
+                    if (formContainer) formContainer.style.display = 'none';
+                    showMigStatus('✨ Часы успешно перенесены!<br>Практикующий: <b>' + (data.name || 'Участник') + '</b><br>Всего в облаке: ' + (data.formattedTime || formatTime(data.totalSeconds)), 'success');
+                } else if (data && data.status === 'not_found') {
+                    showMigStatus('ПИН-код не найден в реестре участников', 'error');
+                } else {
+                    showMigStatus((data && data.message) || 'Ошибка при переносе', 'error');
+                }
+            })
+            .catch(function(err) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'ПЕРЕНЕСТИ';
+                }
+                showMigStatus('Ошибка сети. Проверьте интернет-соединение.', 'error');
+            });
+    }
+
+    var migPinInput = document.getElementById('migPinInput');
+    if (migPinInput) {
+        migPinInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitMigration();
+            }
+        });
     }
 
     /* SERVICE WORKER */
