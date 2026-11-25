@@ -652,6 +652,17 @@
         .migration-status.error { color: #e57373; }
         .migration-status.success { color: #81c784; }
         .migration-status.info { color: var(--gold); }
+        .migration-reset-btn {
+            background: transparent; border: 1px dashed var(--accent);
+            color: var(--accent); padding: 8px 14px; border-radius: 12px;
+            font-size: 0.72rem; cursor: pointer; margin-top: 12px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+            display: inline-block;
+        }
+        .migration-reset-btn:active {
+            border-color: var(--gold); color: var(--gold);
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -1607,7 +1618,8 @@
             if (formContainer) formContainer.style.display = 'none';
             if (statusEl) {
                 statusEl.className = 'migration-status success';
-                statusEl.innerHTML = '✨ Часы уже перенесены в новый MASTER.<br>Повторный перенос не требуется.';
+                statusEl.innerHTML = '✨ Часы уже перенесены в новый MASTER.<br>' +
+                    '<button class="migration-reset-btn" onclick="resetMigrationTest()">🔄 Сбросить статус (для теста)</button>';
             }
         } else {
             if (formContainer) formContainer.style.display = 'block';
@@ -1622,6 +1634,11 @@
             }
         }
         modal.classList.add('show');
+    }
+
+    function resetMigrationTest() {
+        localStorage.removeItem('mb_migrated_to_prana');
+        openMigrationModal();
     }
 
     function closeMigrationModal() {
@@ -1683,9 +1700,17 @@
                 }
                 if (data && data.status === 'success') {
                     localStorage.setItem('mb_migrated_to_prana', 'true');
+                    if (data.totalSeconds && data.totalSeconds > 0) {
+                        try {
+                            localStorage.setItem('mb_total', data.totalSeconds.toString());
+                            localStorage.setItem('mb_total_practice_sec', data.totalSeconds.toString());
+                            state.totalSec = data.totalSeconds;
+                            renderStatText();
+                        } catch(e) {}
+                    }
                     var formContainer = document.getElementById('migFormContainer');
                     if (formContainer) formContainer.style.display = 'none';
-                    showMigStatus('✨ Часы успешно перенесены!<br>Практикующий: <b>' + (data.name || 'Участник') + '</b><br>Всего в облаке: ' + (data.formattedTime || formatTime(data.totalSeconds)), 'success');
+                    showMigStatus('✨ Часы успешно перенесены!<br>Практикующий: <b>' + (data.name || 'Участник') + '</b><br>Всего в облаке: ' + (data.formattedTime || formatTime(data.totalSeconds)) + '<br><button class="migration-reset-btn" onclick="resetMigrationTest()">🔄 Сбросить статус (для теста)</button>', 'success');
                 } else if (data && data.status === 'not_found') {
                     showMigStatus('ПИН-код не найден в реестре участников', 'error');
                 } else {

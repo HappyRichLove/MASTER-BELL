@@ -1522,7 +1522,7 @@
 
         <!-- FOOTER -->
         <footer class="footer-area">
-            <div class="version-tag">MASTER v2.0.10</div>
+            <div class="version-tag">MASTER v2.0.11</div>
         </footer>
     </div>
 
@@ -3662,15 +3662,71 @@
         }
     }, { passive: false });
 
+    /* =====================================================
+       ONE-TIME SILENT CLOUD STATS SYNC (ON APP INIT)
+       Подтягивает часы из таблицы ровно 1 раз, не блокируя UI
+       ===================================================== */
+    function syncCloudTotalOnce() {
+        var pin = localStorage.getItem('mb_user_pin');
+        if (!pin || !navigator.onLine) return;
+        // Однократность: если уже успешно синхронизировали из облака — повторно запросы не шлем
+        if (localStorage.getItem('prana_cloud_total_synced') === 'true') return;
+
+        var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.status === 'ok' && typeof data.totalSeconds === 'number') {
+                    if (data.totalSeconds > currentMbTotal) {
+                        currentMbTotal = data.totalSeconds;
+                        try {
+                            localStorage.setItem('mb_total', currentMbTotal.toString());
+                        } catch(e) {}
+                        renderLifetimeDisplay();
+                    }
+                    localStorage.setItem('prana_cloud_total_synced', 'true');
+                }
+            })
+            .catch(function() {});
+    }
+
+    // Ручной тап по капсуле времени для мгновенной сверки с облаком
+    var bottomCapsule = document.getElementById('bottomLifetimeCapsule');
+    if (bottomCapsule) {
+        bottomCapsule.style.cursor = 'pointer';
+        bottomCapsule.addEventListener('click', function() {
+            var pin = localStorage.getItem('mb_user_pin');
+            if (!pin || !navigator.onLine) {
+                showToast('Практика: ' + formatLifetimeTime(currentMbTotal));
+                return;
+            }
+            showToast('Сверка с облаком...');
+            var url = GOOGLE_SHEETS_API_URL + '?action=check_pin&pin=' + encodeURIComponent(pin);
+            fetch(url)
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
+                    if (data && data.status === 'ok' && typeof data.totalSeconds === 'number') {
+                        if (data.totalSeconds > currentMbTotal) {
+                            currentMbTotal = data.totalSeconds;
+                            try { localStorage.setItem('mb_total', currentMbTotal.toString()); } catch(e){}
+                            renderLifetimeDisplay();
+                        }
+                        localStorage.setItem('prana_cloud_total_synced', 'true');
+                        showToast('✨ В облаке: ' + formatLifetimeTime(data.totalSeconds));
+                    }
+                })
+                .catch(function(){
+                    showToast('Офлайн режим');
+                });
+        });
+    }
+
     // Initialize application & auto-sync lifetime hours to cloud
     function handleAppInitSync() {
         initApp();
         checkStandaloneUI();
         flushOfflineSyncBuffer();
-        var savedPin = localStorage.getItem('mb_user_pin');
-        if (savedPin && currentMbTotal > 0 && navigator.onLine) {
-            syncInitialUserTimeToCloud(savedPin, currentMbTotal);
-        }
+        syncCloudTotalOnce();
     }
     document.addEventListener('DOMContentLoaded', handleAppInitSync);
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
